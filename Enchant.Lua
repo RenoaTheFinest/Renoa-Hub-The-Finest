@@ -1,6 +1,6 @@
--- ================================================
--- ENCHANT TAB
--- ================================================
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
+
 local EnchantTab = Window:CreateTab("Enchant", nil)
 
 local function RunEnchant(primary, secondary, item1, item2)
