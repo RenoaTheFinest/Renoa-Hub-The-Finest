@@ -26,4 +26,4 @@ loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/m
 loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Enchant.Lua")
 loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Rift.Lua")
 loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Shrine.Lua")
-loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Webhook.Lua")
+loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/refs/heads/main/Webhook.Lua")
