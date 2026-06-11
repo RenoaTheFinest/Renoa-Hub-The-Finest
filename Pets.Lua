@@ -1,5 +1,10 @@
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
+
+local PetTab = Window:CreateTab("Pets", nil)
+
 -- ================================================
--- REBIRTH MACHINE (FIXED - HUB VERSION)
+-- REBIRTH MACHINE
 -- ================================================
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -50,9 +55,7 @@ local function fusionLoop()
     while fuserActive do
         task.wait(2.5)
 
-        if targetPetNamesString == "" then
-            continue
-        end
+        if targetPetNamesString == "" then continue end
 
         local targetNames = {}
         for chunk in string.gmatch(targetPetNamesString, "[^,]+") do
@@ -97,10 +100,7 @@ local function fusionLoop()
     end
 end
 
--- ================================================
--- UI (RAYFIELD)
--- ================================================
-
+-- UI
 PetTab:CreateSection("Rebirth Machine")
 
 PetTab:CreateInput({
