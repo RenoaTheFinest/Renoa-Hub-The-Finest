@@ -1,6 +1,9 @@
 -- ================================================
--- WEBHOOK TAB (FINAL FIX)
+-- WEBHOOK TAB (SAFE FIX)
 -- ================================================
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
+
 local WebhookTab = Window:CreateTab("Webhook", nil)
 
 local Players = game:GetService("Players")
@@ -9,9 +12,10 @@ local HttpService = game:GetService("HttpService")
 
 local player = Players.LocalPlayer
 
-_G.WEBHOOK_URL = getSetting("WebhookURL","")
-_G.DISCORD_USER_ID = getSetting("DiscordID","")
-_G.webhookEnabled = getSetting("WebhookEnabled",false)
+-- CONFIG (isi manual di UI)
+_G.WEBHOOK_URL = ""
+_G.DISCORD_USER_ID = ""
+_G.webhookEnabled = false
 
 local webhookHooked = false
 
@@ -21,8 +25,7 @@ if not request then
     return
 end
 
-local Pets = nil
-local LocalData = nil
+local Pets, LocalData
 pcall(function() Pets = require(ReplicatedStorage.Shared.Data.Pets) end)
 pcall(function() LocalData = require(ReplicatedStorage.Client.Framework.Services.LocalData) end)
 
@@ -86,15 +89,17 @@ local function send(petName,egg,ex)
         footer = {text=os.date("%H:%M:%S")}
     }
 
-    request({
-        Url = _G.WEBHOOK_URL,
-        Method = "POST",
-        Headers = {["Content-Type"]="application/json"},
-        Body = HttpService:JSONEncode({
-            content = (_G.DISCORD_USER_ID~="") and "<@".._G.DISCORD_USER_ID..">" or nil,
-            embeds = {embed}
+    pcall(function()
+        request({
+            Url = _G.WEBHOOK_URL,
+            Method = "POST",
+            Headers = {["Content-Type"]="application/json"},
+            Body = HttpService:JSONEncode({
+                content = (_G.DISCORD_USER_ID~="") and "<@".._G.DISCORD_USER_ID..">" or nil,
+                embeds = {embed}
+            })
         })
-    })
+    end)
 end
 
 local function hook()
@@ -123,7 +128,7 @@ local function hook()
             return
         end))
         webhookHooked = true
-        print("[Webhook] Hooked 🔥")
+        print("[Webhook] hooked 🔥")
     end
 end
 
@@ -132,31 +137,25 @@ WebhookTab:CreateSection("Webhook")
 
 WebhookTab:CreateInput({
     Name = "Webhook URL",
-    CurrentValue = _G.WEBHOOK_URL,
+    CurrentValue = "",
     Callback = function(v)
         _G.WEBHOOK_URL = v
-        setSetting("WebhookURL",v)
     end
 })
 
 WebhookTab:CreateInput({
     Name = "Discord ID",
-    CurrentValue = _G.DISCORD_USER_ID,
+    CurrentValue = "",
     Callback = function(v)
         _G.DISCORD_USER_ID = v
-        setSetting("DiscordID",v)
     end
 })
 
 WebhookTab:CreateToggle({
     Name = "Enable Webhook",
-    CurrentValue = _G.webhookEnabled,
+    CurrentValue = false,
     Callback = function(v)
         _G.webhookEnabled = v
-        setSetting("WebhookEnabled",v)
-
-        if v then
-            hook()
-        end
+        if v then hook() end
     end
 })
