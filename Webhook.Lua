@@ -1,5 +1,5 @@
 -- ================================================
--- WEBHOOK TAB (SAFE FIX)
+-- WEBHOOK TAB (RAYFIELD FIX)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -132,12 +132,16 @@ local function hook()
     end
 end
 
--- UI
-WebhookTab:CreateSection("Webhook")
+-- ================================================
+-- UI (RAYFIELD METHODS)
+-- ================================================
+WebhookTab:CreateSection("Webhook Settings")
 
 WebhookTab:CreateInput({
     Name = "Webhook URL",
     CurrentValue = "",
+    PlaceholderText = "https://discord.com/api/webhooks/...",
+    RemoveTextAfterFocusLost = false,
     Callback = function(v)
         _G.WEBHOOK_URL = v
     end
@@ -146,6 +150,8 @@ WebhookTab:CreateInput({
 WebhookTab:CreateInput({
     Name = "Discord ID",
     CurrentValue = "",
+    PlaceholderText = "1234567890",
+    RemoveTextAfterFocusLost = false,
     Callback = function(v)
         _G.DISCORD_USER_ID = v
     end
