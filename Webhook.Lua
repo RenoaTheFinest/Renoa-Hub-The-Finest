@@ -1,13 +1,13 @@
 -- ================================================
--- WEBHOOK TAB (RAYFIELD - FOOLPROOF)
+-- WEBHOOK TAB (HYBRID FIX - Working Reference Logic)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
 
 local WebhookTab = Window:CreateTab("Webhook", nil)
 
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 
 local player = Players.LocalPlayer
@@ -19,217 +19,118 @@ _G.webhookEnabled = false
 
 local webhookHooked = false
 
-local request = http_request or request or (syn and syn.request)
+-- Use the EXACT same request method that works in your reference
+local request = http_request
 if not request then
     warn("executor lu ga support webhook 💀")
     return
 end
 
-local Pets, LocalData
+local Pets
 pcall(function() Pets = require(ReplicatedStorage.Shared.Data.Pets) end)
-pcall(function() LocalData = require(ReplicatedStorage.Client.Framework.Services.LocalData) end)
 
 local TRACKED = {
-    ["Secret"]=true,
-    ["Celestial"]=true,
-    ["Infinity"]=true,
-    ["Void"]=true,
-    ["Super Legendary"]=true,
+    ["Secret"] = true,
+    ["Celestial"] = true,
+    ["Infinity"] = true,
+    ["Void"] = true,
+    ["Super Legendary"] = true,
 }
 
 -- ======================================
--- FORMAT
+-- QUEUE SYSTEM (from working reference)
 -- ======================================
-local function formatNum(n)
-    if not n then return "0" end
-    if n>=1e9 then return string.format("%.1fB",n/1e9)
-    elseif n>=1e6 then return string.format("%.1fM",n/1e6)
-    elseif n>=1e3 then return string.format("%.1fK",n/1e3)
-    else return tostring(math.floor(n)) end
+local webhookQueue = {}
+local webhookProcessing = false
+
+local function sendWebhookRaw(msg)
+    local ok, err = pcall(function()
+        request({
+            Url = _G.WEBHOOK_URL,
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/json"
+            },
+            Body = HttpService:JSONEncode({
+                content = (_G.DISCORD_USER_ID ~= "" and "<@" .. _G.DISCORD_USER_ID .. ">" or nil),
+                embeds = {{
+                    title = "🎉 Secret Pet Hatched!",
+                    description = msg,
+                    color = 16711680
+                }}
+            })
+        })
+    end)
+    return ok, err
 end
 
-local function formatExist(n)
-    if not n then return "0" end
-    local s=tostring(math.floor(n))
-    return s:reverse():gsub("(%d%d%d)","%1,"):reverse():gsub("^,","")
-end
-
--- ======================================
--- STATS
--- ======================================
-local function getStats(eggName)
-    if not LocalData then return "0","0","0" end
-    local ok,data = pcall(function() return LocalData:Get() end)
-    if not ok or not data then return "0","0","0" end
-
-    return
-        formatNum(data.Coins or 0),
-        formatNum(data.Gems or 0),
-        formatNum((data.EggsOpened and data.EggsOpened[eggName]) or 0)
-end
-
--- ======================================
--- PET EXTRA
--- ======================================
-local function getPetExtra(petInfo)
-    local odds="Unknown"
-    local exist="Unknown"
-
-    if petInfo.Chance then
-        local calc=math.floor(1/petInfo.Chance)
-        if calc>0 then odds="1/"..formatExist(calc) end
-    elseif petInfo.Odds then
-        odds="1/"..formatExist(petInfo.Odds)
-    end
-
-    if petInfo.Exists then
-        exist=formatExist(petInfo.Exists)
-    end
-
-    return odds,exist
-end
-
--- ======================================
--- VARIANT
--- ======================================
-local function getVariant(ex)
-    if ex.Shiny and ex.Mythic then return "ShinyMythic"
-    elseif ex.Shiny then return "Shiny"
-    elseif ex.Mythic then return "Mythic"
-    else return "Normal" end
-end
-
-local function getVariantText(v)
-    if v=="ShinyMythic" then return "Shiny Mythic"
-    elseif v=="Shiny" then return "Shiny"
-    elseif v=="Mythic" then return "Mythic"
-    else return "Normal" end
-end
-
--- ======================================
--- IMAGE
--- ======================================
-local function getImage(petInfo)
-    local raw = petInfo.Image or petInfo.ImageId
-    if not raw then return nil end
-
-    local id = tostring(raw):gsub("rbxassetid://",""):match("%d+")
-    if not id then return nil end
-
-    return "https://www.roblox.com/asset-thumbnail/image?assetId="..id.."&width=420&height=420&format=png"
-end
-
--- ======================================
--- QUEUE (ANTI RATELIMIT)
--- ======================================
-local queue={}
-local processing=false
-
-local function process()
-    if processing then return end
-    processing=true
+local function processWebhookQueue()
+    if webhookProcessing then return end
+    webhookProcessing = true
 
     task.spawn(function()
-        while #queue>0 do
-            local p=table.remove(queue,1)
-            pcall(function()
-                request({
-                    Url=_G.WEBHOOK_URL,
-                    Method="POST",
-                    Headers={["Content-Type"]="application/json"},
-                    Body=HttpService:JSONEncode(p)
-                })
-            end)
+        while #webhookQueue > 0 do
+            local item = table.remove(webhookQueue, 1)
+            sendWebhookRaw(item.msg)
             task.wait(1)
         end
-        processing=false
+        webhookProcessing = false
     end)
 end
 
--- ======================================
--- SEND
--- ======================================
-local function send(petName, eggName, ex)
+local function queueWebhook(petName, eggName, extras)
     if not _G.webhookEnabled then return end
-    if _G.WEBHOOK_URL=="" then return end
-    if not Pets then return end
+    if _G.WEBHOOK_URL == "" then return end
 
-    local info = Pets[petName]
-    if not info then return end
+    local tags = {}
+    if extras.Shiny then table.insert(tags, "✨ Shiny") end
+    if extras.Mythic then table.insert(tags, "🌟 Mythic") end
+    if extras.XL then table.insert(tags, "📏 XL") end
 
-    local rarity = info.Rarity
-    if not TRACKED[rarity] then return end
+    local tagStr = #tags > 0 and (" | " .. table.concat(tags, " | ")) or ""
 
-    local variant = getVariant(ex)
-    local variantText = getVariantText(variant)
+    local msg = ("**%s** from **%s**\n👤 Player: **%s**\n🕐 Time: **%s**%s"):format(
+        petName,
+        eggName,
+        player.Name,
+        os.date("%H:%M:%S"),
+        tagStr
+    )
 
-    local coins,gems,opened = getStats(eggName)
-    local odds,exist = getPetExtra(info)
-    local img = getImage(info)
-
-    local embed = {
-        title = "🎉 Congrats You Hatched A "..variantText.." "..rarity.." "..petName.."!",
-        color = 16711680,
-
-        fields = {
-            {
-                name = "• User Info",
-                value =
-                    "👤 Name : "..player.Name.."\n"..
-                    "🪙 Coin : "..coins.."\n"..
-                    "💎 Gems : "..gems.."\n"..
-                    "🥚 Egg Hatched : "..opened,
-                inline = false
-            },
-            {
-                name = "🐾 Pet Info",
-                value =
-                    "Odds : "..odds.."\n"..
-                    "Exist : "..exist,
-                inline = false
-            }
-        },
-
-        footer = {
-            text = "Renoa The Finest has Blessed You! • "..os.date("%Y-%m-%d %H:%M:%S")
-        }
-    }
-
-    if img then
-        embed.thumbnail = {url = img}
-    end
-
-    table.insert(queue, {
-        content = (_G.DISCORD_USER_ID~="") and "<@".._G.DISCORD_USER_ID..">" or nil,
-        embeds = {embed}
-    })
-
-    process()
+    table.insert(webhookQueue, { msg = msg })
+    processWebhookQueue()
 end
 
 -- ======================================
--- HOOK
+-- HOOK (from working reference)
 -- ======================================
 local function hook()
     if webhookHooked then return end
 
-    local ok,mod = pcall(function()
+    local success, HatchingModule = pcall(function()
         return require(ReplicatedStorage.Client.Effects.HatchEgg)
     end)
 
-    if ok and mod then
-        hookfunction(mod.Play, newcclosure(function(_, data)
-            if type(data)=="table" and data.Pets then
-                for _, p in ipairs(data.Pets) do
-                    local pet = p.Pet or p
+    if success and HatchingModule then
+        hookfunction(HatchingModule.Play, newcclosure(function(self, data)
+            if type(data) == "table" and data.Pets then
+                for _, petData in ipairs(data.Pets) do
+                    local pet = petData.Pet
                     if pet and pet.Name then
-                        task.spawn(function()
-                            send(
-                                pet.Name,
-                                data.Name or "Egg",
-                                {Shiny=pet.Shiny, Mythic=pet.Mythic}
-                            )
+                        local ok, petInfo = pcall(function()
+                            return Pets[pet.Name]
                         end)
+                        if ok and petInfo and TRACKED[petInfo.Rarity] then
+                            queueWebhook(
+                                pet.Name,
+                                data.Name or "Unknown",
+                                {
+                                    Shiny = pet.Shiny,
+                                    Mythic = pet.Mythic,
+                                    XL = pet.XL
+                                }
+                            )
+                        end
                     end
                 end
             end
@@ -237,11 +138,13 @@ local function hook()
         end))
         webhookHooked = true
         print("[Webhook] hooked 🔥")
+    else
+        warn("[Webhook] Failed to hook HatchEgg module")
     end
 end
 
 -- ================================================
--- UI (FOOLPROOF - no Enter needed)
+-- UI (RAYFIELD - Foolproof)
 -- ================================================
 local urlInput
 local idInput
@@ -251,7 +154,7 @@ WebhookTab:CreateSection("Webhook Settings")
 urlInput = WebhookTab:CreateInput({
     Name = "Webhook URL",
     CurrentValue = "",
-    PlaceholderText = "https://discord.com/api/webhooks/...",
+    PlaceholderText = "https://webhook.lewisakura.moe/api/webhooks/...",
     RemoveTextAfterFocusLost = false,
     Callback = function(v)
         _G.WEBHOOK_URL = v
@@ -277,16 +180,16 @@ WebhookTab:CreateToggle({
     end
 })
 
--- 🔄 Override send to read directly from input fields (no Enter needed)
-local oldSend = send
-send = function(petName, egg, ex)
+-- 🔄 Auto-read input fields (no Enter needed)
+local oldQueueWebhook = queueWebhook
+queueWebhook = function(petName, eggName, extras)
     if urlInput and urlInput.Text then
         _G.WEBHOOK_URL = urlInput.Text
     end
     if idInput and idInput.Text then
         _G.DISCORD_USER_ID = idInput.Text
     end
-    return oldSend(petName, egg, ex)
+    return oldQueueWebhook(petName, eggName, extras)
 end
 
 print("Webhook udah bener, kalo masih jelek berarti lu nya 😭")
