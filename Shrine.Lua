@@ -1,3 +1,6 @@
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
+
 local ShrineTab = Window:CreateTab("Shrine", nil)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -10,12 +13,11 @@ local bubbleThread = nil
 local dreamerThread = nil
 
 local BUBBLE = {
-    Name = getSetting("BubbleName","Lucky"),
-    Amount = getSetting("BubbleAmount",500)
+    Name = "Lucky",
+    Amount = 500
 }
 
-local DREAMER_AMOUNT = getSetting("DreamerAmount",15)
-
+local DREAMER_AMOUNT = 15
 local INTERVAL = 43200
 
 local function bubble()
@@ -42,7 +44,6 @@ ShrineTab:CreateInput({
     CurrentValue = BUBBLE.Name,
     Callback = function(v)
         BUBBLE.Name = v
-        setSetting("BubbleName",v)
     end
 })
 
@@ -53,7 +54,6 @@ ShrineTab:CreateInput({
         local n = tonumber(v)
         if n then
             BUBBLE.Amount = n
-            setSetting("BubbleAmount",n)
         end
     end
 })
@@ -63,6 +63,7 @@ ShrineTab:CreateToggle({
     CurrentValue = false,
     Callback = function(v)
         bubbleEnabled = v
+
         if v then
             bubble()
             bubbleThread = task.spawn(function()
@@ -86,7 +87,6 @@ ShrineTab:CreateInput({
         local n = tonumber(v)
         if n then
             DREAMER_AMOUNT = n
-            setSetting("DreamerAmount",n)
         end
     end
 })
@@ -96,6 +96,7 @@ ShrineTab:CreateToggle({
     CurrentValue = false,
     Callback = function(v)
         dreamerEnabled = v
+
         if v then
             dreamer()
             dreamerThread = task.spawn(function()
