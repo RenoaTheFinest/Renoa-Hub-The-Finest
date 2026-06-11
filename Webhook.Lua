@@ -1,5 +1,5 @@
 -- ================================================
--- WEBHOOK TAB (HYBRID FIX - Working Reference Logic)
+-- WEBHOOK TAB (DELTA MOBILE FIX)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -19,9 +19,15 @@ _G.webhookEnabled = false
 
 local webhookHooked = false
 
--- Use the EXACT same request method that works in your reference
-local request = http_request
-if not request then
+-- Delta Mobile compatible request
+local request
+if syn and syn.request then
+    request = syn.request
+elseif http_request then
+    request = http_request
+elseif request then
+    request = request
+else
     warn("executor lu ga support webhook 💀")
     return
 end
@@ -38,13 +44,13 @@ local TRACKED = {
 }
 
 -- ======================================
--- QUEUE SYSTEM (from working reference)
+-- QUEUE SYSTEM
 -- ======================================
 local webhookQueue = {}
 local webhookProcessing = false
 
 local function sendWebhookRaw(msg)
-    local ok, err = pcall(function()
+    local success, err = pcall(function()
         request({
             Url = _G.WEBHOOK_URL,
             Method = "POST",
@@ -54,14 +60,19 @@ local function sendWebhookRaw(msg)
             Body = HttpService:JSONEncode({
                 content = (_G.DISCORD_USER_ID ~= "" and "<@" .. _G.DISCORD_USER_ID .. ">" or nil),
                 embeds = {{
-                    title = "🎉 Secret Pet Hatched!",
+                    title = "🎉 Rare Pet Hatched!",
                     description = msg,
                     color = 16711680
                 }}
             })
         })
     end)
-    return ok, err
+    
+    if not success then
+        warn("[Webhook] Send failed:", err)
+    end
+    
+    return success, err
 end
 
 local function processWebhookQueue()
@@ -72,7 +83,7 @@ local function processWebhookQueue()
         while #webhookQueue > 0 do
             local item = table.remove(webhookQueue, 1)
             sendWebhookRaw(item.msg)
-            task.wait(1)
+            task.wait(1.5) -- Slightly longer delay for mobile
         end
         webhookProcessing = false
     end)
@@ -102,7 +113,7 @@ local function queueWebhook(petName, eggName, extras)
 end
 
 -- ======================================
--- HOOK (from working reference)
+-- HOOK
 -- ======================================
 local function hook()
     if webhookHooked then return end
@@ -154,10 +165,11 @@ WebhookTab:CreateSection("Webhook Settings")
 urlInput = WebhookTab:CreateInput({
     Name = "Webhook URL",
     CurrentValue = "",
-    PlaceholderText = "https://webhook.lewisakura.moe/api/webhooks/...",
+    PlaceholderText = "Paste your webhook URL here...",
     RemoveTextAfterFocusLost = false,
     Callback = function(v)
         _G.WEBHOOK_URL = v
+        print("[Webhook] URL saved!")
     end
 })
 
@@ -168,6 +180,7 @@ idInput = WebhookTab:CreateInput({
     RemoveTextAfterFocusLost = false,
     Callback = function(v)
         _G.DISCORD_USER_ID = v
+        print("[Webhook] Discord ID saved!")
     end
 })
 
@@ -176,7 +189,12 @@ WebhookTab:CreateToggle({
     CurrentValue = false,
     Callback = function(v)
         _G.webhookEnabled = v
-        if v then hook() end
+        if v then 
+            hook()
+            print("[Webhook] Enabled!")
+        else
+            print("[Webhook] Disabled!")
+        end
     end
 })
 
@@ -192,4 +210,18 @@ queueWebhook = function(petName, eggName, extras)
     return oldQueueWebhook(petName, eggName, extras)
 end
 
-print("Webhook udah bener, kalo masih jelek berarti lu nya 😭")
+-- 🧪 Test Button
+WebhookTab:CreateButton({
+    Name = "🧪 Test Webhook",
+    Callback = function()
+        print("[Webhook] Testing...")
+        local ok, err = sendWebhookRaw("🧪 Test from **"..player.Name.."** | Time: **"..os.date("%H:%M:%S").."**")
+        if ok then
+            print("[Webhook] ✅ Test sent successfully!")
+        else
+            warn("[Webhook] ❌ Test failed:", err)
+        end
+    end
+})
+
+print("[Webhook] Script loaded! Ready to use. 🔥")
