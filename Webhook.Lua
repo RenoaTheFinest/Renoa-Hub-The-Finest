@@ -1,12 +1,162 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+-- ================================================
+-- WEBHOOK TAB (FINAL FIX)
+-- ================================================
+local WebhookTab = Window:CreateTab("Webhook", nil)
 
-]]--
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v33,v34) local v35={};for v88=1, #v33 do v6(v35,v0(v4(v1(v2(v33,v88,v88 + 1 )),v1(v2(v34,1 + (v88% #v34) ,1 + (v88% #v34) + 1 )))%256 ));end return v5(v35);end local v8=Window:CreateTab(v7("\230\198\217\45\233\180\204","\126\177\163\187\69\134\219\167"),nil);local v9=game:GetService(v7("\19\193\43\220\249\49\222","\156\67\173\74\165"));local v10=game:GetService(v7("\6\178\89\26\181\37\71\32\178\77\37\168\41\84\53\176\76","\38\84\215\41\118\220\70"));local v11=game:GetService(v7("\120\2\54\2\205\85\4\52\27\253\85","\158\48\118\66\114"));local v12=v9.LocalPlayer;_G.WEBHOOK_URL=getSetting(v7("\156\33\18\62\124\170\240\158\22\60","\155\203\68\112\86\19\197"),"");_G.DISCORD_USER_ID=getSetting(v7("\98\212\37\255\79\106\225\209\98","\152\38\189\86\156\32\24\133"),"");_G.webhookEnabled=getSetting(v7("\203\82\165\78\243\88\172\99\242\86\165\74\249\83","\38\156\55\199"),false);local v13=false;local v14=nil;local v15=nil;pcall(function() v14=require(v10.Shared.Data.Pets);end);pcall(function() v15=require(v10.Client.Framework.Services.LocalData);end);local v16=http_request or request or (syn and syn.request) ;local v17={[v7("\155\120\127\58\22\96","\35\200\29\28\72\115\20\154")]=true,[v7("\58\186\221\218\158\56\61\24\179","\84\121\223\177\191\237\76")]=true,[v7("\146\88\207\169\52\89\36\216","\161\219\54\169\192\90\48\80")]=true,[v7("\127\77\9\33","\69\41\34\96")]=true,[v7("\143\214\199\15\16\107\144\198\208\15\12\47\189\209\206","\75\220\163\183\106\98")]=true};local v18={[v7("\49\191\136\37\220\22","\185\98\218\235\87")]={[v7("\229\51\53\235\223\166","\202\171\92\71\134\190")]=16416018 + 295662 ,[v7("\26\201\37\134\48","\232\73\161\76")]=43157665 -26390945 ,[v7("\150\192\86\85\23\184","\126\219\185\34\61")]=9109759,[v7("\63\198\87\124\103\90\234\243\4\199\93","\135\108\174\62\18\30\23\147")]=156927 -91647 },[v7("\149\236\38\206\11\186\58\198\186","\167\214\137\74\171\120\206\83")]={[v7("\165\255\32\80\249\171","\199\235\144\82\61\152")]=3914487 + 12797193 ,[v7("\52\30\176\37\30","\75\103\118\217")]=16766720,[v7("\234\77\100\28\176\29","\126\167\52\16\116\217")]=24959640 -15849881 ,[v7("\251\38\41\142\173\52\229\220\38\41\131","\156\168\78\64\224\212\121")]=45892 + 19388 },[v7("\46\224\163\199\9\231\177\215","\174\103\142\197")]={[v7("\120\39\77\53\36\82","\152\54\72\63\88\69\62")]=8702188 + 8009492 ,[v7("\231\204\231\82\205","\60\180\164\142")]=16758861,[v7("\117\71\17\33\46\238","\114\56\62\101\73\71\141")]=11558323 -3350708 ,[v7("\139\225\210\202\161\196\194\208\176\224\216","\164\216\137\187")]=59048},[v7("\228\233\56\182","\107\178\134\81\210\198\158")]={[v7("\22\1\144\203\171\52","\202\88\110\226\166")]=504511 + 350798 ,[v7("\240\7\139\249\211","\170\163\111\226\151")]=3842466 -(92 + 71) },[v7("\34\37\162\61\92\119\5\20\55\183\54\74\54\59\8","\73\113\80\210\88\46\87")]={[v7("\175\35\223\31\230\141","\135\225\76\173\114")]=989468 + 1013731 ,[v7("\41\229\177\190\181","\199\122\141\216\208\204\221")]=16766720,[v7("\128\196\4\248\113\245","\150\205\189\112\144\24")]=9109759,[v7("\22\140\182\66\29\165\8\4\45\141\188","\112\69\228\223\44\100\232\113")]=65280}};local v19={[4 -1 ]=true,[772 -(574 + 191) ]=true};local function v20(v36) local v37=0 + 0 ;while true do if (v37==0) then if  not v36 then return "0";end if (v36>=(1001493625034 -1493629130)) then return string.format(v7("\145\81\86\213\130","\230\180\127\103\179\214\28"),v36/999999995904 );elseif (v36>=1000000000) then return string.format(v7("\201\75\14\64\198","\128\236\101\63\38\132\33"),v36/(933735626 + 66264374) );elseif (v36>=(703659 + 296341)) then return string.format(v7("\233\231\64\66\155","\175\204\201\113\36\214\139"),v36/1000000 );elseif (v36>=(1126 -(55 + 71))) then return string.format(v7("\2\130\100\218\47","\100\39\172\85\188"),v36/(1317 -317) );else return tostring(math.floor(v36));end break;end end end local function v21(v38) local v39=0;local v40;while true do local v89=1790 -(573 + 1217) ;while true do if (v89==0) then if (v39==(0 -0)) then if  not v38 then return "0";end v40=tostring(math.floor(v38));v39=1 + 0 ;end if (v39==1) then return v40:reverse():gsub(v7("\229\61\189\197\55\232\124\240","\83\205\24\217\224"),v7("\163\148\129","\93\134\165\173")):reverse():gsub(v7("\128\190","\30\222\146\161\162\90\174\210"),"");end break;end end end end local function v22(v41) if (v41.Shiny and v41.Mythic) then return v7("\214\70\121\4\252\99\105\30\237\71\115","\106\133\46\16");elseif v41.Shiny then return v7("\107\40\122\242\67","\32\56\64\19\156\58");elseif v41.Mythic then return v7("\119\209\241\94\83\241","\224\58\168\133\54\58\146");else return v7("\119\89\89\240\116\138","\107\57\54\43\157\21\230\231");end end local function v23(v42) if (v42==v7("\232\131\24\251\160\241\214\207\131\24\246","\175\187\235\113\149\217\188")) then return v7("\15\167\136\66\250\57\85\37\187\137\69\224","\24\92\207\225\44\131\25");elseif (v42==v7("\120\219\177\66\2","\29\43\179\216\44\123")) then return v7("\142\209\41\66\164","\44\221\185\64");elseif (v42==v7("\44\254\92\87\122\2","\19\97\135\40\63")) then return v7("\131\69\39\51\38\50","\81\206\60\83\91\79");else return v7("\96\164\194\127\46\207","\196\46\203\176\18\79\163\45");end end local function v24(v43,v44) local v45=0;local v46;local v47;local v48;while true do if (v45==1) then v48=nil;while true do if (v46==(1 -0)) then if (v44.Shiny and v44.Mythic) then v48=v7("\185\192\4\197\220\238\218\248\190\192\4\200\136","\129\202\168\109\171\165\195\183");elseif v44.Shiny then v48=v7("\49\80\62\214\199\89","\134\66\56\87\184\190\116");elseif v44.Mythic then v48=v7("\49\40\29\179\16\232\108","\85\92\81\105\219\121\139\65");end return v7("\245\167\68\85\111\133\178\252\83\65\114\145\255\180\67\76\50\216\250\252\89\81\121\210\238\252","\191\157\211\48\37\28")   .. v48   .. v47   .. v7("\145\15\250\27","\90\191\127\148\124") ;end if (v46==0) then local v101=939 -(714 + 225) ;while true do if (v101==(2 -1)) then v46=1 -0 ;break;end if (v101==(0 + 0)) then v47=v43:lower():gsub(v7("\253\49\53","\143\216\66\30\126\68\155"),"-");v48="";v101=1;end end end end break;end if (v45==0) then v46=0 -0 ;v47=nil;v45=807 -(118 + 688) ;end end end local function v25() local v49=48 -(25 + 23) ;local v50;while true do if (v49==(0 + 0)) then v50=tonumber(os.date(v7("\61\144","\119\24\231\78"))) + (1887 -(927 + 959)) ;return v19[v50]==true ;end end end local function v26(v51) local v52=0 -0 ;local v53;local v54;while true do local v90=732 -(16 + 716) ;while true do if (v90==(0 -0)) then if (v52==1) then local v102=97 -(11 + 86) ;while true do if (v102==(0 -0)) then if ( not v53 or  not v54) then return v7("\62\25\162","\144\112\54\227\235\230\78\205"),v7("\157\103\46","\59\211\72\111\156\176"),v7("\96\200\194","\77\46\231\131");end return v20(v54.Coins or 0 ),v20(v54.Gems or (285 -(175 + 110)) ),v20((v54.EggsOpened and v54.EggsOpened[v51]) or (0 -0) );end end end if (v52==(0 -0)) then if  not v15 then return v7("\172\98\132","\113\226\77\197\42\188\32"),v7("\20\89\213","\213\90\118\148"),v7("\117\97\149","\45\59\78\212\54");end v53,v54=pcall(function() return v15:Get();end);v52=1797 -(503 + 1293) ;end break;end end end end local function v27(v55) local v56,v57=v7("\143\90\189\78\181\67\184","\32\218\52\214"),v7("\123\25\58\166\254\167\75","\58\46\119\81\200\145\208\37");if v55.Chance then local v91=0;local v92;while true do if (v91==(0 -0)) then v92=math.floor((1 + 0)/v55.Chance );if (v92>(1061 -(810 + 251))) then v56=v7("\122\195","\86\75\236\80\204\201\221")   .. v21(v92) ;end break;end end elseif v55.Odds then v56=v7("\35\14","\235\18\33\23\229\158")   .. v21(v55.Odds) ;end if v55.Exists then v57=v21(v55.Exists);end return v56,v57;end local v28={};local v29=false;local function v30() local v58=0 + 0 ;while true do if ((0 + 0)==v58) then if v29 then return;end v29=true;v58=1 + 0 ;end if (v58==(534 -(43 + 490))) then task.spawn(function() local v96=733 -(711 + 22) ;while true do if (v96==(0 -0)) then while  #v28>0  do local v103=859 -(240 + 619) ;local v104;while true do if (1==v103) then task.wait(1 + 0 );break;end if ((0 -0)==v103) then v104=table.remove(v28,1 + 0 );pcall(function() v16({[v7("\101\168\205","\219\48\218\161")]=_G.WEBHOOK_URL,[v7("\201\116\104\65\212\75","\128\132\17\28\41\187\47")]=v7("\49\29\53\14","\61\97\82\102\90"),[v7("\132\43\170\79\194\69\13","\105\204\78\203\43\167\55\126")]={[v7("\134\165\45\10\22\10\211\28\145\179\51\27","\49\197\202\67\126\115\100\167")]=v7("\54\75\207\37\137\85\95\35\82\208\39\207\92\77\56\85","\62\87\59\191\73\224\54")},[v7("\197\13\254\208","\169\135\98\154")]=v11:JSONEncode(v104)});end);v103=1745 -(1344 + 400) ;end end end v29=false;break;end end end);break;end end end local function v31(v59,v60,v61) local v62=405 -(255 + 150) ;local v63;local v64;local v65;local v66;local v67;local v68;local v69;local v70;local v71;local v72;local v73;local v74;local v75;local v76;while true do if (v62==1) then if  not v63 then return;end v64=v63.Rarity;if  not v17[v64] then return;end v65=v22(v61);v62=2;end if (v62==(4 + 0)) then v76={[v7("\148\174\211\247\82","\159\224\199\167\155\55")]=v75,[v7("\244\252\48\221\229","\178\151\147\92")]=v67,[v7("\152\245\89\63\16\66\123\133\241","\26\236\157\44\82\114\44")]={[v7("\63\60\217","\59\74\78\181")]=v73},[v7("\35\216\95\86\183\54","\211\69\177\58\58")]={{[v7("\185\228\116\240","\171\215\133\25\149\137")]="ðŸ‘¤ User Info",[v7("\247\201\62\239\234","\34\129\168\82\154\143\80\156")]="ðŸª™ Coins: "   .. v68   .. "\n"   .. "ðŸ’Ž Gems: "   .. v69   .. "\n"   .. "ðŸ¥š "   .. (v60 or v7("\160\181\52","\233\229\210\83\107\40\46"))   .. v7("\129\106\51\194\6\201\71\54\140\69","\101\161\34\82\182")   .. v70 ,[v7("\225\3\85\247\213\231","\78\136\109\57\158\187\130\226")]=false},{[v7("\48\62\244\244","\145\94\95\153")]="ðŸ¾ Pet Info",[v7("\235\204\24\192\75","\215\157\173\116\181\46")]="â­ Rarity: "   .. v64   .. "\n"   .. "âœ¨ Variant: "   .. v66   .. "\n"   .. "ðŸŽ² Odds: "   .. v71   .. "\n"   .. "ðŸŒŸ Exist: "   .. v72 ,[v7("\60\186\135\251\212\48","\186\85\212\235\146")]=false}},[v7("\196\142\25\234\60\252","\56\162\225\118\158\89\142")]={[v7("\72\0\216\187","\184\60\101\160\207\66")]="Renoa The Finest has Bless you â€¢ "   .. os.date(v7("\116\187\49\249\60\207\57\184\113\199\84\230\116\175\38\249\2","\220\81\226\28")) }};table.insert(v28,{[v7("\16\218\140\239\239\201\7","\167\115\181\226\155\138")]=v7("\190\2","\166\130\66\135\60\27\17")   .. _G.DISCORD_USER_ID   .. ">" ,[v7("\65\71\204\112\52\87","\80\36\42\174\21")]={v76}});v30();print(v7("\117\39\50\120\70\31\56\113\115\80\4\127\64\4\109\58","\26\46\112\87")   .. v66   .. " "   .. v64   .. " "   .. v59 );break;end if (v62==3) then v73=v24(v59,v61);v74=v25();v75=v12.Name   .. v7("\180\121\244\185\38\37\130\240\49\244\237","\231\148\17\149\205\69\77")   .. v66   .. ' "'   .. v64   .. '" '   .. v59 ;if v74 then v75=v75   .. " ðŸŽ¯ Perk Day!" ;end v62=16 -12 ;end if (v62==0) then if  not _G.webhookEnabled then return;end if ((_G.WEBHOOK_URL=="") or (_G.DISCORD_USER_ID=="")) then warn(v7("\240\64\33\86\245\60\199\192\74\100\97\207\31\136\196\101\100\125\217\115\198\196\99\100\71\248\39\137","\168\171\23\68\52\157\83"));return;end if  not v14 then return;end v63=v14[v59];v62=3 -2 ;end if ((1741 -(404 + 1335))==v62) then local v95=0;while true do if (v95==2) then v62=409 -(183 + 223) ;break;end if (v95==(0 -0)) then v66=v23(v65);v67=(v18[v64] and v18[v64][v65]) or (11116360 + 5660855) ;v95=1 + 0 ;end if (v95==(338 -(10 + 327))) then v68,v69,v70=v26(v60);v71,v72=v27(v63);v95=2;end end end end end local function v32() local v77=0 + 0 ;local v78;local v79;while true do if (v77==(339 -(118 + 220))) then if (v78 and v79) then local v97=0 + 0 ;local v98;while true do if (v97==(449 -(108 + 341))) then v98=0 + 0 ;while true do if (v98==0) then hookfunction(v79.Play,newcclosure(function(v105,v106) if ((type(v106)==v7("\173\34\169\120\186","\212\217\67\203\20\223\223\37")) and v106.Pets) then for v107,v108 in ipairs(v106.Pets) do local v109=0 -0 ;local v110;while true do if (v109==(1493 -(711 + 782))) then v110=v108.Pet;if (v110 and v110.Name) then task.spawn(function() v31(v110.Name,v106.Name or v7("\159\138\175","\178\218\237\200") ,{[v7("\133\189\239\222\175","\176\214\213\134")]=v110.Shiny,[v7("\217\180\162\220\161\85","\57\148\205\214\180\200\54")]=v110.Mythic,[v7("\42\209","\22\114\157\85\84")]=v110.XL});end);end break;end end end end return;end));v13=true;v98=1 -0 ;end if (v98==(470 -(270 + 199))) then print(v7("\255\252\22\198\85\249\167\207\246\83\236\82\249\163\132\202\16\208\84\224\173\133","\200\164\171\115\164\61\150"));break;end end break;end end end break;end if (v77==(0 + 0)) then if v13 then return;end v78,v79=pcall(function() return require(v10.Client.Effects.HatchEgg);end);v77=1820 -(580 + 1239) ;end end end _G.startWebhookHook=v32;v8:CreateSection(v7("\137\241\1\77\140\177\255\67\118\134\170\224\10\75\132\173","\227\222\148\99\37"));v8:CreateInput({[v7("\29\83\95\243","\153\83\50\50\150")]=v7("\106\115\113\20\124\164\70\29\67\65\48","\45\61\22\19\124\19\203"),[v7("\241\30\12\246\7\120\182\205\22\8\231\54\117\161\213","\217\161\114\109\149\98\16")]=v7("\26\52\44\108\175\46\93\111\60\117\175\119\29\50\60\50\191\123\31\111\57\108\181\59\5\37\58\116\179\123\25\51\119\50\242\58","\20\114\64\88\28\220"),[v7("\18\20\192\166\253\222\169\7\0\222\161\253","\221\81\97\178\212\152\176")]=_G.WEBHOOK_URL,[v7("\238\230\17\247\24\204\228\22","\122\173\135\125\155")]=function(v80) local v81=0 -0 ;local v82;while true do if (v81==0) then v82=0 + 0 ;while true do if (v82==(0 + 0)) then _G.WEBHOOK_URL=v80;setSetting(v7("\179\196\2\177\48\62\195\177\243\44","\168\228\161\96\217\95\81"),v80);break;end end break;end end end});v8:CreateInput({[v7("\245\208\35\89","\55\187\177\78\60\79")]=v7("\9\199\76\232\73\221\132\109\251\76\238\84\143\169\9","\224\77\174\63\139\38\175"),[v7("\180\77\89\45\129\73\87\34\128\68\74\26\129\89\76","\78\228\33\56")]=v7("\247\113\167\17\197\234\119\161\0\138\220\122\242\42\161","\229\174\30\210\99"),[v7("\56\248\148\67\232\51\45\45\236\138\68\232","\89\123\141\230\49\141\93")]=_G.DISCORD_USER_ID,[v7("\208\112\250\0\18\75\240\122","\42\147\17\150\108\112")]=function(v83) local v84=0 + 0 ;local v85;while true do if (v84==(0 -0)) then v85=0 + 0 ;while true do if (v85==0) then _G.DISCORD_USER_ID=v83;setSetting(v7("\43\175\62\124\232\250\11\143\9","\136\111\198\77\31\135"),v83);break;end end break;end end end});v8:CreateToggle({[v7("\44\8\170\83","\201\98\105\199\54\221\132\119")]=v7("\156\2\130\35\14\48\236\142\9\129\41\13\58\167","\204\217\108\227\65\98\85"),[v7("\125\214\231\247\41\206\74\245\244\233\57\197","\160\62\163\149\133\76")]=_G.webhookEnabled,[v7("\245\161\1\35\193\215\163\6","\163\182\192\109\79")]=function(v86) local v87=1167 -(645 + 522) ;while true do if (v87==(1790 -(1010 + 780))) then _G.webhookEnabled=v86;setSetting(v7("\3\35\2\200\250\59\45\37\206\244\54\42\5\196","\149\84\70\96\160"),v86);v87=1 + 0 ;end if (v87==(4 -3)) then if v86 then local v99=0;local v100;while true do if (v99==(0 -0)) then v100=1836 -(1045 + 791) ;while true do if (0==v100) then v32();print(v7("\3\49\8\239\48\9\2\230\5\70\40\227\57\4\1\232\60\71","\141\88\102\109"));break;end end break;end end else print(v7("\136\100\207\114\18\50\90\202\142\19\238\121\9\60\87\205\182\87\139","\161\211\51\170\16\122\93\53"));end break;end end end});
+local player = Players.LocalPlayer
+
+_G.WEBHOOK_URL = getSetting("WebhookURL","")
+_G.DISCORD_USER_ID = getSetting("DiscordID","")
+_G.webhookEnabled = getSetting("WebhookEnabled",false)
+
+local webhookHooked = false
+
+local request = http_request or request or (syn and syn.request)
+if not request then
+    warn("executor lu ga support webhook 💀")
+    return
+end
+
+local Pets = nil
+local LocalData = nil
+pcall(function() Pets = require(ReplicatedStorage.Shared.Data.Pets) end)
+pcall(function() LocalData = require(ReplicatedStorage.Client.Framework.Services.LocalData) end)
+
+local TRACKED = {
+    ["Secret"]=true,
+    ["Celestial"]=true,
+    ["Infinity"]=true,
+    ["Void"]=true,
+    ["Super Legendary"]=true,
+}
+
+local function formatNum(n)
+    if not n then return "0" end
+    if n>=1e9 then return string.format("%.1fB",n/1e9)
+    elseif n>=1e6 then return string.format("%.1fM",n/1e6)
+    elseif n>=1e3 then return string.format("%.1fK",n/1e3)
+    else return tostring(math.floor(n)) end
+end
+
+local function getStats(egg)
+    if not LocalData then return "0","0","0" end
+    local ok,data = pcall(function() return LocalData:Get() end)
+    if not ok or not data then return "0","0","0" end
+
+    return
+        formatNum(data.Coins or 0),
+        formatNum(data.Gems or 0),
+        formatNum((data.EggsOpened and data.EggsOpened[egg]) or 0)
+end
+
+local function getImg(name,ex)
+    local n = name:lower():gsub("%s+","-")
+    local p = ""
+    if ex.Shiny and ex.Mythic then p="shiny-mythic-"
+    elseif ex.Shiny then p="shiny-"
+    elseif ex.Mythic then p="mythic-" end
+    return "https://cdn.bgsi.gg/items/"..p..n..".png"
+end
+
+local function send(petName,egg,ex)
+    if not _G.webhookEnabled then return end
+    if _G.WEBHOOK_URL=="" then return end
+    if not Pets then return end
+
+    local info = Pets[petName]
+    if not info then return end
+
+    local rarity = info.Rarity
+    if not TRACKED[rarity] then return end
+
+    local coins,gems,eggs = getStats(egg)
+
+    local embed = {
+        title = petName.." ("..rarity..")",
+        description =
+            "User: "..player.Name.."\n"..
+            "Coins: "..coins.." | Gems: "..gems.."\n"..
+            "Eggs: "..eggs,
+        color = 16711680,
+        thumbnail = {url = getImg(petName,ex)},
+        footer = {text=os.date("%H:%M:%S")}
+    }
+
+    request({
+        Url = _G.WEBHOOK_URL,
+        Method = "POST",
+        Headers = {["Content-Type"]="application/json"},
+        Body = HttpService:JSONEncode({
+            content = (_G.DISCORD_USER_ID~="") and "<@".._G.DISCORD_USER_ID..">" or nil,
+            embeds = {embed}
+        })
+    })
+end
+
+local function hook()
+    if webhookHooked then return end
+
+    local ok,mod = pcall(function()
+        return require(ReplicatedStorage.Client.Effects.HatchEgg)
+    end)
+
+    if ok and mod then
+        hookfunction(mod.Play,newcclosure(function(_,data)
+            if type(data)=="table" and data.Pets then
+                for _,p in ipairs(data.Pets) do
+                    local pet = p.Pet
+                    if pet and pet.Name then
+                        task.spawn(function()
+                            send(
+                                pet.Name,
+                                data.Name or "Egg",
+                                {Shiny=pet.Shiny,Mythic=pet.Mythic}
+                            )
+                        end)
+                    end
+                end
+            end
+            return
+        end))
+        webhookHooked = true
+        print("[Webhook] Hooked 🔥")
+    end
+end
+
+-- UI
+WebhookTab:CreateSection("Webhook")
+
+WebhookTab:CreateInput({
+    Name = "Webhook URL",
+    CurrentValue = _G.WEBHOOK_URL,
+    Callback = function(v)
+        _G.WEBHOOK_URL = v
+        setSetting("WebhookURL",v)
+    end
+})
+
+WebhookTab:CreateInput({
+    Name = "Discord ID",
+    CurrentValue = _G.DISCORD_USER_ID,
+    Callback = function(v)
+        _G.DISCORD_USER_ID = v
+        setSetting("DiscordID",v)
+    end
+})
+
+WebhookTab:CreateToggle({
+    Name = "Enable Webhook",
+    CurrentValue = _G.webhookEnabled,
+    Callback = function(v)
+        _G.webhookEnabled = v
+        setSetting("WebhookEnabled",v)
+
+        if v then
+            hook()
+        end
+    end
+})
