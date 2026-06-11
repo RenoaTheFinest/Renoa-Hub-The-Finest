@@ -1,10 +1,8 @@
 -- =========================
 -- EGGS TAB (FIX GLOBAL)
 -- =========================
-
-local Rayfield = _G.Rayfield
-local Window = _G.Window
-
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
 local EggTab = Window:CreateTab("Eggs", nil)
 
 local autoSpamEActive = false
