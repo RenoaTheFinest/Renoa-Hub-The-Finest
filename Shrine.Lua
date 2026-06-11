@@ -1,12 +1,111 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+local ShrineTab = Window:CreateTab("Shrine", nil)
 
-]]--
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v20,v21) local v22={};for v40=1, #v20 do v6(v22,v0(v4(v1(v2(v20,v40,v40 + 1 )),v1(v2(v21,1 + (v40% #v21) ,1 + (v40% #v21) + 1 )))%256 ));end return v5(v22);end local v8=Window:CreateTab(v7("\226\203\201\44\232\190","\126\177\163\187\69\134\219\167"),nil);local v9=game:GetService(v7("\17\200\58\201\245\32\204\62\192\248\16\217\37\215\253\36\200","\156\67\173\74\165"));local v10=require(v9.Shared.Framework.Network.Remote);local v11=getSetting(v7("\22\162\75\20\176\35\117\60\165\64\24\185\3\72\53\181\69\19\184","\38\84\215\41\118\220\70"),false);local v12=getSetting(v7("\116\4\39\19\243\85\4\17\26\236\89\24\39\55\240\81\20\46\23\250","\158\48\118\66\114"),false);local v13=nil;local v14=nil;local v15={[v7("\135\33\6\51\127","\155\203\68\112\86\19\197")]=getSetting(v7("\100\200\52\254\76\125\214\240\84\212\56\249\108\125\243\253\74","\152\38\189\86\156\32\24\133"),1370 -(243 + 1126) ),[v7("\200\78\183\67","\38\156\55\199")]=getSetting(v7("\138\104\126\42\31\113\201\75\186\116\114\45\39\109\234\70","\35\200\29\28\72\115\20\154"),v7("\41\176\197\214\130\34","\84\121\223\177\191\237\76")),[v7("\149\87\196\165","\161\219\54\169\192\90\48\80")]=getSetting(v7("\107\87\2\39\69\71\51\45\91\75\14\32\103\67\13\32","\69\41\34\96"),v7("\144\214\212\1\27","\75\220\163\183\106\98")),[v7("\35\183\132\34\215\22","\185\98\218\235\87")]=getSetting(v7("\233\41\37\228\210\175\248\52\53\239\208\175\234\49\40\243\208\190","\202\171\92\71\134\190"),40 + 460 )};local v16=getSetting(v7("\13\211\41\137\36\196\62\169\36\206\57\134\61","\232\73\161\76"),1651 -(1373 + 263) );local v17=44200 -(451 + 549) ;local function v18() local v23=0 + 0 ;local v24;local v25;while true do if (v23==(0 -0)) then v24,v25=pcall(function() v10:InvokeServer(v7("\159\214\76\92\10\190\237\77\110\22\169\208\76\88","\126\219\185\34\61"),v15);end);if v24 then print(v7("\55\253\86\96\119\121\246\218\76\236\75\112\124\123\246\167\63\198\76\123\112\114\179\230\15\218\87\100\127\99\246\227\77","\135\108\174\62\18\30\23\147"));else print(v7("\141\218\34\217\17\160\54\250\246\203\63\201\26\162\54\135\133\225\56\194\22\171\115\193\183\224\38\206\28\244\115","\167\214\137\74\171\120\206\83")   .. tostring(v25) );end break;end end end local function v19() local v26=0 -0 ;local v27;local v28;while true do if (0==v26) then v27,v28=pcall(function() v10:InvokeServer(v7("\175\255\60\92\236\162\191\255\22\79\253\166\134\245\32\110\240\181\130\254\55","\199\235\144\82\61\152"),v16);end);if v27 then print(v7("\60\37\177\57\14\24\188\22\71\50\171\46\6\27\188\57\71\37\177\57\14\24\188\107\6\21\173\34\17\23\173\46\3\87","\75\103\118\217"));else print(v7("\252\103\120\6\176\16\194\105\48\48\171\27\198\89\117\6\249\45\207\70\121\26\188\94\193\85\121\24\188\26\157\20","\126\167\52\16\116\217")   .. tostring(v28) );end break;end end end v8:CreateSection(v7("\234\59\34\130\184\28\188\251\38\50\137\186\28","\156\168\78\64\224\212\121"));v8:CreateInput({[v7("\41\239\168\203","\174\103\142\197")]=v7("\102\39\75\49\42\80\184\120\41\82\61","\152\54\72\63\88\69\62"),[v7("\228\200\239\95\209\204\225\80\208\193\252\104\209\220\250","\60\180\164\142")]=v7("\116\75\6\34\62","\114\56\62\101\73\71\141"),[v7("\155\252\201\214\189\231\207\242\185\229\206\193","\164\216\137\187")]=v15.Name,[v7("\241\231\61\190\164\255\8\217","\107\178\134\81\210\198\158")]=function(v29) local v30=0;while true do if (v30==(1384 -(746 + 638))) then v15.Name=v29;setSetting(v7("\26\27\128\196\166\61\61\138\212\163\54\11\172\199\167\61","\202\88\110\226\166"),v29);break;end end end});v8:CreateInput({[v7("\237\14\143\242","\170\163\111\226\151")]=v7("\48\61\189\45\64\35\105\5\63\242\28\65\57\40\5\53","\73\113\80\210\88\46\87"),[v7("\177\32\204\17\226\137\35\193\22\226\147\24\200\10\243","\135\225\76\173\114")]=v7("\79\189\232","\199\122\141\216\208\204\221"),[v7("\142\200\2\226\125\248\185\235\17\252\109\243","\150\205\189\112\144\24")]=tostring(v15.Amount),[v7("\6\133\179\64\6\137\18\27","\112\69\228\223\44\100\232\113")]=function(v31) local v32=0 + 0 ;local v33;while true do if (v32==0) then v33=tonumber(v31);if v33 then local v45=0 -0 ;while true do if (v45==(341 -(218 + 123))) then v15.Amount=v33;setSetting(v7("\246\10\5\209\186\121\181\220\13\14\221\179\93\139\219\10\9\199","\230\180\127\103\179\214\28"),v33);break;end end end break;end end end});v8:CreateToggle({[v7("\162\4\82\67","\128\236\101\63\38\132\33")]=v7("\141\188\5\75\246\201\218\174\171\29\65\246\216\199\190\160\31\65","\175\204\201\113\36\214\139"),[v7("\100\217\39\206\1\73\216\3\221\8\82\201","\100\39\172\85\188")]=v11,[v7("\142\121\181\140\49\172\123\178","\83\205\24\217\224")]=function(v34) local v35=1581 -(1535 + 46) ;while true do if (v35==(0 + 0)) then v11=v34;setSetting(v7("\196\208\207\63\234\192\254\53\244\204\195\56\195\203\204\63\234\192\201","\93\134\165\173"),v34);v35=1 + 0 ;end if (v35==(561 -(306 + 254))) then if v34 then local v46=0;while true do if (v46==(1 + 0)) then print(v7("\133\193\201\208\51\192\183\67\254\208\212\192\56\194\183\62\141\250\211\203\52\203\242\127\171\230\206\130\41\218\179\108\170\247\197\131","\30\222\146\161\162\90\174\210"));break;end if (v46==0) then v18();v13=task.spawn(function() while v11 do task.wait(v17);if v11 then v18();end end end);v46=1;end end else local v47=0 -0 ;while true do if ((1467 -(899 + 568))==v47) then if v13 then local v51=0 + 0 ;while true do if (v51==0) then task.cancel(v13);v13=nil;break;end end end print(v7("\222\125\120\24\236\64\117\55\165\108\101\8\231\66\117\74\214\70\98\3\235\75\48\25\241\65\96\26\224\74\49","\106\133\46\16"));break;end end end break;end end end});v8:CreateSection(v7("\124\50\118\253\87\69\74\96\64\244\72\73\86\37","\32\56\64\19\156\58"));v8:CreateInput({[v7("\116\201\232\83","\224\58\168\133\54\58\146")]=v7("\120\91\68\232\123\146\199\31\86\22\111\242\123\135\147\14","\107\57\54\43\157\21\230\231"),[v7("\235\135\16\246\188\212\192\215\143\20\231\141\217\215\207","\175\187\235\113\149\217\188")]=v7("\109\250","\24\92\207\225\44\131\25"),[v7("\104\198\170\94\30\115\95\229\185\64\14\120","\29\43\179\216\44\123")]=tostring(v16),[v7("\158\216\44\64\191\216\35\71","\44\221\185\64")]=function(v36) local v37=0;local v38;while true do if (v37==(0 -0)) then v38=tonumber(v36);if v38 then local v48=603 -(268 + 335) ;while true do if ((290 -(60 + 230))==v48) then v16=v38;setSetting(v7("\37\245\77\94\126\4\245\105\82\124\20\233\92","\19\97\135\40\63"),v38);break;end end end break;end end end});v8:CreateToggle({[v7("\128\93\62\62","\81\206\60\83\91\79")]=v7("\111\190\196\125\111\231\95\161\79\166\213\96\111\240\69\182\71\165\213","\196\46\203\176\18\79\163\45"),[v7("\155\55\108\12\33\245\251\142\35\114\11\33","\143\216\66\30\126\68\155")]=v12,[v7("\137\201\1\199\199\162\212\234","\129\202\168\109\171\165\195\183")]=function(v39) v12=v39;setSetting(v7("\6\74\50\217\211\17\244\17\80\37\209\208\17\195\44\89\53\212\219\16","\134\66\56\87\184\190\116"),v39);if v39 then local v41=572 -(426 + 146) ;while true do if (v41==1) then print(v7("\7\2\1\169\16\229\36\8\124\21\27\190\24\230\36\39\124\2\1\169\16\229\36\117\61\36\29\180\89\248\53\52\46\37\12\191\88","\85\92\81\105\219\121\139\65"));break;end if (v41==(0 + 0)) then v19();v14=task.spawn(function() while v12 do local v49=1456 -(282 + 1174) ;while true do if (0==v49) then task.wait(v17);if v12 then v19();end break;end end end end);v41=812 -(569 + 242) ;end end else local v42=0 -0 ;local v43;while true do if (v42==0) then v43=0;while true do if (v43==(0 + 0)) then if v14 then local v52=1024 -(706 + 318) ;while true do if (v52==(1251 -(721 + 530))) then task.cancel(v14);v14=nil;break;end end end print(v7("\198\128\88\87\117\209\248\142\16\97\110\218\252\190\85\87\60\236\245\161\89\75\121\159\238\167\95\85\108\218\249\242","\191\157\211\48\37\28"));break;end end break;end end end end});
+local bubbleEnabled = false
+local dreamerEnabled = false
+
+local bubbleThread = nil
+local dreamerThread = nil
+
+local BUBBLE = {
+    Name = getSetting("BubbleName","Lucky"),
+    Amount = getSetting("BubbleAmount",500)
+}
+
+local DREAMER_AMOUNT = getSetting("DreamerAmount",15)
+
+local INTERVAL = 43200
+
+local function bubble()
+    pcall(function()
+        Remote:InvokeServer("DonateToShrine",{
+            Level = 1,
+            Type = "Potion",
+            Name = BUBBLE.Name,
+            Amount = BUBBLE.Amount
+        })
+    end)
+end
+
+local function dreamer()
+    pcall(function()
+        Remote:InvokeServer("DonateToDreamerShrine",DREAMER_AMOUNT)
+    end)
+end
+
+ShrineTab:CreateSection("Bubble Shrine")
+
+ShrineTab:CreateInput({
+    Name = "Potion Name",
+    CurrentValue = BUBBLE.Name,
+    Callback = function(v)
+        BUBBLE.Name = v
+        setSetting("BubbleName",v)
+    end
+})
+
+ShrineTab:CreateInput({
+    Name = "Amount",
+    CurrentValue = tostring(BUBBLE.Amount),
+    Callback = function(v)
+        local n = tonumber(v)
+        if n then
+            BUBBLE.Amount = n
+            setSetting("BubbleAmount",n)
+        end
+    end
+})
+
+ShrineTab:CreateToggle({
+    Name = "Auto Bubble",
+    CurrentValue = false,
+    Callback = function(v)
+        bubbleEnabled = v
+        if v then
+            bubble()
+            bubbleThread = task.spawn(function()
+                while bubbleEnabled do
+                    task.wait(INTERVAL)
+                    bubble()
+                end
+            end)
+        else
+            if bubbleThread then task.cancel(bubbleThread) end
+        end
+    end
+})
+
+ShrineTab:CreateSection("Dreamer Shrine")
+
+ShrineTab:CreateInput({
+    Name = "Amount",
+    CurrentValue = tostring(DREAMER_AMOUNT),
+    Callback = function(v)
+        local n = tonumber(v)
+        if n then
+            DREAMER_AMOUNT = n
+            setSetting("DreamerAmount",n)
+        end
+    end
+})
+
+ShrineTab:CreateToggle({
+    Name = "Auto Dreamer",
+    CurrentValue = false,
+    Callback = function(v)
+        dreamerEnabled = v
+        if v then
+            dreamer()
+            dreamerThread = task.spawn(function()
+                while dreamerEnabled do
+                    task.wait(INTERVAL)
+                    dreamer()
+                end
+            end)
+        else
+            if dreamerThread then task.cancel(dreamerThread) end
+        end
+    end
+})
