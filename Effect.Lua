@@ -1,12 +1,111 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+-- =========================
+-- EFFECTS TAB (FIX GLOBAL)
+-- =========================
 
-]]--
+local Rayfield = _G.Rayfield
+local Window = _G.Window
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v13,v14) local v15={};for v32=1, #v13 do v6(v15,v0(v4(v1(v2(v13,v32,v32 + 1 )),v1(v2(v14,1 + (v32% #v14) ,1 + (v32% #v14) + 1 )))%256 ));end return v5(v15);end local v8=Window:CreateTab(v7("\244\197\221\32\229\175\212","\126\177\163\187\69\134\219\167"),nil);local v9={[v7("\23\200\50\209\233\49\200\57","\156\67\173\74\165")]=getSetting(v7("\16\190\90\23\190\42\67\0\178\81\2\169\52\67\39","\38\84\215\41\118\220\70"),true),[v7("\102\31\49\7\255\92\51\36\20\251\83\2\49","\158\48\118\66\114")]=getSetting(v7("\143\45\3\55\113\169\254\157\45\3\35\114\169\222\173\34\21\53\103\182","\155\203\68\112\86\19\197"),true),[v7("\118\220\36\232\83","\152\38\189\86\156\32\24\133")]=getSetting(v7("\216\94\180\71\254\91\162\118\253\69\179\85","\38\156\55\199"),true),[v7("\152\124\110\60\26\119\246\70\187","\35\200\29\28\72\115\20\154")]=getSetting(v7("\61\182\194\222\143\32\49\41\190\195\203\132\47\56\28\172","\84\121\223\177\191\237\76"),true),[v7("\136\93\208","\161\219\54\169\192\90\48\80")]=getSetting(v7("\109\75\19\36\75\78\5\22\66\91","\69\41\34\96"),true)};local function v10(v16,v17,v18) pcall(function() v16[v17]=v18;end);end local function v11() local v19={};for v34,v35 in next,game:GetDescendants() do if (v9.Parts and v35:IsA(v7("\158\194\196\15\50\42\174\215","\75\220\163\183\106\98"))) then local v36=0 + 0 ;while true do if (v36==(0 + 0)) then v10(v35,v7("\47\187\159\50\203\11\187\135","\185\98\218\235\87"),Enum.Material.SmoothPlastic);table.insert(v19,v35);break;end end end if v9.Particles then if (v35:IsA(v7("\251\61\53\242\215\169\199\57\2\235\215\190\223\57\53","\202\171\92\71\134\190")) or v35:IsA(v7("\26\204\35\131\44","\232\73\161\76")) or v35:IsA(v7("\136\201\67\79\21\183\220\81","\126\219\185\34\61")) or v35:IsA(v7("\42\199\76\119","\135\108\174\62\18\30\23\147"))) then v10(v35,v7("\147\231\43\201\20\171\55","\167\214\137\74\171\120\206\83"),false);table.insert(v19,v35);end end if v9.VisualEffects then if (v35:IsA(v7("\169\252\61\82\245\130\141\246\55\94\236","\199\235\144\82\61\152")) or v35:IsA(v7("\37\26\172\57\34\16\191\46\4\2","\75\103\118\217")) or v35:IsA(v7("\227\81\96\0\177\49\193\114\121\17\181\26\226\82\118\17\186\10","\126\167\52\16\116\217")) or v35:IsA(v7("\251\59\46\178\181\0\239\237\40\38\133\183\13","\156\168\78\64\224\212\121")) or v35:IsA(v7("\36\225\169\193\21\205\170\220\21\235\166\218\14\225\171\235\1\232\160\205\19","\174\103\142\197"))) then local v41=1985 -(1266 + 719) ;while true do if (v41==(603 -(268 + 335))) then v10(v35,v7("\115\38\94\58\41\91\252","\152\54\72\63\88\69\62"),false);table.insert(v19,v35);break;end end end end if v9.Textures then if (v35:IsA(v7("\240\193\237\93\216","\60\180\164\142")) or v35:IsA(v7("\108\91\29\61\50\255\23","\114\56\62\101\73\71\141"))) then local v42=290 -(60 + 230) ;while true do if (v42==(572 -(426 + 146))) then v10(v35,v7("\140\251\218\202\171\249\218\214\189\231\216\221","\164\216\137\187"),1 + 0 );table.insert(v19,v35);break;end end end end if (v9.Sky and v35:IsA(v7("\225\237\40","\107\178\134\81\210\198\158"))) then local v37=1456 -(282 + 1174) ;while true do if (v37==(811 -(569 + 242))) then v10(v35,v7("\8\15\144\195\164\44","\202\88\110\226\166"),nil);table.insert(v19,v35);break;end end end end print(v7("\248\42\132\241\207\192\27\145\183\238\202\28\131\245\198\198\29\191\183\238\202\28\131\245\198\198\11\194","\170\163\111\226\151")   ..  #v19   .. v7("\81\49\161\43\75\35\58\94\53\180\62\75\52\61\2\126","\73\113\80\210\88\46\87") );end local function v12() local v20=game:GetService(v7("\173\37\202\26\243\136\34\202","\135\225\76\173\114"));v10(v20,v7("\60\226\191\147\163\177\168\8","\199\122\141\216\208\204\221"),Color3.fromRGB(734 -479 ,15 + 240 ,1279 -(706 + 318) ));v10(v20,v7("\139\210\23\213\118\242","\150\205\189\112\144\24"),math.huge);v10(v20,v7("\3\139\184\127\16\137\3\4","\112\69\228\223\44\100\232\113"),math.huge);v10(v20,v7("\245\18\5\218\179\114\146","\230\180\127\103\179\214\28"),Color3.fromRGB(2155 -(106 + 1794) ,1506 -(721 + 530) ,1526 -(945 + 326) ));v10(v20,v7("\174\23\86\65\236\85\238\137\22\76","\128\236\101\63\38\132\33"),5);v10(v20,v7("\143\166\29\75\164\216\199\165\175\5\123\148\228\219\184\166\28","\175\204\201\113\36\214\139"),Color3.fromRGB(637 -382 ,227 + 28 ,752 -497 ));v10(v20,v7("\100\195\57\211\22\116\196\60\218\16\120\248\58\204","\100\39\172\85\188"),Color3.fromRGB(955 -(271 + 429) ,235 + 20 ,255));v10(v20,v7("\130\109\173\132\60\162\106\152\141\49\164\125\183\148","\83\205\24\217\224"),Color3.fromRGB(1755 -(1408 + 92) ,839 -(57 + 527) ,1682 -(41 + 1386) ));print(v7("\221\224\203\59\227\198\217\46\166\225\196\46\231\199\193\56\244\248\141\27\243\201\193\31\244\204\202\53\242\133\200\51\231\199\193\56\226\139","\93\134\165\173"));end _G.RunEffectsDisabler=v11;v8:CreateSection(v7("\154\251\210\195\56\194\183\62\155\244\199\199\57\218\161","\30\222\146\161\162\90\174\210"));v8:CreateToggle({[v7("\203\79\125\15","\106\133\46\16")]=v7("\124\41\96\253\88\76\93\96\71\249\66\84\77\50\118\239","\32\56\64\19\156\58"),[v7("\121\221\247\68\95\252\148\108\201\233\67\95","\224\58\168\133\54\58\146")]=v9.Textures,[v7("\122\87\71\241\119\135\132\0","\107\57\54\43\157\21\230\231")]=function(v21) local v22=103 -(17 + 86) ;while true do if (v22==(1086 -(461 + 625))) then v9.Textures=v21;setSetting(v7("\255\130\2\244\187\208\202\239\142\9\225\172\206\202\200","\175\187\235\113\149\217\188"),v21);break;end end end});v8:CreateToggle({[v7("\18\174\140\73","\24\92\207\225\44\131\25")]=v7("\111\218\171\77\25\113\78\147\142\69\8\104\74\223\248\105\29\123\78\208\172\95","\29\43\179\216\44\123"),[v7("\158\204\50\94\184\215\52\122\188\213\53\73","\44\221\185\64")]=v9.VisualEffects,[v7("\34\230\68\83\113\0\228\67","\19\97\135\40\63")]=function(v23) local v24=1288 -(993 + 295) ;while true do if (v24==(0 -0)) then v9.VisualEffects=v23;setSetting(v7("\138\85\32\58\45\61\171\106\58\40\58\48\162\121\53\61\42\50\186\79","\81\206\60\83\91\79"),v23);break;end end end});v8:CreateToggle({[v7("\96\170\221\119","\196\46\203\176\18\79\163\45")]=v7("\156\43\109\31\38\247\234\248\18\127\12\48\232\175\149\35\106\27\54\242\238\180","\143\216\66\30\126\68\155"),[v7("\137\221\31\217\192\173\195\215\171\196\24\206","\129\202\168\109\171\165\195\183")]=v9.Parts,[v7("\1\89\59\212\220\21\229\41","\134\66\56\87\184\190\116")]=function(v25) local v26=0;while true do if (v26==(0 + 0)) then v9.Parts=v25;setSetting(v7("\24\56\26\186\27\231\36\5\61\35\29\168","\85\92\81\105\219\121\139\65"),v25);break;end end end});v8:CreateToggle({[v7("\211\178\93\64","\191\157\211\48\37\28")]=v7("\251\22\231\29\56\211\26\180\44\59\205\11\253\31\54\218\12","\90\191\127\148\124"),[v7("\91\146\60\5\125\137\58\33\121\139\59\18","\119\24\231\78")]=v9.Particles,[v7("\161\44\169\70\222\65\18\137","\113\226\77\197\42\188\32")]=function(v27) local v28=1171 -(418 + 753) ;local v29;while true do if ((0 + 0)==v28) then v29=0 + 0 ;while true do if (v29==(0 + 0)) then v9.Particles=v27;setSetting(v7("\30\31\231\180\56\26\241\133\59\4\224\188\57\26\241\166","\213\90\118\148"),v27);break;end end break;end end end});v8:CreateToggle({[v7("\117\47\185\83","\45\59\78\212\54")]=v7("\52\95\144\138\132\34\168\176\35\93\154","\144\112\54\227\235\230\78\205"),[v7("\144\61\29\238\213\85\167\30\14\240\197\94","\59\211\72\111\156\176")]=v9.Sky,[v7("\109\134\239\33\76\134\224\38","\77\46\231\131")]=function(v30) v9.Sky=v30;setSetting(v7("\158\93\165\65\184\88\179\115\177\77","\32\218\52\214"),v30);end});v8:CreateButton({[v7("\96\22\60\173","\58\46\119\81\200\145\208\37")]=v7("\10\156\32\160\176\253\19\45\138\53\175\189\174\118\24\137\36\184\160\179\49\56","\86\75\236\80\204\201\221"),[v7("\81\64\123\137\252\138\113\74","\235\18\33\23\229\158")]=function() v11();end});v8:CreateSection(v7("\118\175\205\183\114\168\200\188\88\174","\219\48\218\161"));v8:CreateButton({[v7("\202\112\113\76","\128\132\17\28\41\187\47")]=v7("\36\60\7\56\81\4\114\32\47\81\13\16\20\51\90\9\38","\61\97\82\102\90"),[v7("\143\47\167\71\197\86\29\2","\105\204\78\203\43\167\55\126")]=function() v12();end});
+local EffectsTab = Window:CreateTab("Effects", nil)
+
+local ToDisable = {
+    Textures = true,
+    VisualEffects = true,
+    Parts = true,
+    Particles = true,
+    Sky = true,
+}
+
+local function safeSet(obj, prop, value)
+    pcall(function() obj[prop] = value end)
+end
+
+local function RunEffectsDisabler()
+    for _, v in pairs(game:GetDescendants()) do
+        if ToDisable.Parts and v:IsA("BasePart") then
+            safeSet(v, "Material", Enum.Material.SmoothPlastic)
+        end
+
+        if ToDisable.Particles then
+            if v:IsA("ParticleEmitter") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then
+                safeSet(v, "Enabled", false)
+            end
+        end
+
+        if ToDisable.VisualEffects then
+            if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("DepthOfFieldEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") then
+                safeSet(v, "Enabled", false)
+            end
+        end
+
+        if ToDisable.Textures then
+            if v:IsA("Decal") or v:IsA("Texture") then
+                safeSet(v, "Transparency", 1)
+            end
+        end
+
+        if ToDisable.Sky and v:IsA("Sky") then
+            safeSet(v, "Parent", nil)
+        end
+    end
+
+    print("Effects dimatiin 🔥")
+end
+
+local function RunFullBright()
+    local Lighting = game:GetService("Lighting")
+
+    safeSet(Lighting, "Brightness", 5)
+    safeSet(Lighting, "Ambient", Color3.fromRGB(255,255,255))
+    safeSet(Lighting, "OutdoorAmbient", Color3.fromRGB(255,255,255))
+    safeSet(Lighting, "FogEnd", math.huge)
+
+    print("FullBright nyala 🔥")
+end
+
+EffectsTab:CreateSection("Disable Effects")
+
+EffectsTab:CreateToggle({
+    Name = "Disable Textures",
+    CurrentValue = true,
+    Callback = function(V) ToDisable.Textures = V end
+})
+
+EffectsTab:CreateToggle({
+    Name = "Disable Visual Effects",
+    CurrentValue = true,
+    Callback = function(V) ToDisable.VisualEffects = V end
+})
+
+EffectsTab:CreateToggle({
+    Name = "Disable Parts",
+    CurrentValue = true,
+    Callback = function(V) ToDisable.Parts = V end
+})
+
+EffectsTab:CreateToggle({
+    Name = "Disable Particles",
+    CurrentValue = true,
+    Callback = function(V) ToDisable.Particles = V end
+})
+
+EffectsTab:CreateToggle({
+    Name = "Disable Sky",
+    CurrentValue = true,
+    Callback = function(V) ToDisable.Sky = V end
+})
+
+EffectsTab:CreateButton({
+    Name = "Apply Effects",
+    Callback = function()
+        RunEffectsDisabler()
+    end
+})
+
+EffectsTab:CreateSection("FullBright")
+
+EffectsTab:CreateButton({
+    Name = "Enable FullBright",
+    Callback = function()
+        RunFullBright()
+    end
+})
