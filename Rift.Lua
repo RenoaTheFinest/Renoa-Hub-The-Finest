@@ -1,6 +1,9 @@
 -- ================================================
--- RIFT TAB (TOGGLE VERSION)
+-- RIFT TAB (CLEAN FIX)
 -- ================================================
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
+
 local RiftTab = Window:CreateTab("Rift", nil)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -28,9 +31,9 @@ local chestLoop = false
 local eggThread = nil
 local chestThread = nil
 
--- ====================================
+-- =========================
 -- EGG RIFT
--- ====================================
+-- =========================
 RiftTab:CreateSection("Egg Rift")
 
 RiftTab:CreateDropdown({
@@ -57,6 +60,7 @@ RiftTab:CreateToggle({
     CurrentValue = false,
     Callback = function(v)
         eggLoop = v
+
         if v then
             eggThread = task.spawn(function()
                 while eggLoop do
@@ -72,7 +76,7 @@ RiftTab:CreateToggle({
                             }
                         )
                     end)
-                    task.wait(31*60)
+                    task.wait(1860)
                 end
             end)
         else
@@ -82,9 +86,9 @@ RiftTab:CreateToggle({
     end
 })
 
--- ====================================
+-- =========================
 -- CHEST RIFT
--- ====================================
+-- =========================
 RiftTab:CreateSection("Chest Rift")
 
 RiftTab:CreateDropdown({
@@ -111,6 +115,7 @@ RiftTab:CreateToggle({
     CurrentValue = false,
     Callback = function(v)
         chestLoop = v
+
         if v then
             chestThread = task.spawn(function()
                 while chestLoop do
@@ -125,7 +130,7 @@ RiftTab:CreateToggle({
                             }
                         )
                     end)
-                    task.wait(31*60)
+                    task.wait(1860)
                 end
             end)
         else
@@ -133,82 +138,4 @@ RiftTab:CreateToggle({
             if chestThread then task.cancel(chestThread) end
         end
     end
-})RiftTab:CreateDropdown({
-    Name = "Egg",
-    Options = WORLD_EGGS[selectedEggWorld],
-    CurrentOption = {selectedEggName},
-    Callback = function(V)
-        selectedEggName = V[1]
-        setSetting("EggRiftName", selectedEggName)
-    end,
 })
-
-RiftTab:CreateButton({
-    Name = "Start Auto Egg Rift",
-    Callback = function()
-        task.spawn(function()
-            while true do
-                game:GetService("ReplicatedStorage")
-                .Shared.Framework.Network.Remote.RemoteFunction:InvokeServer(
-                    "SummonRift",
-                    {
-                        Type="Egg",
-                        Name=selectedEggName,
-                        Time=5,
-                        Luck=5,
-                        World=selectedEggWorld
-                    }
-                )
-                task.wait(1860)
-            end
-        end)
-    end,
-})
-
--- CHEST
-RiftTab:CreateSection("Chest Rift")
-
-RiftTab:CreateDropdown({
-    Name = "World",
-    Options = WORLDS,
-    CurrentOption = {selectedChestWorld},
-    Callback = function(V)
-        selectedChestWorld = V[1]
-        setSetting("ChestRiftWorld", selectedChestWorld)
-        selectedChestName = WORLD_CHESTS[selectedChestWorld][1]
-        setSetting("ChestRiftName", selectedChestName)
-    end,
-})
-
-RiftTab:CreateDropdown({
-    Name = "Chest",
-    Options = WORLD_CHESTS[selectedChestWorld],
-    CurrentOption = {selectedChestName},
-    Callback = function(V)
-        selectedChestName = V[1]
-        setSetting("ChestRiftName", selectedChestName)
-    end,
-})
-
-RiftTab:CreateButton({
-    Name = "Start Auto Chest Rift",
-    Callback = function()
-        task.spawn(function()
-            while true do
-                game:GetService("ReplicatedStorage")
-                .Shared.Framework.Network.Remote.RemoteFunction:InvokeServer(
-                    "SummonRift",
-                    {
-                        Type="Chest",
-                        Name=selectedChestName,
-                        Time=5,
-                        World=selectedChestWorld
-                    }
-                )
-                task.wait(1860)
-            end
-        end)
-    end,
-})
-
-end
