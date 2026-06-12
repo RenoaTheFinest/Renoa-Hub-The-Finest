@@ -1,19 +1,20 @@
+-- ======================================
+-- RENOA HUB
+-- ======================================
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Renoa Hub",
+    Name = "Renoa Hub | The Finest Hub",
     LoadingTitle = "Loading...",
     LoadingSubtitle = "by Renoa"
 })
 
--- IMPORTANT: share Window ke semua script
 getgenv().Window = Window
 
 local function loadTab(url)
     local success, err = pcall(function()
         loadstring(game:HttpGet(url))()
     end)
-
     if not success then
         warn("FAILED:", url)
         warn(err)
@@ -26,4 +27,4 @@ loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/m
 loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Enchant.Lua")
 loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Rift.Lua")
 loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Shrine.Lua")
-loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/refs/heads/main/Webhook.Lua")
+loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Webhook.Lua")
