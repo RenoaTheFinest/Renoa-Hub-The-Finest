@@ -15,6 +15,7 @@ local player = Players.LocalPlayer
 -- DATA MODULES
 -- ======================================
 local SecretBountyUtil = require(ReplicatedStorage.Shared.Utils.Stats.SecretBountyUtil)
+local Rifts = require(ReplicatedStorage.Shared.Data.Rifts)
 local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
 local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
 
@@ -22,7 +23,6 @@ local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteF
 -- ALL EGG LOCATIONS (Permanent + Event)
 -- ======================================
 local EGG_LOCATIONS = {
-    -- Permanent Eggs
     ["Common Egg"] = Vector3.new(-60, 13, -65),
     ["Inferno Egg"] = Vector3.new(61, -39, -37),
     ["Classic Egg"] = Vector3.new(-90, 13, 30),
@@ -44,8 +44,6 @@ local EGG_LOCATIONS = {
     ["Lunar Egg"] = Vector3.new(-148, 11, -15),
     ["Void Egg"] = Vector3.new(-150, 11, -26),
     ["Hell Egg"] = Vector3.new(-149, 11, -37),
-    
-    -- Event/Limited Eggs (Current)
     ["Tropical Egg"] = Vector3.new(-303, 12, -5012),
     ["Research Egg"] = Vector3.new(-323, 13, -5006),
     ["Summer Egg"] = Vector3.new(-313, 13, -5009),
@@ -54,7 +52,7 @@ local EGG_LOCATIONS = {
     ["600M Egg"] = Vector3.new(2366, 3162, 972),
 }
 
--- World mapping for rift summon
+-- World mapping
 local EGG_WORLDS = {
     ["Common Egg"] = "The Overworld",
     ["Inferno Egg"] = "The Overworld",
@@ -85,7 +83,7 @@ local EGG_WORLDS = {
     ["600M Egg"] = "The Overworld",
 }
 
--- All egg names for dropdowns
+-- All egg names
 local ALL_EGG_NAMES = {}
 for eggName, _ in pairs(EGG_LOCATIONS) do
     table.insert(ALL_EGG_NAMES, eggName)
@@ -115,12 +113,54 @@ local function getRoot()
     if char then return char:FindFirstChild("HumanoidRootPart") end
 end
 
+local function eggNameToKey(eggName)
+    return eggName:lower():gsub("%s+", "-")
+end
+
+local function isRiftActive(eggName)
+    local key = eggNameToKey(eggName) .. "-egg"
+    return Rifts[key] ~= nil
+end
+
+local function getRiftPosition(eggName)
+    local world = EGG_WORLDS[eggName] or "The Overworld"
+    local worldObj = workspace.Worlds:FindFirstChild(world)
+    if worldObj then
+        local islands = worldObj:FindFirstChild("Islands")
+        if islands then
+            for _, island in ipairs(islands:GetChildren()) do
+                if island.Name:lower():find("rift") or island.Name:lower():find(eggNameToKey(eggName)) then
+                    if island:IsA("Model") then
+                        return island:GetPivot().Position
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
+
 local function teleportToEgg(eggName)
+    -- Check if rift is active
+    if isRiftActive(eggName) then
+        local riftPos = getRiftPosition(eggName)
+        if riftPos then
+            local root = getRoot()
+            if root then
+                root.CFrame = CFrame.new(riftPos)
+                print("[Auto] 🌀 Teleported to RIFT for: " .. eggName)
+                return true
+            end
+        end
+    end
+    
+    -- Fallback to normal egg
     local pos = EGG_LOCATIONS[eggName]
     if pos then
         local root = getRoot()
         if root then
             root.CFrame = CFrame.new(pos)
+            print("[Auto] 🥚 Teleported to normal egg: " .. eggName)
             return true
         end
     end
@@ -180,7 +220,7 @@ local function summonRift()
             }
         )
     end)
-    print("[Auto] Rift summoned for: " .. currentBountyEgg .. " | World: " .. world)
+    print("[Auto] Rift summoned for: " .. currentBountyEgg)
 end
 
 -- ======================================
@@ -190,10 +230,10 @@ AutoTab:CreateSection("🥚 Auto Hatch Selected Egg")
 
 AutoTab:CreateDropdown({
     Name = "Select Egg",
-    CurrentOption = "Common Egg",
+    CurrentOption = {"Common Egg"},
     Options = ALL_EGG_NAMES,
     Callback = function(v)
-        selectedEgg = v
+        selectedEgg = v[1] or v
         print("[Auto] Selected egg: " .. selectedEgg)
     end
 })
@@ -226,10 +266,7 @@ AutoTab:CreateToggle({
                             Remote:InvokeServer("HatchEgg", selectedEgg, HATCH_AMOUNT)
                         end)
                         print("[Auto] Hatched " .. HATCH_AMOUNT .. " | " .. selectedEgg)
-                    else
-                        warn("[Auto] Could not find location for: " .. selectedEgg)
                     end
-                    
                     task.wait(0.5)
                 end
             end)
@@ -249,18 +286,18 @@ updateBountyInfo()
 
 AutoTab:CreateSection("🎯 Current Bounty")
 
-AutoTab:CreateLabel("Pet: " .. currentBountyPet)
-AutoTab:CreateLabel("Egg: " .. currentBountyEgg)
-AutoTab:CreateLabel("Chance: " .. currentBountyChance)
-AutoTab:CreateLabel("Resets in: " .. getTimeUntilReset())
+local bountyPetLabel = AutoTab:CreateLabel("Pet: " .. currentBountyPet)
+local bountyEggLabel = AutoTab:CreateLabel("Egg: " .. currentBountyEgg)
+local bountyChanceLabel = AutoTab:CreateLabel("Chance: " .. currentBountyChance)
+local bountyResetLabel = AutoTab:CreateLabel("Resets in: " .. getTimeUntilReset())
 
-AutoTab:CreateButton({
-    Name = "🔄 Refresh Bounty Info",
-    Callback = function()
-        updateBountyInfo()
-        print("[Auto] Refreshed: " .. currentBountyPet .. " | " .. currentBountyEgg)
-    end
-})
+local function refreshBountyLabels()
+    updateBountyInfo()
+    bountyPetLabel:SetText("Pet: " .. currentBountyPet)
+    bountyEggLabel:SetText("Egg: " .. currentBountyEgg)
+    bountyChanceLabel:SetText("Chance: " .. currentBountyChance)
+    bountyResetLabel:SetText("Resets in: " .. getTimeUntilReset())
+end
 
 AutoTab:CreateToggle({
     Name = "Auto Bounty (Teleport + Hatch)",
@@ -269,22 +306,26 @@ AutoTab:CreateToggle({
         bountyEnabled = v
         
         if v then
-            updateBountyInfo()
+            refreshBountyLabels()
             
             bountyThread = task.spawn(function()
                 while bountyEnabled do
+                    local oldEgg = currentBountyEgg
+                    refreshBountyLabels()
+                    
+                    if currentBountyEgg ~= oldEgg then
+                        print("[Auto] 🔄 Bounty changed! New: " .. currentBountyPet .. " | " .. currentBountyEgg)
+                    end
+                    
                     local success = teleportToEgg(currentBountyEgg)
                     if success then
                         pcall(function()
                             Remote:InvokeServer("HatchEgg", currentBountyEgg, HATCH_AMOUNT)
                         end)
                         print("[Auto] Hatched " .. HATCH_AMOUNT .. " | " .. currentBountyEgg)
-                    else
-                        warn("[Auto] Could not find location for: " .. currentBountyEgg)
                     end
                     
                     task.wait(0.5)
-                    updateBountyInfo()
                 end
             end)
         else
@@ -308,13 +349,13 @@ AutoTab:CreateToggle({
         riftEnabled = v
         
         if v then
-            updateBountyInfo()
+            refreshBountyLabels()
             summonRift()
             
             riftThread = task.spawn(function()
                 while riftEnabled do
                     task.wait(1860)
-                    updateBountyInfo()
+                    refreshBountyLabels()
                     summonRift()
                 end
             end)
