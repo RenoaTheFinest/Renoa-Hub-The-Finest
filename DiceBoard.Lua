@@ -1,5 +1,5 @@
 -- ================================================
--- DICE BOARD TAB (FINAL FIX NO TP + LOOP FIX)
+-- DICE BOARD TAB (FINAL FIX - WAIT SYSTEM)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -14,7 +14,7 @@ local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
 local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
 
 -- ======================================
--- TILE MAPPING
+-- TILE DATA
 -- ======================================
 local TILE_TYPES = {
     ["Chance"] = {5,13,25,29,32,36,39,40,44,50,53,55,60,61,62,72,76,78,79,83},
@@ -30,13 +30,31 @@ local TILE_TYPES = {
 }
 
 -- ======================================
--- SETTINGS
+-- STATE
 -- ======================================
-local boardEnabled = false
+local enabled = false
 local targetTile = "Chance"
 
 -- ======================================
--- GET NODE FIX
+-- DETECT ROLLING (INI KUNCI)
+-- ======================================
+local function isRolling()
+    local gui = player.PlayerGui:FindFirstChild("Board")
+    if not gui then return false end
+
+    for _,v in pairs(gui:GetDescendants()) do
+        if v.Name:lower():find("roll") and v:IsA("Frame") then
+            if v.Visible then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+-- ======================================
+-- GET NODE
 -- ======================================
 local function getNode()
     for name, piece in pairs(Board.Pieces) do
@@ -45,7 +63,7 @@ local function getNode()
             if type(node) == "table" then
                 if node.Index then return node.Index end
                 if node.Id then return node.Id end
-                if node.Number then return node.Number end
+                if node.Node then return node.Node end
             end
         end
     end
@@ -53,10 +71,10 @@ local function getNode()
 end
 
 -- ======================================
--- TARGET
+-- TARGET CALC
 -- ======================================
-local function getTarget(current, targetType)
-    local tiles = TILE_TYPES[targetType]
+local function getTarget(current)
+    local tiles = TILE_TYPES[targetTile]
     if not tiles then return nil,999 end
 
     local best = nil
@@ -86,42 +104,64 @@ local function getTarget(current, targetType)
 end
 
 -- ======================================
--- ROLL FIX (IMPORTANT)
+-- ROLL
 -- ======================================
 local function roll(d)
+    print("[ROLL]:", d)
     pcall(function()
         Remote:InvokeServer("RollDice", d)
     end)
 end
 
+-- ======================================
+-- SMART ROLL
+-- ======================================
 local function smartRoll()
     local node = getNode()
 
     if not node then
-        print("[DiceBoard] node null → spam dice")
         roll("Dice")
         return
     end
 
-    local target, dist = getTarget(node, targetTile)
+    local target, dist = getTarget(node)
 
     if not target then
         roll("Dice")
         return
     end
 
-    -- FIX LOGIC BIAR GA KEKUNCI DI DICE BIASA
+    print("[INFO]", node, "→", target, "|", dist)
+
     if dist <= 2 then
         roll("Golden Dice")
-        print("🔥 GOLDEN | dist:", dist)
-
     elseif dist <= 10 then
         roll("Giant Dice")
-        print("💀 GIANT | dist:", dist)
-
     else
         roll("Dice")
-        print("🙂 NORMAL | dist:", dist)
+    end
+end
+
+-- ======================================
+-- LOOP FIX (INI YANG NGE FIX MASALAH LU)
+-- ======================================
+local function loop()
+    while enabled do
+        task.wait(0.5)
+
+        -- tunggu sampe boleh roll lagi
+        if isRolling() then
+            continue
+        end
+
+        print("[READY] rolling...")
+
+        smartRoll()
+
+        -- tunggu anim selesai
+        repeat task.wait(0.5) until not isRolling()
+
+        task.wait(1) -- buffer biar aman
     end
 end
 
@@ -130,31 +170,28 @@ end
 -- ======================================
 DiceBoardTab:CreateDropdown({
     Name = "Target Tile",
-    CurrentOption = {"Chance"},
     Options = {
-        "Chance","Dice-Key","Dice","Giant-Dice","Golden-Dice",
-        "Infinity-Elixir","Random-Dice","Special-Egg","Super-Ticket","Basic"
+        "Chance","Dice-Key","Dice","Giant-Dice",
+        "Golden-Dice","Infinity-Elixir","Random-Dice",
+        "Special-Egg","Super-Ticket","Basic"
     },
+    CurrentOption = {"Chance"},
     Callback = function(v)
         targetTile = v
     end
 })
 
 DiceBoardTab:CreateToggle({
-    Name = "Auto Roll Dice (FIXED)",
+    Name = "Auto Smart Dice (FINAL)",
     CurrentValue = false,
     Callback = function(v)
-        boardEnabled = v
+        enabled = v
 
         if v then
-            task.spawn(function()
-                while boardEnabled do
-                    smartRoll()
-                    task.wait(2) -- jangan 3, biar ga ke skip server tick
-                end
-            end)
+            task.spawn(loop)
+            print("[DiceBoard] STARTED")
+        else
+            print("[DiceBoard] STOPPED")
         end
     end
 })
-
-print("[DiceBoard] FINAL FIX READY 🔥")
