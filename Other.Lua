@@ -19,19 +19,24 @@ local hatchedLabel = nil
 local rateLabel = nil
 local timeLabel = nil
 
-local startTime = os.clock()
+local startTime = 0
 local startHatches = 0
 local currentHatches = 0
 
-local function updateStats()
-    -- Read from leaderboard
+local function getHatches()
     local leaderstats = player:FindFirstChild("leaderstats")
     if leaderstats then
-        local hatchesStat = leaderstats:FindFirstChild("Hatches")
-        if hatchesStat then
-            currentHatches = tonumber(hatchesStat.Value) or 0
+        for _, stat in ipairs(leaderstats:GetChildren()) do
+            if stat.Name:find("Hatches") then
+                return tonumber(stat.Value) or 0
+            end
         end
     end
+    return 0
+end
+
+local function updateStats()
+    currentHatches = getHatches()
     
     local elapsed = os.clock() - startTime
     local minutes = elapsed / 60
@@ -178,16 +183,9 @@ OtherTab:CreateToggle({
         statsEnabled = v
         if v then
             startTime = os.clock()
-            -- Get starting hatch count
-            local leaderstats = player:FindFirstChild("leaderstats")
-            if leaderstats then
-                local hatchesStat = leaderstats:FindFirstChild("Hatches")
-                if hatchesStat then
-                    startHatches = tonumber(hatchesStat.Value) or 0
-                end
-            end
+            startHatches = getHatches()
             createStatsUI()
-            print("[Other] Stats UI shown!")
+            print("[Other] Stats UI shown! Starting at: " .. startHatches)
         else
             destroyStatsUI()
             print("[Other] Stats UI hidden!")
