@@ -20,16 +20,16 @@ local rateLabel = nil
 local timeLabel = nil
 
 local startTime = os.clock()
-local lastHatched = 0
-local currentHatched = 0
+local startHatches = 0
+local currentHatches = 0
 
 local function updateStats()
     -- Read from leaderboard
     local leaderstats = player:FindFirstChild("leaderstats")
     if leaderstats then
-        local eggsStat = leaderstats:FindFirstChild("Eggs") or leaderstats:FindFirstChild("Hatches") or leaderstats:FindFirstChild("Eggs Opened")
-        if eggsStat then
-            currentHatched = tonumber(eggsStat.Value) or 0
+        local hatchesStat = leaderstats:FindFirstChild("Hatches")
+        if hatchesStat then
+            currentHatches = tonumber(hatchesStat.Value) or 0
         end
     end
     
@@ -37,8 +37,9 @@ local function updateStats()
     local minutes = elapsed / 60
     local hours = elapsed / 3600
     
-    local perMin = minutes > 0 and math.floor((currentHatched - lastHatched) / minutes) or 0
-    local perHour = hours > 0 and math.floor((currentHatched - lastHatched) / hours) or 0
+    local hatchedSinceStart = currentHatches - startHatches
+    local perMin = minutes > 0 and math.floor(hatchedSinceStart / minutes) or 0
+    local perHour = hours > 0 and math.floor(hatchedSinceStart / hours) or 0
     
     -- Format time
     local h = math.floor(elapsed / 3600)
@@ -47,7 +48,7 @@ local function updateStats()
     local timeStr = string.format("%02d:%02d:%02d", h, m, s)
     
     if hatchedLabel then
-        hatchedLabel.Text = "🥚 Hatched: " .. currentHatched
+        hatchedLabel.Text = "🥚 Hatched: " .. hatchedSinceStart
     end
     if rateLabel then
         rateLabel.Text = "📊 Rate: " .. perMin .. "/min | " .. perHour .. "/hr"
@@ -177,8 +178,14 @@ OtherTab:CreateToggle({
         statsEnabled = v
         if v then
             startTime = os.clock()
-            updateStats()
-            lastHatched = currentHatched
+            -- Get starting hatch count
+            local leaderstats = player:FindFirstChild("leaderstats")
+            if leaderstats then
+                local hatchesStat = leaderstats:FindFirstChild("Hatches")
+                if hatchesStat then
+                    startHatches = tonumber(hatchesStat.Value) or 0
+                end
+            end
             createStatsUI()
             print("[Other] Stats UI shown!")
         else
