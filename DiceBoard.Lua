@@ -1,5 +1,5 @@
 -- ================================================
--- DICE BOARD TAB (FINAL FIX + AUTO UI)
+-- DICE BOARD TAB (FINAL STABLE FIX)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -11,6 +11,7 @@ local Players = game:GetService("Players")
 
 local player = Players.LocalPlayer
 local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
+local Board = require(ReplicatedStorage.Client.Gui.Frames.Board) -- FIX
 
 -- ======================================
 -- CONFIG
@@ -55,14 +56,10 @@ local function openBoard()
     if not screen then return end
 
     local board = screen:FindFirstChild("BoardHUD")
-    if board then
-        board.Enabled = true
-    end
+    if board then board.Enabled = true end
 
     local mini = screen:FindFirstChild("Minigame")
-    if mini then
-        mini.Enabled = true
-    end
+    if mini then mini.Enabled = true end
 
     print("[DiceBoard] UI forced open")
 end
@@ -71,8 +68,6 @@ end
 -- GET NODE
 -- ======================================
 local function getNode()
-    local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
-
     for name, piece in pairs(Board.Pieces) do
         if name == player.Name then
             if piece.Node and piece.Node.Part then
@@ -80,7 +75,6 @@ local function getNode()
             end
         end
     end
-
     return nil
 end
 
@@ -116,8 +110,14 @@ end
 -- ======================================
 local function smartRoll()
     local node = getNode()
+
     if not node then
         warn("[DiceBoard] node ga kebaca")
+        return
+    end
+
+    if type(node) ~= "number" then
+        warn("[DiceBoard] node aneh:", node)
         return
     end
 
@@ -141,7 +141,7 @@ local function smartRoll()
         diceToUse = "Dice"
     end
 
-    print("[SMART]", "Node:", node, "Target:", target, "Dist:", dist, "Dice:", diceToUse)
+    print("[SMART]", node, "→", target, "| dist:", dist, "|", diceToUse)
 
     roll(diceToUse)
 end
@@ -166,7 +166,7 @@ DiceBoardTab:CreateDropdown({
         "Basic"
     },
     Callback = function(v)
-        targetTile = v[1] -- FIX
+        targetTile = v[1]
         print("Target set:", targetTile)
     end
 })
@@ -180,8 +180,8 @@ DiceBoardTab:CreateToggle({
         running = v
 
         if v then
-            openBoard() -- 🔥 penting
-            task.wait(1)
+            openBoard()
+            task.wait(2) -- FIX penting
 
             thread = task.spawn(function()
                 while running do
@@ -198,4 +198,4 @@ DiceBoardTab:CreateToggle({
     end
 })
 
-print("DICE BOARD FINAL LOADED 😈")
+print("DICE BOARD FINAL STABLE 😈")
