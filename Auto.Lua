@@ -1,5 +1,5 @@
 -- ================================================
--- AUTO TAB (FULL FIXED)
+-- AUTO TAB (RIFT TELEPORT FIXED)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -103,37 +103,44 @@ local function eggNameToKey(eggName)
     return eggName:lower():gsub("%s+", "-")
 end
 
-local function isRiftActive(eggName)
-    local key = eggNameToKey(eggName) .. "-egg"
-    return Rifts[key] ~= nil
-end
-
-local function teleportToEgg(eggName)
-    -- Try rift first
-    if isRiftActive(eggName) then
-        print("[Auto] 🌀 Rift detected for " .. eggName .. ", trying to find island...")
-        -- Look for rift island
-        local world = EGG_WORLDS[eggName] or "The Overworld"
-        local worldObj = workspace.Worlds:FindFirstChild(world)
-        if worldObj then
-            local islands = worldObj:FindFirstChild("Islands")
-            if islands then
-                for _, island in ipairs(islands:GetChildren()) do
-                    if island.Name:lower():find("rift") then
-                        if island:IsA("Model") then
-                            local pos = island:GetPivot().Position
-                            local root = getRoot()
-                            if root then
-                                root.CFrame = CFrame.new(pos)
-                                print("[Auto] 🌀 Teleported to rift for: " .. eggName)
-                                return true
-                            end
-                        end
+local function getRiftPosition(eggName)
+    local key = eggNameToKey(eggName)
+    local riftFolder = workspace:FindFirstChild("Rendered")
+    if riftFolder then
+        riftFolder = riftFolder:FindFirstChild("Rifts")
+        if riftFolder then
+            local rift = riftFolder:FindFirstChild(key)
+            if rift then
+                -- Find the EggPlatformSpawn to teleport to
+                local spawn = rift:FindFirstChild("EggPlatformSpawn")
+                if spawn then
+                    local part = spawn:FindFirstChild("Part")
+                    if part then
+                        return part.Position
+                    end
+                end
+                -- Fallback: use any part in the rift
+                for _, child in ipairs(rift:GetDescendants()) do
+                    if child:IsA("BasePart") then
+                        return child.Position
                     end
                 end
             end
         end
-        print("[Auto] ⚠️ Rift exists in data but island not found, falling back to normal egg")
+    end
+    return nil
+end
+
+local function teleportToEgg(eggName)
+    -- Try rift first
+    local riftPos = getRiftPosition(eggName)
+    if riftPos then
+        local root = getRoot()
+        if root then
+            root.CFrame = CFrame.new(riftPos)
+            print("[Auto] 🌀 Teleported to RIFT: " .. eggName)
+            return true
+        end
     end
     
     -- Fallback to normal egg position
