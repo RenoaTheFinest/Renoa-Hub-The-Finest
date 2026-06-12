@@ -1,5 +1,5 @@
 -- ================================================
--- AUTO TAB (AUTO HATCH + BOUNTY + RIFT)
+-- AUTO TAB (FULL FIXED)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -17,10 +17,11 @@ local player = Players.LocalPlayer
 local SecretBountyUtil = require(ReplicatedStorage.Shared.Utils.Stats.SecretBountyUtil)
 local Rifts = require(ReplicatedStorage.Shared.Data.Rifts)
 local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
+local RemoteEvent = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
 local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
 
 -- ======================================
--- ALL EGG LOCATIONS (Permanent + Event)
+-- EGG LOCATIONS
 -- ======================================
 local EGG_LOCATIONS = {
     ["Common Egg"] = Vector3.new(-60, 13, -65),
@@ -52,38 +53,23 @@ local EGG_LOCATIONS = {
     ["600M Egg"] = Vector3.new(2366, 3162, 972),
 }
 
--- World mapping
 local EGG_WORLDS = {
-    ["Common Egg"] = "The Overworld",
-    ["Inferno Egg"] = "The Overworld",
-    ["Classic Egg"] = "The Overworld",
-    ["Vine Egg"] = "The Overworld",
-    ["Lava Egg"] = "The Overworld",
-    ["Icy Egg"] = "The Overworld",
-    ["Iceshard Egg"] = "The Overworld",
-    ["Spotted Egg"] = "The Overworld",
-    ["Atlantis Egg"] = "The Overworld",
-    ["Mining Egg"] = "Minigame Paradise",
-    ["Neon Egg"] = "Minigame Paradise",
-    ["Cyber Egg"] = "Minigame Paradise",
-    ["Rainbow Egg"] = "The Overworld",
-    ["Nightmare Egg"] = "The Overworld",
-    ["Infinity Egg"] = "The Overworld",
-    ["Spikey Egg"] = "The Overworld",
-    ["Magma Egg"] = "The Overworld",
-    ["Crystal Egg"] = "The Overworld",
-    ["Lunar Egg"] = "The Overworld",
-    ["Void Egg"] = "The Overworld",
-    ["Hell Egg"] = "The Overworld",
-    ["Tropical Egg"] = "The Overworld",
-    ["Research Egg"] = "The Overworld",
-    ["Summer Egg"] = "The Overworld",
-    ["Oceanic Egg"] = "The Overworld",
-    ["Flower Kingdom Egg"] = "The Overworld",
+    ["Common Egg"] = "The Overworld", ["Inferno Egg"] = "The Overworld",
+    ["Classic Egg"] = "The Overworld", ["Vine Egg"] = "The Overworld",
+    ["Lava Egg"] = "The Overworld", ["Icy Egg"] = "The Overworld",
+    ["Iceshard Egg"] = "The Overworld", ["Spotted Egg"] = "The Overworld",
+    ["Atlantis Egg"] = "The Overworld", ["Mining Egg"] = "Minigame Paradise",
+    ["Neon Egg"] = "Minigame Paradise", ["Cyber Egg"] = "Minigame Paradise",
+    ["Rainbow Egg"] = "The Overworld", ["Nightmare Egg"] = "The Overworld",
+    ["Infinity Egg"] = "The Overworld", ["Spikey Egg"] = "The Overworld",
+    ["Magma Egg"] = "The Overworld", ["Crystal Egg"] = "The Overworld",
+    ["Lunar Egg"] = "The Overworld", ["Void Egg"] = "The Overworld",
+    ["Hell Egg"] = "The Overworld", ["Tropical Egg"] = "The Overworld",
+    ["Research Egg"] = "The Overworld", ["Summer Egg"] = "The Overworld",
+    ["Oceanic Egg"] = "The Overworld", ["Flower Kingdom Egg"] = "The Overworld",
     ["600M Egg"] = "The Overworld",
 }
 
--- All egg names
 local ALL_EGG_NAMES = {}
 for eggName, _ in pairs(EGG_LOCATIONS) do
     table.insert(ALL_EGG_NAMES, eggName)
@@ -93,17 +79,17 @@ table.sort(ALL_EGG_NAMES)
 -- ======================================
 -- VARIABLES
 -- ======================================
+local HATCH_AMOUNT = 12
+local selectedEgg = "Common Egg"
+local currentBountyPet = "Unknown"
+local currentBountyEgg = "Unknown"
+local currentBountyChance = "Unknown"
 local autoHatchEnabled = false
 local bountyEnabled = false
 local riftEnabled = false
 local autoHatchThread = nil
 local bountyThread = nil
 local riftThread = nil
-local selectedEgg = "Common Egg"
-local currentBountyPet = "Unknown"
-local currentBountyEgg = "Unknown"
-local currentBountyChance = "Unknown"
-local HATCH_AMOUNT = 12
 
 -- ======================================
 -- FUNCTIONS
@@ -122,48 +108,45 @@ local function isRiftActive(eggName)
     return Rifts[key] ~= nil
 end
 
-local function getRiftPosition(eggName)
-    local world = EGG_WORLDS[eggName] or "The Overworld"
-    local worldObj = workspace.Worlds:FindFirstChild(world)
-    if worldObj then
-        local islands = worldObj:FindFirstChild("Islands")
-        if islands then
-            for _, island in ipairs(islands:GetChildren()) do
-                if island.Name:lower():find("rift") or island.Name:lower():find(eggNameToKey(eggName)) then
-                    if island:IsA("Model") then
-                        return island:GetPivot().Position
+local function teleportToEgg(eggName)
+    -- Try rift first
+    if isRiftActive(eggName) then
+        print("[Auto] 🌀 Rift detected for " .. eggName .. ", trying to find island...")
+        -- Look for rift island
+        local world = EGG_WORLDS[eggName] or "The Overworld"
+        local worldObj = workspace.Worlds:FindFirstChild(world)
+        if worldObj then
+            local islands = worldObj:FindFirstChild("Islands")
+            if islands then
+                for _, island in ipairs(islands:GetChildren()) do
+                    if island.Name:lower():find("rift") then
+                        if island:IsA("Model") then
+                            local pos = island:GetPivot().Position
+                            local root = getRoot()
+                            if root then
+                                root.CFrame = CFrame.new(pos)
+                                print("[Auto] 🌀 Teleported to rift for: " .. eggName)
+                                return true
+                            end
+                        end
                     end
                 end
             end
         end
-    end
-    return nil
-end
-
-local function teleportToEgg(eggName)
-    -- Check if rift is active
-    if isRiftActive(eggName) then
-        local riftPos = getRiftPosition(eggName)
-        if riftPos then
-            local root = getRoot()
-            if root then
-                root.CFrame = CFrame.new(riftPos)
-                print("[Auto] 🌀 Teleported to RIFT for: " .. eggName)
-                return true
-            end
-        end
+        print("[Auto] ⚠️ Rift exists in data but island not found, falling back to normal egg")
     end
     
-    -- Fallback to normal egg
+    -- Fallback to normal egg position
     local pos = EGG_LOCATIONS[eggName]
     if pos then
         local root = getRoot()
         if root then
             root.CFrame = CFrame.new(pos)
-            print("[Auto] 🥚 Teleported to normal egg: " .. eggName)
+            print("[Auto] 🥚 Teleported to: " .. eggName)
             return true
         end
     end
+    print("[Auto] ❌ Could not find: " .. eggName)
     return false
 end
 
@@ -220,7 +203,7 @@ local function summonRift()
             }
         )
     end)
-    print("[Auto] Rift summoned for: " .. currentBountyEgg)
+    print("[Auto] 🌌 Rift summoned for: " .. currentBountyEgg)
 end
 
 -- ======================================
@@ -263,7 +246,7 @@ AutoTab:CreateToggle({
                     local success = teleportToEgg(selectedEgg)
                     if success then
                         pcall(function()
-                            Remote:InvokeServer("HatchEgg", selectedEgg, HATCH_AMOUNT)
+                            RemoteEvent:FireServer("HatchEgg", selectedEgg, HATCH_AMOUNT)
                         end)
                         print("[Auto] Hatched " .. HATCH_AMOUNT .. " | " .. selectedEgg)
                     end
@@ -293,10 +276,10 @@ local bountyResetLabel = AutoTab:CreateLabel("Resets in: " .. getTimeUntilReset(
 
 local function refreshBountyLabels()
     updateBountyInfo()
-    bountyPetLabel:SetText("Pet: " .. currentBountyPet)
-    bountyEggLabel:SetText("Egg: " .. currentBountyEgg)
-    bountyChanceLabel:SetText("Chance: " .. currentBountyChance)
-    bountyResetLabel:SetText("Resets in: " .. getTimeUntilReset())
+    pcall(function() bountyPetLabel:SetText("Pet: " .. currentBountyPet) end)
+    pcall(function() bountyEggLabel:SetText("Egg: " .. currentBountyEgg) end)
+    pcall(function() bountyChanceLabel:SetText("Chance: " .. currentBountyChance) end)
+    pcall(function() bountyResetLabel:SetText("Resets in: " .. getTimeUntilReset()) end)
 end
 
 AutoTab:CreateToggle({
@@ -320,7 +303,7 @@ AutoTab:CreateToggle({
                     local success = teleportToEgg(currentBountyEgg)
                     if success then
                         pcall(function()
-                            Remote:InvokeServer("HatchEgg", currentBountyEgg, HATCH_AMOUNT)
+                            RemoteEvent:FireServer("HatchEgg", currentBountyEgg, HATCH_AMOUNT)
                         end)
                         print("[Auto] Hatched " .. HATCH_AMOUNT .. " | " .. currentBountyEgg)
                     end
