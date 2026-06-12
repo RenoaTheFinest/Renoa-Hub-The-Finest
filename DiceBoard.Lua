@@ -1,5 +1,5 @@
 -- ================================================
--- DICE BOARD TAB (SMART AUTO ROLL)
+-- DICE BOARD TAB (SIMPLIFIED)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -12,7 +12,6 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
 local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
-local BoardUtil = require(ReplicatedStorage.Shared.Utils.BoardUtil)
 
 -- ======================================
 -- TILE MAPPINGS
@@ -36,12 +35,7 @@ local TILE_TYPES = {
 local boardEnabled = false
 local boardThread = nil
 local targetTile = "Chance"
-local settings = {
-    UseGoldenDice = true,
-    GoldenDiceDistance = 2,
-    DiceDistance = 6,
-    GiantDiceDistance = 10,
-}
+local goldenDistance = 2
 
 -- ======================================
 -- FUNCTIONS
@@ -49,7 +43,9 @@ local settings = {
 local function getMyNode()
     for playerName, piece in pairs(Board.Pieces) do
         if playerName == player.Name then
-            return piece.Node.Part
+            if piece and piece.Node then
+                return piece.Node.Part
+            end
         end
     end
     return nil
@@ -91,25 +87,27 @@ end
 
 local function smartRoll()
     local myNode = getMyNode()
-    if not myNode then return end
     
-    local target, distance = getClosestTarget(myNode, targetTile)
-    if not target then
-        rollDice("Dice")
-        print("[DiceBoard] No target ahead, rolling Dice")
-        return
+    if myNode then
+        local target, distance = getClosestTarget(myNode, targetTile)
+        
+        if target and distance <= goldenDistance then
+            rollDice("Golden Dice")
+            print("[DiceBoard] 🎯 Target " .. distance .. " tiles → Golden Dice!")
+            return
+        elseif target and distance <= 6 then
+            rollDice("Dice")
+            print("[DiceBoard] 🎯 Target " .. distance .. " tiles → Dice")
+            return
+        elseif target and distance <= 10 then
+            rollDice("Giant Dice")
+            print("[DiceBoard] 🎯 Target " .. distance .. " tiles → Giant Dice!")
+            return
+        end
     end
     
-    if settings.UseGoldenDice and distance <= settings.GoldenDiceDistance then
-        rollDice("Golden Dice")
-        print("[DiceBoard] 🎯 Target " .. distance .. " tiles away → Golden Dice!")
-    elseif distance <= settings.GiantDiceDistance and distance > settings.DiceDistance then
-        rollDice("Giant Dice")
-        print("[DiceBoard] 🎯 Target " .. distance .. " tiles away → Giant Dice!")
-    else
-        rollDice("Dice")
-        print("[DiceBoard] 🎯 Target " .. distance .. " tiles away → Dice")
-    end
+    rollDice("Dice")
+    print("[DiceBoard] Rolling Dice")
 end
 
 -- ======================================
@@ -134,14 +132,24 @@ DiceBoardTab:CreateDropdown({
     },
     Callback = function(v)
         targetTile = v
-        print("[DiceBoard] Target: " .. v)
+    end
+})
+
+DiceBoardTab:CreateInput({
+    Name = "Golden Dice Distance",
+    CurrentValue = tostring(goldenDistance),
+    PlaceholderText = "2",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(v)
+        local n = tonumber(v)
+        if n then goldenDistance = n end
     end
 })
 
 DiceBoardTab:CreateSection("🎮 Auto Roll")
 
 DiceBoardTab:CreateToggle({
-    Name = "Auto Roll Dice (Smart)",
+    Name = "Auto Dice Board",
     CurrentValue = false,
     Callback = function(v)
         boardEnabled = v
@@ -152,10 +160,10 @@ DiceBoardTab:CreateToggle({
                     task.wait(3)
                 end
             end)
-            print("[DiceBoard] Auto Roll started!")
+            print("[DiceBoard] Started!")
         else
             if boardThread then task.cancel(boardThread) end
-            print("[DiceBoard] Auto Roll stopped!")
+            print("[DiceBoard] Stopped!")
         end
     end
 })
