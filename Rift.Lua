@@ -1,5 +1,5 @@
 -- ================================================
--- RIFT TAB (SUMMON + TP + HATCH/OPEN)
+-- RIFT TAB (FIXED - HATCH + CHEST + HIGHEST LUCK)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -14,6 +14,8 @@ local player = Players.LocalPlayer
 
 local RemoteEvent = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
 local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
+local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
+local Rifts = require(ReplicatedStorage.Shared.Data.Rifts)
 
 -- ======================================
 -- EGG LOCATIONS
@@ -74,25 +76,33 @@ local function getRiftPosition(name)
     if riftFolder then
         riftFolder = riftFolder:FindFirstChild("Rifts")
         if riftFolder then
-            local rift = riftFolder:FindFirstChild(key)
-            if rift then
+            -- Find all rifts for this egg and pick highest luck
+            local bestRift = nil
+            local bestLuck = -1
+            
+            for _, rift in ipairs(riftFolder:GetChildren()) do
+                if rift.Name == key then
+                    local data = Rifts[key]
+                    local luck = 0
+                    if data and data.Luck then
+                        luck = tonumber(data.Luck) or 0
+                    end
+                    if luck > bestLuck then
+                        bestLuck = luck
+                        bestRift = rift
+                    end
+                end
+            end
+            
+            if bestRift then
                 -- Try EggPlatformSpawn first
-                local spawn = rift:FindFirstChild("EggPlatformSpawn")
+                local spawn = bestRift:FindFirstChild("EggPlatformSpawn")
                 if spawn then
                     local part = spawn:FindFirstChild("Part")
                     if part then return part.Position end
                 end
-                -- Try Chest model
-                local chest = rift:FindFirstChild("Chest")
-                if chest then
-                    for _, child in ipairs(chest:GetDescendants()) do
-                        if child:IsA("BasePart") then
-                            return child.Position
-                        end
-                    end
-                end
                 -- Fallback: any part
-                for _, child in ipairs(rift:GetDescendants()) do
+                for _, child in ipairs(bestRift:GetDescendants()) do
                     if child:IsA("BasePart") then
                         return child.Position
                     end
@@ -103,8 +113,30 @@ local function getRiftPosition(name)
     return nil
 end
 
+local function getChestPosition(name)
+    local key = eggNameToKey(name)
+    local riftFolder = workspace:FindFirstChild("Rendered")
+    if riftFolder then
+        riftFolder = riftFolder:FindFirstChild("Rifts")
+        if riftFolder then
+            local rift = riftFolder:FindFirstChild(key)
+            if rift then
+                local chest = rift:FindFirstChild("Chest")
+                if chest then
+                    for _, child in ipairs(chest:GetDescendants()) do
+                        if child:IsA("BasePart") then
+                            return child.Position
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
+
 local function teleportToRift(name)
-    local pos = getRiftPosition(name)
+    local pos = getRiftPosition(name) or getChestPosition(name)
     if pos then
         local root = getRoot()
         if root then
@@ -192,12 +224,13 @@ RiftTab:CreateToggle({
                     -- Wait for rift
                     task.wait(3)
                     
-                    -- Teleport
+                    -- Teleport to highest luck rift
                     teleportToRift(selectedEgg)
                     
-                    -- Hatch
+                    -- Hatch using Remote:InvokeServer
+                    task.wait(0.5)
                     pcall(function()
-                        RemoteEvent:FireServer("HatchEgg", selectedEgg, HATCH_AMOUNT)
+                        Remote:InvokeServer("HatchEgg", selectedEgg, HATCH_AMOUNT)
                     end)
                     print("[Rift] 🥚 Hatched " .. HATCH_AMOUNT)
                     
@@ -259,17 +292,24 @@ RiftTab:CreateToggle({
                     print("[Rift] 🌌 Summoned chest: " .. selectedChest)
                     
                     -- Wait for rift
-                    task.wait(3)
+                    task.wait(5)
                     
                     -- Teleport to chest
-                    teleportToRift(selectedChest)
-                    task.wait(0.5)
-                    
-                    -- Spam E until toggle turned off
-                    while chestLoop do
-                        pressE()
-                        task.wait(0.01)
+                    local success = teleportToRift(selectedChest)
+                    if success then
+                        print("[Rift] 📍 At chest, spamming E...")
+                        task.wait(0.5)
+                        
+                        -- Spam E until toggle off
+                        while chestLoop do
+                            pressE()
+                            task.wait(0.01)
+                        end
+                    else
+                        print("[Rift] ❌ Couldn't find chest position")
                     end
+                    
+                    task.wait(1860)
                 end
             end)
         else
