@@ -1,5 +1,5 @@
 -- ================================================
--- OTHER TAB (STATS TRACKER + FLOATING UI)
+-- OTHER TAB (STATS TRACKER + EFFECTS)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -10,7 +10,7 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
 -- ======================================
--- FLOATING STATS UI
+-- STATS TRACKER
 -- ======================================
 local statsEnabled = false
 local screenGui = nil
@@ -37,30 +37,21 @@ end
 
 local function updateStats()
     currentHatches = getHatches()
-    
     local elapsed = os.clock() - startTime
     local minutes = elapsed / 60
     local hours = elapsed / 3600
-    
     local hatchedSinceStart = currentHatches - startHatches
     local perMin = minutes > 0 and math.floor(hatchedSinceStart / minutes) or 0
     local perHour = hours > 0 and math.floor(hatchedSinceStart / hours) or 0
     
-    -- Format time
     local h = math.floor(elapsed / 3600)
     local m = math.floor((elapsed % 3600) / 60)
     local s = math.floor(elapsed % 60)
     local timeStr = string.format("%02d:%02d:%02d", h, m, s)
     
-    if hatchedLabel then
-        hatchedLabel.Text = "🥚 Hatched: " .. hatchedSinceStart
-    end
-    if rateLabel then
-        rateLabel.Text = "📊 Rate: " .. perMin .. "/min | " .. perHour .. "/hr"
-    end
-    if timeLabel then
-        timeLabel.Text = "⏱️ Time: " .. timeStr
-    end
+    if hatchedLabel then hatchedLabel.Text = "🥚 Hatched: " .. hatchedSinceStart end
+    if rateLabel then rateLabel.Text = "📊 Rate: " .. perMin .. "/min | " .. perHour .. "/hr" end
+    if timeLabel then timeLabel.Text = "⏱️ Time: " .. timeStr end
 end
 
 local function createStatsUI()
@@ -127,7 +118,7 @@ local function createStatsUI()
     timeLabel.TextXAlignment = Enum.TextXAlignment.Left
     timeLabel.Parent = frame
     
-    -- Make draggable
+    -- Draggable
     local dragging = false
     local dragStart = nil
     local startPos = nil
@@ -151,7 +142,6 @@ local function createStatsUI()
         end
     end)
     
-    -- Update every second
     task.spawn(function()
         while statsEnabled do
             updateStats()
@@ -172,6 +162,43 @@ local function destroyStatsUI()
 end
 
 -- ======================================
+-- EFFECTS
+-- ======================================
+local function safeSet(obj, prop, value)
+    pcall(function() obj[prop] = value end)
+end
+
+local function RunFPSBoost()
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("BasePart") then
+            safeSet(v, "Material", Enum.Material.SmoothPlastic)
+        end
+        if v:IsA("ParticleEmitter") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then
+            safeSet(v, "Enabled", false)
+        end
+        if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("DepthOfFieldEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") then
+            safeSet(v, "Enabled", false)
+        end
+        if v:IsA("Decal") or v:IsA("Texture") then
+            safeSet(v, "Transparency", 1)
+        end
+        if v:IsA("Sky") then
+            safeSet(v, "Parent", nil)
+        end
+    end
+    print("[Other] FPS Boost applied! 🔥")
+end
+
+local function RunFullBright()
+    local Lighting = game:GetService("Lighting")
+    safeSet(Lighting, "Brightness", 5)
+    safeSet(Lighting, "Ambient", Color3.fromRGB(255, 255, 255))
+    safeSet(Lighting, "OutdoorAmbient", Color3.fromRGB(255, 255, 255))
+    safeSet(Lighting, "FogEnd", math.huge)
+    print("[Other] FullBright applied! 🔥")
+end
+
+-- ======================================
 -- UI
 -- ======================================
 OtherTab:CreateSection("📊 Stats Tracker")
@@ -185,11 +212,25 @@ OtherTab:CreateToggle({
             startTime = os.clock()
             startHatches = getHatches()
             createStatsUI()
-            print("[Other] Stats UI shown! Starting at: " .. startHatches)
         else
             destroyStatsUI()
-            print("[Other] Stats UI hidden!")
         end
+    end
+})
+
+OtherTab:CreateSection("⚡ Effects")
+
+OtherTab:CreateButton({
+    Name = "Click to Improve FPS",
+    Callback = function()
+        RunFPSBoost()
+    end
+})
+
+OtherTab:CreateButton({
+    Name = "Click for Brightness",
+    Callback = function()
+        RunFullBright()
     end
 })
 
