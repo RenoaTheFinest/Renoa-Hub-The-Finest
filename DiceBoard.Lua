@@ -1,6 +1,3 @@
--- ================================================
--- DICE BOARD TAB (FINAL NO NGACO)
--- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
 
@@ -13,19 +10,6 @@ local player = Players.LocalPlayer
 local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
 local RemoteEvent = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
 
--- ======================================
--- CONFIG
--- ======================================
-getgenv().boardSettings = {
-    UseGoldenDice = true,
-    GoldenDiceDistance = 2,
-    DiceDistance = 6,
-    GiantDiceDistance = 10,
-}
-
--- ======================================
--- TILE TARGET
--- ======================================
 local TILE_TYPES = {
     ["Chance"] = {5,13,25,29,32,36,39,40,44,50,53,55,60,61,62,72,76,78,79,83},
     ["Dice-Key"] = {19,21,34,47,80},
@@ -39,154 +23,98 @@ local TILE_TYPES = {
 }
 
 local targetTile = "Chance"
-
--- ======================================
--- STATE
--- ======================================
 local running = false
 local thread = nil
 
--- ======================================
--- OPEN UI (PAKSA)
--- ======================================
+local USE_GOLDEN_DICE = true
+local GOLDEN_DICE_DIST = 2
+local GIANT_DICE_DIST = 10
+
 local function openBoard()
     local gui = player:WaitForChild("PlayerGui")
-
-    for _,v in pairs(gui:GetDescendants()) do
+    for _, v in pairs(gui:GetDescendants()) do
         if v.Name == "BoardHUD" or v.Name == "Minigame" then
             pcall(function()
-                v.Enabled = true
-                v.Visible = true
+                if v:IsA("Frame") then
+                    v.Visible = true
+                elseif v:IsA("ScreenGui") then
+                    v.Enabled = true
+                end
             end)
         end
     end
-
-    print("[DiceBoard] UI kebuka")
+    print("[DiceBoard] UI opened!")
 end
 
--- ======================================
--- WAIT BOARD READY
--- ======================================
-local function waitBoard()
-    local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
-
-    local timeout = 0
-    repeat
-        for name, piece in pairs(Board.Pieces) do
-            if name == player.Name and piece.Node and piece.Node.Part then
-                local test = tonumber(piece.Node.Part)
-                if test then
-                    print("[DiceBoard] READY")
-                    return true
-                end
-            end
-        end
-
-        task.wait(0.5)
-        timeout += 0.5
-    until timeout > 15
-
-    warn("board ga ready")
-    return false
-end
-
--- ======================================
--- GET NODE (ANTI ERROR)
--- ======================================
 local function getNode()
-    local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
+    local ok, Board = pcall(function()
+        return require(ReplicatedStorage.Client.Gui.Frames.Board)
+    end)
+    if not ok or not Board then return nil end
 
     for name, piece in pairs(Board.Pieces) do
         if name == player.Name and piece.Node then
             local raw = piece.Node.Part
-
-            if typeof(raw) == "number" then
-                return raw
-            end
-
-            if typeof(raw) == "string" then
-                return tonumber(raw)
-            end
-
-            if typeof(raw) == "Instance" then
-                return tonumber(raw.Name)
-            end
+            if typeof(raw) == "number" then return raw end
+            if typeof(raw) == "string" then return tonumber(raw) end
+            if typeof(raw) == "Instance" then return tonumber(raw.Name) end
         end
     end
-
     return nil
 end
 
--- ======================================
--- TARGET
--- ======================================
 local function getClosest(current, list)
     local closest = nil
     local dist = math.huge
-
-    for _,num in ipairs(list) do
+    for _, num in ipairs(list) do
         local d = (num >= current) and (num - current) or (88 - current + num)
         if d < dist then
             dist = d
             closest = num
         end
     end
-
     return closest, dist
 end
 
--- ======================================
--- REMOTES
--- ======================================
-local function roll(dice)
-    RemoteFunction:InvokeServer("RollDice", dice)
-end
-
-local function claim()
-    RemoteEvent:FireServer("ClaimTile")
-end
-
--- ======================================
--- MAIN LOOP
--- ======================================
 local function loop()
     while running do
-
         local node = getNode()
 
-        -- 🔥 kalau node ilang, buka UI lagi
         if not node then
-            warn("node ilang, buka ulang UI")
+            warn("[DiceBoard] Node not found, retrying...")
             openBoard()
-            task.wait(1)
+            task.wait(2)
             continue
         end
 
         local target, dist = getClosest(node, TILE_TYPES[targetTile])
 
         local dice = "Dice"
-
-        if getgenv().boardSettings.UseGoldenDice and dist <= getgenv().boardSettings.GoldenDiceDistance then
+        if USE_GOLDEN_DICE and dist <= GOLDEN_DICE_DIST then
             dice = "Golden Dice"
-        elseif dist >= getgenv().boardSettings.GiantDiceDistance then
+        elseif dist >= GIANT_DICE_DIST then
             dice = "Giant Dice"
         end
 
-        print("NODE:", node, "TARGET:", target, "DIST:", dist, "DICE:", dice)
+        print("[DiceBoard] Node: "..node.." | Target: "..tostring(target).." | Dist: "..dist.." | Dice: "..dice)
 
-        roll(dice)
+        pcall(function()
+            RemoteFunction:InvokeServer("RollDice", dice)
+        end)
 
         task.wait(2.5)
 
-        claim()
+        pcall(function()
+            RemoteEvent:FireServer("ClaimTile")
+        end)
 
         task.wait(2)
     end
 end
 
--- ======================================
 -- UI
--- ======================================
+DiceBoardTab:CreateSection("Settings")
+
 DiceBoardTab:CreateDropdown({
     Name = "Target Tile",
     CurrentOption = {"Chance"},
@@ -196,7 +124,15 @@ DiceBoardTab:CreateDropdown({
     },
     Callback = function(v)
         targetTile = v[1]
-        print("Target:", targetTile)
+        print("[DiceBoard] Target: " .. targetTile)
+    end
+})
+
+DiceBoardTab:CreateToggle({
+    Name = "Use Golden Dice",
+    CurrentValue = USE_GOLDEN_DICE,
+    Callback = function(v)
+        USE_GOLDEN_DICE = v
     end
 })
 
@@ -205,21 +141,19 @@ DiceBoardTab:CreateToggle({
     CurrentValue = false,
     Callback = function(v)
         running = v
-
         if v then
             openBoard()
             task.wait(1)
-
-            if not waitBoard() then return end
-
             thread = task.spawn(loop)
-
-            print("STARTED 😈")
+            print("[DiceBoard] Started!")
         else
-            if thread then task.cancel(thread) end
-            print("STOPPED")
+            if thread then
+                task.cancel(thread)
+                thread = nil
+            end
+            print("[DiceBoard] Stopped!")
         end
     end
 })
 
-print("DICE BOARD FINAL READY 🔥")
+print("[DiceBoard] Loaded!")
