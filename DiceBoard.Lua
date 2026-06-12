@@ -1,5 +1,5 @@
 -- ================================================
--- DICE BOARD TAB (FINAL STABLE FIX)
+-- DICE BOARD TAB (FINAL WORKING FIX)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -10,8 +10,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local player = Players.LocalPlayer
-local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
-local Board = require(ReplicatedStorage.Client.Gui.Frames.Board) -- FIX
+local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
+local RemoteEvent = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
 
 -- ======================================
 -- CONFIG
@@ -47,34 +47,39 @@ local running = false
 local thread = nil
 
 -- ======================================
--- FORCE OPEN BOARD UI
+-- FORCE OPEN UI (WAJIB)
 -- ======================================
 local function openBoard()
     local gui = player:WaitForChild("PlayerGui")
-    local screen = gui:FindFirstChild("ScreenGui")
 
-    if not screen then return end
-
-    local board = screen:FindFirstChild("BoardHUD")
-    if board then board.Enabled = true end
-
-    local mini = screen:FindFirstChild("Minigame")
-    if mini then mini.Enabled = true end
-
-    print("[DiceBoard] UI forced open")
-end
-
--- ======================================
--- GET NODE
--- ======================================
-local function getNode()
-    for name, piece in pairs(Board.Pieces) do
-        if name == player.Name then
-            if piece.Node and piece.Node.Part then
-                return piece.Node.Part
+    for _,v in pairs(gui:GetDescendants()) do
+        if v.Name == "BoardHUD" or v.Name == "Minigame" then
+            if v:IsA("ScreenGui") or v:IsA("Frame") then
+                pcall(function()
+                    v.Enabled = true
+                    v.Visible = true
+                end)
             end
         end
     end
+
+    print("[DiceBoard] UI kebuka")
+end
+
+-- ======================================
+-- GET NODE (FIX FINAL)
+-- ======================================
+local function getNode()
+    local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
+
+    for name, piece in pairs(Board.Pieces) do
+        if name == player.Name then
+            if piece.Node and piece.Node.Part then
+                return tonumber(piece.Node.Part)
+            end
+        end
+    end
+
     return nil
 end
 
@@ -97,27 +102,27 @@ local function getClosest(current, list)
 end
 
 -- ======================================
--- ROLL
+-- REMOTES
 -- ======================================
 local function roll(dice)
     pcall(function()
-        Remote:InvokeServer("RollDice", dice)
+        RemoteFunction:InvokeServer("RollDice", dice)
+    end)
+end
+
+local function claim()
+    pcall(function()
+        RemoteEvent:FireServer("ClaimTile")
     end)
 end
 
 -- ======================================
--- SMART LOGIC
+-- SMART LOGIC (FIX FINAL)
 -- ======================================
 local function smartRoll()
     local node = getNode()
-
     if not node then
-        warn("[DiceBoard] node ga kebaca")
-        return
-    end
-
-    if type(node) ~= "number" then
-        warn("[DiceBoard] node aneh:", node)
+        warn("node ga kebaca")
         return
     end
 
@@ -134,16 +139,18 @@ local function smartRoll()
     elseif dist >= getgenv().boardSettings.GiantDiceDistance then
         diceToUse = "Giant Dice"
 
-    elseif dist >= getgenv().boardSettings.DiceDistance then
-        diceToUse = "Dice"
-
     else
         diceToUse = "Dice"
     end
 
-    print("[SMART]", node, "→", target, "| dist:", dist, "|", diceToUse)
+    print("NODE:", node, "TARGET:", target, "DIST:", dist, "DICE:", diceToUse)
 
+    -- 🔥 FULL FLOW
     roll(diceToUse)
+
+    task.wait(2.5) -- tunggu jalan
+
+    claim() -- 🔥 INI YANG BIKIN LOOP HIDUP
 end
 
 -- ======================================
@@ -167,7 +174,7 @@ DiceBoardTab:CreateDropdown({
     },
     Callback = function(v)
         targetTile = v[1]
-        print("Target set:", targetTile)
+        print("Target:", targetTile)
     end
 })
 
@@ -181,7 +188,7 @@ DiceBoardTab:CreateToggle({
 
         if v then
             openBoard()
-            task.wait(2) -- FIX penting
+            task.wait(1)
 
             thread = task.spawn(function()
                 while running do
@@ -190,7 +197,7 @@ DiceBoardTab:CreateToggle({
                 end
             end)
 
-            print("STARTED")
+            print("STARTED 😈")
         else
             if thread then task.cancel(thread) end
             print("STOPPED")
@@ -198,4 +205,4 @@ DiceBoardTab:CreateToggle({
     end
 })
 
-print("DICE BOARD FINAL STABLE 😈")
+print("DICE BOARD FINAL FIX READY 🔥")
