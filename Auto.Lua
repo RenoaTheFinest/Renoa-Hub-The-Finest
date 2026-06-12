@@ -1,5 +1,5 @@
 -- ================================================
--- AUTO TAB (BOUNTY + MORE)
+-- AUTO TAB (AUTO HATCH + BOUNTY + RIFT)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -16,49 +16,95 @@ local player = Players.LocalPlayer
 -- ======================================
 local SecretBountyUtil = require(ReplicatedStorage.Shared.Utils.Stats.SecretBountyUtil)
 local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
+local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
 
 -- ======================================
--- EGG LOCATIONS
+-- ALL EGG LOCATIONS (Permanent + Event)
 -- ======================================
 local EGG_LOCATIONS = {
-    ["Common Egg"] = Vector3.new(-59.7594, 13.7468, -4.9295),
-    ["Inferno Egg"] = Vector3.new(61.6161, -38.2405, -36.4416),
-    ["Classic Egg"] = Vector3.new(-89.3765, 13.9007, 30.5915),
-    ["Vine Egg"] = Vector3.new(-60.7224, 13.9614, 11.0473),
-    ["Lava Egg"] = Vector3.new(-68.9796, 14.1626, 19.3721),
-    ["Icy Egg"] = Vector3.new(-54.2339, 13.7070, 0.9815),
-    ["Iceshard Egg"] = Vector3.new(-119.0674, 11.4101, 13.9992),
-    ["Spotted Egg"] = Vector3.new(-91.7780, 12.9166, 12.3185),
-    ["Atlantis Egg"] = Vector3.new(-78.4374, 14.7693, 25.9414),
-    ["Mining Egg"] = Vector3.new(-121.7517, 11.0727, -68.1152),
-    ["Neon Egg"] = Vector3.new(-81.3096, 10.9481, -60.4263),
-    ["Cyber Egg"] = Vector3.new(-92.2678, 10.9795, -66.6913),
-    ["Spikey Egg"] = Vector3.new(-128.6110, 10.8857, 9.7908),
-    ["Magma Egg"] = Vector3.new(-137.1953, 11.1698, 3.5342),
-    ["Crystal Egg"] = Vector3.new(-144.1717, 10.9745, -4.9899),
-    ["Rainbow Egg"] = Vector3.new(-140.0540, 10.9538, -56.0581),
-    ["Void Egg"] = Vector3.new(-150.2729, 11.1749, -26.0208),
-    ["Showman Egg"] = Vector3.new(-131.7554, 12.0426, -63.2838),
-    ["Hell Egg"] = Vector3.new(-149.3270, 11.1268, -36.8873),
-    ["Nightmare Egg"] = Vector3.new(-146.0093, 10.9916, -46.9943),
-    ["Lunar Egg"] = Vector3.new(-148.4841, 11.1363, -15.2603),
-    ["Dice Egg"] = Vector3.new(9832.3232, 27.8746, 172.1069),
-    ["Secret Egg"] = Vector3.new(-19438.9062, 8.6763, 18838.1113),
-    ["Seal Egg"] = Vector3.new(24.7512, 10.4872, -5081.8105),
-    ["Tropical Egg"] = Vector3.new(-296, 12, -5008),
-    ["Summer Egg"] = Vector3.new(-310, 12, -5002),
-    ["Flower Kingdom Egg"] = Vector3.new(-6349, 81, -4732),
+    -- Permanent Eggs
+    ["Common Egg"] = Vector3.new(-60, 13, -65),
+    ["Inferno Egg"] = Vector3.new(61, -39, -37),
+    ["Classic Egg"] = Vector3.new(-90, 13, 30),
+    ["Vine Egg"] = Vector3.new(-61, 13, 11),
+    ["Lava Egg"] = Vector3.new(-69, 14, 19),
+    ["Icy Egg"] = Vector3.new(-55, 14, 0),
+    ["Iceshard Egg"] = Vector3.new(9905, 20087, 210),
+    ["Spotted Egg"] = Vector3.new(-11, 10, -69),
+    ["Atlantis Egg"] = Vector3.new(-79, 14, 25),
+    ["Mining Egg"] = Vector3.new(-122, 11, -69),
+    ["Neon Egg"] = Vector3.new(9913, 20089, 212),
+    ["Cyber Egg"] = Vector3.new(9916, 20088, 214),
+    ["Rainbow Egg"] = Vector3.new(9919, 20089, 219),
+    ["Nightmare Egg"] = Vector3.new(9910, 20087, 208),
+    ["Infinity Egg"] = Vector3.new(-106, 12, -28),
+    ["Spikey Egg"] = Vector3.new(-128, 10, 9),
+    ["Magma Egg"] = Vector3.new(-137, 11, 3),
+    ["Crystal Egg"] = Vector3.new(-144, 10, -5),
+    ["Lunar Egg"] = Vector3.new(-148, 11, -15),
+    ["Void Egg"] = Vector3.new(-150, 11, -26),
+    ["Hell Egg"] = Vector3.new(-149, 11, -37),
+    
+    -- Event/Limited Eggs (Current)
+    ["Tropical Egg"] = Vector3.new(-303, 12, -5012),
+    ["Research Egg"] = Vector3.new(-323, 13, -5006),
+    ["Summer Egg"] = Vector3.new(-313, 13, -5009),
+    ["Oceanic Egg"] = Vector3.new(-6548, 13, -8350),
+    ["Flower Kingdom Egg"] = Vector3.new(-6348, 83, -4740),
+    ["600M Egg"] = Vector3.new(2366, 3162, 972),
 }
+
+-- World mapping for rift summon
+local EGG_WORLDS = {
+    ["Common Egg"] = "The Overworld",
+    ["Inferno Egg"] = "The Overworld",
+    ["Classic Egg"] = "The Overworld",
+    ["Vine Egg"] = "The Overworld",
+    ["Lava Egg"] = "The Overworld",
+    ["Icy Egg"] = "The Overworld",
+    ["Iceshard Egg"] = "The Overworld",
+    ["Spotted Egg"] = "The Overworld",
+    ["Atlantis Egg"] = "The Overworld",
+    ["Mining Egg"] = "Minigame Paradise",
+    ["Neon Egg"] = "Minigame Paradise",
+    ["Cyber Egg"] = "Minigame Paradise",
+    ["Rainbow Egg"] = "The Overworld",
+    ["Nightmare Egg"] = "The Overworld",
+    ["Infinity Egg"] = "The Overworld",
+    ["Spikey Egg"] = "The Overworld",
+    ["Magma Egg"] = "The Overworld",
+    ["Crystal Egg"] = "The Overworld",
+    ["Lunar Egg"] = "The Overworld",
+    ["Void Egg"] = "The Overworld",
+    ["Hell Egg"] = "The Overworld",
+    ["Tropical Egg"] = "The Overworld",
+    ["Research Egg"] = "The Overworld",
+    ["Summer Egg"] = "The Overworld",
+    ["Oceanic Egg"] = "The Overworld",
+    ["Flower Kingdom Egg"] = "The Overworld",
+    ["600M Egg"] = "The Overworld",
+}
+
+-- All egg names for dropdowns
+local ALL_EGG_NAMES = {}
+for eggName, _ in pairs(EGG_LOCATIONS) do
+    table.insert(ALL_EGG_NAMES, eggName)
+end
+table.sort(ALL_EGG_NAMES)
 
 -- ======================================
 -- VARIABLES
 -- ======================================
+local autoHatchEnabled = false
 local bountyEnabled = false
+local riftEnabled = false
+local autoHatchThread = nil
 local bountyThread = nil
+local riftThread = nil
+local selectedEgg = "Common Egg"
 local currentBountyPet = "Unknown"
 local currentBountyEgg = "Unknown"
 local currentBountyChance = "Unknown"
-local hatchedCount = 0
 local HATCH_AMOUNT = 12
 
 -- ======================================
@@ -120,19 +166,37 @@ local function getTimeUntilReset()
     return "Unknown"
 end
 
+local function summonRift()
+    local world = EGG_WORLDS[currentBountyEgg] or "The Overworld"
+    pcall(function()
+        RemoteFunction:InvokeServer(
+            "SummonRift",
+            {
+                Type = "Egg",
+                Name = currentBountyEgg,
+                Time = 5,
+                Luck = 5,
+                World = world
+            }
+        )
+    end)
+    print("[Auto] Rift summoned for: " .. currentBountyEgg .. " | World: " .. world)
+end
+
 -- ======================================
--- UI
+-- UI - AUTO HATCH SELECTED EGG
 -- ======================================
-updateBountyInfo()
+AutoTab:CreateSection("🥚 Auto Hatch Selected Egg")
 
-AutoTab:CreateSection("🎯 Current Bounty")
-
-AutoTab:CreateLabel("Pet: " .. currentBountyPet)
-AutoTab:CreateLabel("Egg: " .. currentBountyEgg)
-AutoTab:CreateLabel("Chance: " .. currentBountyChance)
-AutoTab:CreateLabel("Resets in: " .. getTimeUntilReset())
-
-AutoTab:CreateSection("⚙️ Settings")
+AutoTab:CreateDropdown({
+    Name = "Select Egg",
+    CurrentOption = "Common Egg",
+    Options = ALL_EGG_NAMES,
+    Callback = function(v)
+        selectedEgg = v
+        print("[Auto] Selected egg: " .. selectedEgg)
+    end
+})
 
 AutoTab:CreateInput({
     Name = "Hatch Amount",
@@ -146,6 +210,49 @@ AutoTab:CreateInput({
         end
     end
 })
+
+AutoTab:CreateToggle({
+    Name = "Auto Hatch (Teleport + Hatch)",
+    CurrentValue = false,
+    Callback = function(v)
+        autoHatchEnabled = v
+        
+        if v then
+            autoHatchThread = task.spawn(function()
+                while autoHatchEnabled do
+                    local success = teleportToEgg(selectedEgg)
+                    if success then
+                        pcall(function()
+                            Remote:InvokeServer("HatchEgg", selectedEgg, HATCH_AMOUNT)
+                        end)
+                        print("[Auto] Hatched " .. HATCH_AMOUNT .. " | " .. selectedEgg)
+                    else
+                        warn("[Auto] Could not find location for: " .. selectedEgg)
+                    end
+                    
+                    task.wait(0.5)
+                end
+            end)
+        else
+            if autoHatchThread then
+                task.cancel(autoHatchThread)
+                autoHatchThread = nil
+            end
+        end
+    end
+})
+
+-- ======================================
+-- UI - BOUNTY SECTION
+-- ======================================
+updateBountyInfo()
+
+AutoTab:CreateSection("🎯 Current Bounty")
+
+AutoTab:CreateLabel("Pet: " .. currentBountyPet)
+AutoTab:CreateLabel("Egg: " .. currentBountyEgg)
+AutoTab:CreateLabel("Chance: " .. currentBountyChance)
+AutoTab:CreateLabel("Resets in: " .. getTimeUntilReset())
 
 AutoTab:CreateButton({
     Name = "🔄 Refresh Bounty Info",
@@ -171,8 +278,7 @@ AutoTab:CreateToggle({
                         pcall(function()
                             Remote:InvokeServer("HatchEgg", currentBountyEgg, HATCH_AMOUNT)
                         end)
-                        hatchedCount = hatchedCount + HATCH_AMOUNT
-                        print("[Auto] Hatched " .. HATCH_AMOUNT .. " | Total: " .. hatchedCount)
+                        print("[Auto] Hatched " .. HATCH_AMOUNT .. " | " .. currentBountyEgg)
                     else
                         warn("[Auto] Could not find location for: " .. currentBountyEgg)
                     end
@@ -190,7 +296,35 @@ AutoTab:CreateToggle({
     end
 })
 
-AutoTab:CreateSection("📊 Stats")
-AutoTab:CreateLabel("Total Hatched: " .. hatchedCount)
+-- ======================================
+-- UI - RIFT SECTION
+-- ======================================
+AutoTab:CreateSection("🌌 Auto Rift")
 
-print("[Auto] Loaded! Current Bounty: " .. currentBountyPet .. " | " .. currentBountyEgg .. " 🔥")
+AutoTab:CreateToggle({
+    Name = "Auto Summon Rift",
+    CurrentValue = false,
+    Callback = function(v)
+        riftEnabled = v
+        
+        if v then
+            updateBountyInfo()
+            summonRift()
+            
+            riftThread = task.spawn(function()
+                while riftEnabled do
+                    task.wait(1860)
+                    updateBountyInfo()
+                    summonRift()
+                end
+            end)
+        else
+            if riftThread then
+                task.cancel(riftThread)
+                riftThread = nil
+            end
+        end
+    end
+})
+
+print("[Auto] Loaded! 🔥")
