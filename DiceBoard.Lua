@@ -1,5 +1,5 @@
 -- ================================================
--- DICE BOARD TAB (FINAL FIXED SMART)
+-- DICE BOARD TAB (FINAL FIX + AUTO UI)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -13,7 +13,7 @@ local player = Players.LocalPlayer
 local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
 
 -- ======================================
--- CONFIG (BISA LU UBAH)
+-- CONFIG
 -- ======================================
 getgenv().boardSettings = {
     UseGoldenDice = true,
@@ -46,7 +46,29 @@ local running = false
 local thread = nil
 
 -- ======================================
--- GET NODE (FINAL FIX)
+-- FORCE OPEN BOARD UI
+-- ======================================
+local function openBoard()
+    local gui = player:WaitForChild("PlayerGui")
+    local screen = gui:FindFirstChild("ScreenGui")
+
+    if not screen then return end
+
+    local board = screen:FindFirstChild("BoardHUD")
+    if board then
+        board.Enabled = true
+    end
+
+    local mini = screen:FindFirstChild("Minigame")
+    if mini then
+        mini.Enabled = true
+    end
+
+    print("[DiceBoard] UI forced open")
+end
+
+-- ======================================
+-- GET NODE
 -- ======================================
 local function getNode()
     local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
@@ -144,8 +166,8 @@ DiceBoardTab:CreateDropdown({
         "Basic"
     },
     Callback = function(v)
-        targetTile = v
-        print("Target set:", v)
+        targetTile = v[1] -- FIX
+        print("Target set:", targetTile)
     end
 })
 
@@ -158,12 +180,16 @@ DiceBoardTab:CreateToggle({
         running = v
 
         if v then
+            openBoard() -- 🔥 penting
+            task.wait(1)
+
             thread = task.spawn(function()
                 while running do
                     smartRoll()
                     task.wait(3)
                 end
             end)
+
             print("STARTED")
         else
             if thread then task.cancel(thread) end
@@ -172,4 +198,4 @@ DiceBoardTab:CreateToggle({
     end
 })
 
-print("DICE BOARD LOADED 😈")
+print("DICE BOARD FINAL LOADED 😈")
