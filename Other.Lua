@@ -1,12 +1,237 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+-- ================================================
+-- OTHER TAB (STATS TRACKER + EFFECTS)
+-- ================================================
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
 
-]]--
+local OtherTab = Window:CreateTab("Other", nil)
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v28,v29) local v30={};for v56=1, #v28 do v6(v30,v0(v4(v1(v2(v28,v56,v56 + 1 )),v1(v2(v29,1 + (v56% #v29) ,1 + (v56% #v29) + 1 )))%256 ));end return v5(v30);end repeat task.wait();until getgenv().Window local v8=getgenv().Window;local v9=v8:CreateTab(v7("\254\215\211\32\244","\126\177\163\187\69\134\219\167"),nil);local v10=game:GetService(v7("\19\193\43\220\249\49\222","\156\67\173\74\165"));local v11=v10.LocalPlayer;local v12=false;local v13=nil;local v14=nil;local v15=nil;local v16=nil;local v17=nil;local v18=0;local v19=0;local v20=0;local function v21() local v31=530 -(152 + 378) ;local v32;while true do local v57=0;local v58;while true do if (v57==(0 -0)) then v58=0 -0 ;while true do if (0==v58) then if (v31==1) then return 0 -0 ;end if (v31==0) then v32=v11:FindFirstChild(v7("\56\178\72\18\185\52\85\32\182\93\5","\38\84\215\41\118\220\70"));if v32 then for v135,v136 in ipairs(v32:GetChildren()) do if v136.Name:find(v7("\120\23\54\17\246\85\5","\158\48\118\66\114")) then return tonumber(v136.Value) or 0 ;end end end v31=1 + 0 ;end break;end end break;end end end end local function v22() local v33=0 -0 ;local v34;local v35;local v36;local v37;local v38;local v39;local v40;local v41;local v42;local v43;while true do if (v33==(1252 -(721 + 530))) then v37=v20-v19 ;v38=((v35>0) and math.floor(v37/v35 )) or (1271 -(945 + 326)) ;v39=((v36>(0 -0)) and math.floor(v37/v36 )) or 0 ;v40=math.floor(v34/(3204 + 396) );v33=702 -(271 + 429) ;end if ((3 + 0)==v33) then if v16 then v16.Text="ðŸ“Š Rate: "   .. v38   .. v7("\9\208\63\242\0\100\165","\152\38\189\86\156\32\24\133")   .. v39   .. v7("\179\95\181","\38\156\55\199") ;end if v17 then v17.Text="â±ï¸ Time: "   .. v43 ;end break;end if (v33==0) then v20=v21();v34=os.clock() -v18 ;v35=v34/60 ;v36=v34/3600 ;v33=1501 -(1408 + 92) ;end if (v33==(1088 -(461 + 625))) then v41=math.floor((v34%(4888 -(993 + 295)))/(4 + 56) );v42=math.floor(v34%(1231 -(418 + 753)) );v43=string.format(v7("\238\116\66\50\41\224\171\249\32\74\115\35\247\255","\155\203\68\112\86\19\197"),v40,v41,v42);if v15 then v15.Text="ðŸ¥š Hatched: "   .. v37 ;end v33=2 + 1 ;end end end local function v23() local v44=0 + 0 ;local v45;local v46;local v47;local v48;local v49;while true do if (v44==(2 + 3)) then v16=Instance.new(v7("\29\196\52\156\5\192\46\141\37","\232\73\161\76"));v16.Size=UDim2.new(1 + 0 , -10,529 -(406 + 123) ,1787 -(1749 + 20) );v16.Position=UDim2.new(0 + 0 ,5,1322 -(1249 + 73) ,47);v16.BackgroundTransparency=1 + 0 ;v16.TextColor3=Color3.fromRGB(1345 -(466 + 679) ,200,200);v16.Text="ðŸ“Š Rate: 0/min | 0/hr";v16.Font=Enum.Font.Gotham;v44=14 -8 ;end if ((0 -0)==v44) then local v73=1900 -(106 + 1794) ;while true do if (v73==0) then if v13 then return;end v13=Instance.new(v7("\155\126\110\45\22\122\221\86\161","\35\200\29\28\72\115\20\154"));v73=1;end if (v73==2) then v13.Parent=v11:WaitForChild(v7("\139\90\200\185\63\66\23\212\178","\161\219\54\169\192\90\48\80"));v14=Instance.new(v7("\111\80\1\40\76","\69\41\34\96"));v73=1 + 2 ;end if (v73==(1 + 2)) then v14.Size=UDim2.new(0 -0 ,200,0 -0 ,204 -(4 + 110) );v44=585 -(57 + 527) ;break;end if (v73==1) then v13.Name=v7("\42\171\208\203\158\24\38\24\188\218\218\159","\84\121\223\177\191\237\76");v13.ResetOnSpawn=false;v73=1429 -(41 + 1386) ;end end end if (v44==(109 -(17 + 86))) then v16.TextSize=9 + 3 ;v16.TextXAlignment=Enum.TextXAlignment.Left;v16.Parent=v14;v17=Instance.new(v7("\143\220\90\73\50\186\219\71\81","\126\219\185\34\61"));v17.Size=UDim2.new(1 -0 , -(28 -18),0,184 -(122 + 44) );v17.Position=UDim2.new(0,8 -3 ,0,218 -152 );v17.BackgroundTransparency=1 + 0 ;v44=7;end if (v44==(2 + 5)) then v17.TextColor3=Color3.fromRGB(405 -205 ,265 -(30 + 35) ,138 + 62 );v17.Text="â±ï¸ Time: 00:00:00";v17.Font=Enum.Font.Gotham;v17.TextSize=1269 -(1043 + 214) ;v17.TextXAlignment=Enum.TextXAlignment.Left;v17.Parent=v14;v47=false;v44=8;end if ((11 -8)==v44) then v46.Font=Enum.Font.GothamBold;v46.TextSize=14;v46.TextXAlignment=Enum.TextXAlignment.Left;v46.Parent=v14;v15=Instance.new(v7("\255\57\63\242\242\171\201\57\43","\202\171\92\71\134\190"));v15.Size=UDim2.new(1, -(1222 -(323 + 889)),0,18);v15.Position=UDim2.new(0,13 -8 ,0,608 -(361 + 219) );v44=324 -(53 + 267) ;end if (4==v44) then local v97=0 + 0 ;while true do if (v97==(413 -(15 + 398))) then v15.BackgroundTransparency=983 -(18 + 964) ;v15.TextColor3=Color3.fromRGB(752 -552 ,200,116 + 84 );v97=1;end if (v97==2) then v15.TextSize=8 + 4 ;v15.TextXAlignment=Enum.TextXAlignment.Left;v97=853 -(20 + 830) ;end if (v97==3) then v15.Parent=v14;v44=4 + 1 ;break;end if (v97==1) then v15.Text="ðŸ¥š Hatched: 0";v15.Font=Enum.Font.Gotham;v97=128 -(116 + 10) ;end end end if (v44==(1 + 7)) then v48=nil;v49=nil;v46.InputBegan:Connect(function(v110) if ((v110.UserInputType==Enum.UserInputType.MouseButton1) or (v110.UserInputType==Enum.UserInputType.Touch)) then local v130=738 -(542 + 196) ;local v131;while true do if (v130==(0 -0)) then v131=0 + 0 ;while true do if (v131==1) then v49=v14.Position;break;end if ((0 + 0)==v131) then v47=true;v48=v110.Position;v131=1 + 0 ;end end break;end end end end);v46.InputEnded:Connect(function(v111) v47=false;end);game:GetService(v7("\57\221\91\96\87\121\227\242\24\253\91\96\104\126\240\226","\135\108\174\62\18\30\23\147")).InputChanged:Connect(function(v112) if (v47 and ((v112.UserInputType==Enum.UserInputType.MouseMovement) or (v112.UserInputType==Enum.UserInputType.Touch))) then local v132=0 -0 ;local v133;while true do if (0==v132) then v133=v112.Position-v48 ;v14.Position=UDim2.new(v49.X.Scale,v49.X.Offset + v133.X ,v49.Y.Scale,v49.Y.Offset + v133.Y );break;end end end end);task.spawn(function() while v12 do local v116=0 -0 ;while true do if (v116==0) then v22();task.wait(1);break;end end end end);break;end if ((1552 -(1126 + 425))==v44) then v14.Position=UDim2.new(1, -(615 -(118 + 287)),0 -0 ,1131 -(118 + 1003) );v14.BackgroundColor3=Color3.fromRGB(58 -38 ,20,20);v14.BackgroundTransparency=377.2 -(142 + 235) ;v14.BorderSizePixel=0;v14.Parent=v13;v45=Instance.new(v7("\137\234\244\5\16\37\185\209","\75\220\163\183\106\98"));v45.CornerRadius=UDim.new(0 -0 ,2 + 6 );v44=979 -(553 + 424) ;end if (v44==(3 -1)) then v45.Parent=v14;v46=Instance.new(v7("\54\191\147\35\245\3\184\142\59","\185\98\218\235\87"));v46.Size=UDim2.new(1, -(9 + 1),0 + 0 ,13 + 9 );v46.Position=UDim2.new(0 + 0 ,3 + 2 ,0,5);v46.BackgroundTransparency=2 -1 ;v46.TextColor3=Color3.fromRGB(710 -455 ,570 -315 ,75 + 180 );v46.Text="ðŸ“Š Stats Tracker";v44=14 -11 ;end end end local function v24() if v13 then local v63=753 -(239 + 514) ;while true do if (v63==0) then v13:Destroy();v13=nil;v63=1 + 0 ;end if (v63==(1331 -(797 + 532))) then v16=nil;v17=nil;break;end if (v63==1) then v14=nil;v15=nil;v63=2;end end end end local function v25(v50,v51,v52) pcall(function() v50[v51]=v52;end);end local function v26() for v60,v61 in pairs(game:GetDescendants()) do local v62=0;while true do if (v62==(2 + 0)) then if v61:IsA(v7("\158\214\9","\150\205\189\112\144\24")) then v25(v61,v7("\21\133\173\73\10\156","\112\69\228\223\44\100\232\113"),nil);end break;end if (v62==(0 + 0)) then if v61:IsA(v7("\148\232\57\206\40\175\33\211","\167\214\137\74\171\120\206\83")) then v25(v61,v7("\166\241\38\88\234\174\138\252","\199\235\144\82\61\152"),Enum.Material.SmoothPlastic);end if (v61:IsA(v7("\55\23\171\63\14\21\181\46\34\27\176\63\19\19\171","\75\103\118\217")) or v61:IsA(v7("\244\89\127\31\188","\126\167\52\16\116\217")) or v61:IsA(v7("\238\39\50\133","\156\168\78\64\224\212\121")) or v61:IsA(v7("\52\254\164\220\12\226\160\221","\174\103\142\197"))) then v25(v61,v7("\115\38\94\58\41\91\252","\152\54\72\63\88\69\62"),false);end v62=1;end if (v62==(2 -1)) then if (v61:IsA(v7("\246\200\225\83\217\225\232\90\209\199\250","\60\180\164\142")) or v61:IsA(v7("\122\82\16\59\2\235\20\93\93\17","\114\56\62\101\73\71\141")) or v61:IsA(v7("\156\236\203\208\176\198\221\226\177\236\215\192\157\239\221\193\187\253","\164\216\137\187")) or v61:IsA(v7("\225\243\63\128\167\231\24\247\224\55\183\165\234","\107\178\134\81\210\198\158")) or v61:IsA(v7("\27\1\142\201\184\27\1\144\212\175\59\26\139\201\164\29\8\132\195\169\44","\202\88\110\226\166"))) then v25(v61,v7("\230\1\131\245\198\198\11","\170\163\111\226\151"),false);end if (v61:IsA(v7("\53\53\177\57\66","\73\113\80\210\88\46\87")) or v61:IsA(v7("\181\41\213\6\242\147\41","\135\225\76\173\114"))) then v25(v61,v7("\46\255\185\190\191\173\166\8\232\182\179\181","\199\122\141\216\208\204\221"),1203 -(373 + 829) );end v62=733 -(476 + 255) ;end end end print("[Other] FPS Boost applied! ðŸ”¥");end local function v27() local v53=1130 -(369 + 761) ;local v54;while true do if (v53==(1 + 0)) then v25(v54,v7("\141\164\19\77\179\229\219","\175\204\201\113\36\214\139"),Color3.fromRGB(463 -208 ,482 -227 ,493 -(64 + 174) ));v25(v54,v7("\104\217\33\216\11\72\222\20\209\6\78\201\59\200","\100\39\172\85\188"),Color3.fromRGB(255,255,37 + 218 ));v53=2;end if (v53==(0 -0)) then v54=game:GetService(v7("\248\22\0\219\162\117\136\211","\230\180\127\103\179\214\28"));v25(v54,v7("\174\23\86\65\236\85\238\137\22\76","\128\236\101\63\38\132\33"),341 -(144 + 192) );v53=217 -(42 + 174) ;end if (2==v53) then v25(v54,v7("\139\119\190\165\61\169","\83\205\24\217\224"),math.huge);print("[Other] FullBright applied! ðŸ”¥");break;end end end v9:CreateSection("ðŸ“Š Stats Tracker");v9:CreateToggle({[v7("\200\196\192\56","\93\134\165\173")]=v7("\141\250\206\213\122\253\166\127\170\225\129\247\19","\30\222\146\161\162\90\174\210"),[v7("\198\91\98\24\224\64\100\60\228\66\101\15","\106\133\46\16")]=false,[v7("\123\33\127\240\88\65\91\43","\32\56\64\19\156\58")]=function(v55) v12=v55;if v55 then local v64=0 + 0 ;local v65;while true do if (v64==0) then v65=0 + 0 ;while true do if (v65==(0 + 0)) then v18=os.clock();v19=v21();v65=1;end if (v65==(1505 -(363 + 1141))) then v23();break;end end break;end end else v24();end end});v9:CreateSection("âš¡ Effects");v9:CreateButton({[v7("\116\201\232\83","\224\58\168\133\54\58\146")]=v7("\122\90\66\254\126\198\147\4\25\127\70\237\103\137\145\14\25\112\123\206","\107\57\54\43\157\21\230\231"),[v7("\248\138\29\249\187\221\204\208","\175\187\235\113\149\217\188")]=function() v26();end});v9:CreateButton({[v7("\18\174\140\73","\24\92\207\225\44\131\25")]=v7("\104\223\177\79\16\61\77\220\170\12\57\111\66\212\176\88\21\120\88\192","\29\43\179\216\44\123"),[v7("\158\216\44\64\191\216\35\71","\44\221\185\64")]=function() v27();end});print("[Other] Loaded! ðŸ”¥");
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+-- ======================================
+-- STATS TRACKER
+-- ======================================
+local statsEnabled = false
+local screenGui = nil
+local frame = nil
+local hatchedLabel = nil
+local rateLabel = nil
+local timeLabel = nil
+
+local startTime = 0
+local startHatches = 0
+local currentHatches = 0
+
+local function getHatches()
+    local leaderstats = player:FindFirstChild("leaderstats")
+    if leaderstats then
+        for _, stat in ipairs(leaderstats:GetChildren()) do
+            if stat.Name:find("Hatches") then
+                return tonumber(stat.Value) or 0
+            end
+        end
+    end
+    return 0
+end
+
+local function updateStats()
+    currentHatches = getHatches()
+    local elapsed = os.clock() - startTime
+    local minutes = elapsed / 60
+    local hours = elapsed / 3600
+    local hatchedSinceStart = currentHatches - startHatches
+    local perMin = minutes > 0 and math.floor(hatchedSinceStart / minutes) or 0
+    local perHour = hours > 0 and math.floor(hatchedSinceStart / hours) or 0
+    
+    local h = math.floor(elapsed / 3600)
+    local m = math.floor((elapsed % 3600) / 60)
+    local s = math.floor(elapsed % 60)
+    local timeStr = string.format("%02d:%02d:%02d", h, m, s)
+    
+    if hatchedLabel then hatchedLabel.Text = "🥚 Hatched: " .. hatchedSinceStart end
+    if rateLabel then rateLabel.Text = "📊 Rate: " .. perMin .. "/min | " .. perHour .. "/hr" end
+    if timeLabel then timeLabel.Text = "⏱️ Time: " .. timeStr end
+end
+
+local function createStatsUI()
+    if screenGui then return end
+    
+    screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "StatsTracker"
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+    
+    frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 200, 0, 90)
+    frame.Position = UDim2.new(1, -210, 0, 10)
+    frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    frame.BackgroundTransparency = 0.2
+    frame.BorderSizePixel = 0
+    frame.Parent = screenGui
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = frame
+    
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, -10, 0, 22)
+    title.Position = UDim2.new(0, 5, 0, 5)
+    title.BackgroundTransparency = 1
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    title.Text = "📊 Stats Tracker"
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 14
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.Parent = frame
+    
+    hatchedLabel = Instance.new("TextLabel")
+    hatchedLabel.Size = UDim2.new(1, -10, 0, 18)
+    hatchedLabel.Position = UDim2.new(0, 5, 0, 28)
+    hatchedLabel.BackgroundTransparency = 1
+    hatchedLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    hatchedLabel.Text = "🥚 Hatched: 0"
+    hatchedLabel.Font = Enum.Font.Gotham
+    hatchedLabel.TextSize = 12
+    hatchedLabel.TextXAlignment = Enum.TextXAlignment.Left
+    hatchedLabel.Parent = frame
+    
+    rateLabel = Instance.new("TextLabel")
+    rateLabel.Size = UDim2.new(1, -10, 0, 18)
+    rateLabel.Position = UDim2.new(0, 5, 0, 47)
+    rateLabel.BackgroundTransparency = 1
+    rateLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    rateLabel.Text = "📊 Rate: 0/min | 0/hr"
+    rateLabel.Font = Enum.Font.Gotham
+    rateLabel.TextSize = 12
+    rateLabel.TextXAlignment = Enum.TextXAlignment.Left
+    rateLabel.Parent = frame
+    
+    timeLabel = Instance.new("TextLabel")
+    timeLabel.Size = UDim2.new(1, -10, 0, 18)
+    timeLabel.Position = UDim2.new(0, 5, 0, 66)
+    timeLabel.BackgroundTransparency = 1
+    timeLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    timeLabel.Text = "⏱️ Time: 00:00:00"
+    timeLabel.Font = Enum.Font.Gotham
+    timeLabel.TextSize = 12
+    timeLabel.TextXAlignment = Enum.TextXAlignment.Left
+    timeLabel.Parent = frame
+    
+    -- Draggable
+    local dragging = false
+    local dragStart = nil
+    local startPos = nil
+    
+    title.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+        end
+    end)
+    
+    title.InputEnded:Connect(function(input)
+        dragging = false
+    end)
+    
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+    
+    task.spawn(function()
+        while statsEnabled do
+            updateStats()
+            task.wait(1)
+        end
+    end)
+end
+
+local function destroyStatsUI()
+    if screenGui then
+        screenGui:Destroy()
+        screenGui = nil
+        frame = nil
+        hatchedLabel = nil
+        rateLabel = nil
+        timeLabel = nil
+    end
+end
+
+-- ======================================
+-- EFFECTS
+-- ======================================
+local function safeSet(obj, prop, value)
+    pcall(function() obj[prop] = value end)
+end
+
+local function RunFPSBoost()
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("BasePart") then
+            safeSet(v, "Material", Enum.Material.SmoothPlastic)
+        end
+        if v:IsA("ParticleEmitter") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then
+            safeSet(v, "Enabled", false)
+        end
+        if v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("DepthOfFieldEffect") or v:IsA("SunRaysEffect") or v:IsA("ColorCorrectionEffect") then
+            safeSet(v, "Enabled", false)
+        end
+        if v:IsA("Decal") or v:IsA("Texture") then
+            safeSet(v, "Transparency", 1)
+        end
+        if v:IsA("Sky") then
+            safeSet(v, "Parent", nil)
+        end
+    end
+    print("[Other] FPS Boost applied! 🔥")
+end
+
+local function RunFullBright()
+    local Lighting = game:GetService("Lighting")
+    safeSet(Lighting, "Brightness", 5)
+    safeSet(Lighting, "Ambient", Color3.fromRGB(255, 255, 255))
+    safeSet(Lighting, "OutdoorAmbient", Color3.fromRGB(255, 255, 255))
+    safeSet(Lighting, "FogEnd", math.huge)
+    print("[Other] FullBright applied! 🔥")
+end
+
+-- ======================================
+-- UI
+-- ======================================
+OtherTab:CreateSection("📊 Stats Tracker")
+
+OtherTab:CreateToggle({
+    Name = "Show Stats UI",
+    CurrentValue = false,
+    Callback = function(v)
+        statsEnabled = v
+        if v then
+            startTime = os.clock()
+            startHatches = getHatches()
+            createStatsUI()
+        else
+            destroyStatsUI()
+        end
+    end
+})
+
+OtherTab:CreateSection("⚡ Effects")
+
+OtherTab:CreateButton({
+    Name = "Click to Improve FPS",
+    Callback = function()
+        RunFPSBoost()
+    end
+})
+
+OtherTab:CreateButton({
+    Name = "Click for Brightness",
+    Callback = function()
+        RunFullBright()
+    end
+})
+
+print("[Other] Loaded! 🔥")
