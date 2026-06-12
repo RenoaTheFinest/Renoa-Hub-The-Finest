@@ -1,5 +1,5 @@
 -- ================================================
--- WEBHOOK TAB (BG.SI IMAGES - ORIGINAL LAYOUT)
+-- WEBHOOK TAB (NUCLEAR FIX - MATCHES WORKING STANDALONE)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -32,7 +32,7 @@ local HttpService = game:GetService("HttpService")
 local player = Players.LocalPlayer
 
 -- ======================================
--- WEBHOOK (from config)
+-- WEBHOOK
 -- ======================================
 local WEBHOOK_URL = config.PRIVATE_WEBHOOK_URL
 local DISCORD_USER_ID = config.DISCORD_USER_ID or ""
@@ -238,35 +238,43 @@ local function send(petName,eggName,ex)
     })
 
     process()
+    
+    -- 🔥 DEBUG PRINT
+    print("[Webhook] Queued: "..petName.." ("..rarity..")")
 end
 
 -- ======================================
--- HOOK (ANTI MISS)
+-- HOOK - EXACT COPY OF WORKING STANDALONE
 -- ======================================
-local success,mod=pcall(function()
+local success, HatchingModule = pcall(function()
     return require(ReplicatedStorage.Client.Effects.HatchEgg)
 end)
 
-if success and mod then
-    hookfunction(mod.Play,newcclosure(function(self,data)
-        if type(data)=="table" and data.Pets then
-            for _,p in ipairs(data.Pets) do
-                local pet=p.Pet or p
+if success and HatchingModule then
+    hookfunction(HatchingModule.Play, newcclosure(function(self, data)
+        if type(data) == "table" and data.Pets then
+            print("[Webhook] Hatch detected! Pets: "..#data.Pets) -- 🔥 DEBUG
+            for _, petData in ipairs(data.Pets) do
+                local pet = petData.Pet
                 if pet and pet.Name then
+                    print("[Webhook] Pet: "..pet.Name.." | Shiny: "..tostring(pet.Shiny).." | Mythic: "..tostring(pet.Mythic)) -- 🔥 DEBUG
                     send(
                         pet.Name,
                         data.Name or "Egg",
-                        {Shiny=pet.Shiny,Mythic=pet.Mythic,XL=pet.XL}
+                        {Shiny = pet.Shiny, Mythic = pet.Mythic, XL = pet.XL}
                     )
                 end
             end
         end
         return
     end))
+    print("[Webhook] Hook installed! 🔥")
+else
+    warn("[Webhook] Failed to hook HatchEgg module!")
 end
 
 -- ======================================
--- UI - JUST SHOW IT'S RUNNING
+-- UI
 -- ======================================
 WebhookTab:CreateSection("✅ Status")
 WebhookTab:CreateLabel("Webhook is Running!")
@@ -274,4 +282,4 @@ WebhookTab:CreateLabel("Tracking: Secret, Celestial, Infinity, Void, Super Legen
 WebhookTab:CreateLabel("Images: cdn.bgsi.gg")
 WebhookTab:CreateLabel("Ping: "..(DISCORD_USER_ID ~= "" and "ON <@"..DISCORD_USER_ID..">" or "OFF"))
 
-print("Webhook udah bener, kalo masih jelek berarti lu nya 😭")
+print("Webhook script loaded! Ready. 🔥")
