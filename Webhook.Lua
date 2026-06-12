@@ -1,5 +1,5 @@
 -- ================================================
--- WEBHOOK TAB (CONFIG-BASED - WORKING VERSION)
+-- WEBHOOK TAB (BG.SI IMAGES - ORIGINAL LAYOUT)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -16,8 +16,8 @@ if not config.PRIVATE_WEBHOOK_URL or config.PRIVATE_WEBHOOK_URL == "" then
     WebhookTab:CreateLabel("Please set your webhook in the config before executing!")
     WebhookTab:CreateLabel("Add this BEFORE the loadstring in your executor:")
     WebhookTab:CreateLabel([[getgenv().config = {
-    PRIVATE_WEBHOOK_URL = "YOUR_URL_HERE",
-    DISCORD_USER_ID = "YOUR_ID_HERE"
+    PRIVATE_WEBHOOK_URL = "Put your webhook URL here!",
+    DISCORD_USER_ID = "Put your Discord user ID here!"
 }]])
     return
 end
@@ -138,16 +138,21 @@ local function getVariantText(v)
 end
 
 -- ======================================
--- IMAGE
+-- IMAGE (BG.SI CDN)
 -- ======================================
-local function getImage(petInfo, petName)
-    local raw = petInfo.Image or petInfo.ImageId
-    if not raw then return nil end
-
-    local id = tostring(raw):gsub("rbxassetid://",""):match("%d+")
-    if not id then return nil end
-
-    return "https://www.roblox.com/asset-thumbnail/image?assetId="..id.."&width=420&height=420&format=png"
+local function getImage(petName, ex)
+    local n = petName:lower():gsub("%s+", "-"):gsub("[^%w%-]", "")
+    
+    local prefix = ""
+    if ex.Shiny and ex.Mythic then
+        prefix = "shiny-mythic-"
+    elseif ex.Shiny then
+        prefix = "shiny-"
+    elseif ex.Mythic then
+        prefix = "mythic-"
+    end
+    
+    return "https://cdn.bgsi.gg/items/" .. prefix .. n .. ".png"
 end
 
 -- ======================================
@@ -193,7 +198,7 @@ local function send(petName,eggName,ex)
 
     local coins,gems,opened=getStats(eggName)
     local odds,exist=getPetExtra(info)
-    local img=getImage(info, petName)
+    local img=getImage(petName, ex)
 
     local embed={
         title="🎉 Congrats You Hatched A "..variantText.." "..rarity.." "..petName.."!",
@@ -236,7 +241,7 @@ local function send(petName,eggName,ex)
 end
 
 -- ======================================
--- HOOK
+-- HOOK (ANTI MISS)
 -- ======================================
 local success,mod=pcall(function()
     return require(ReplicatedStorage.Client.Effects.HatchEgg)
@@ -266,6 +271,7 @@ end
 WebhookTab:CreateSection("✅ Status")
 WebhookTab:CreateLabel("Webhook is Running!")
 WebhookTab:CreateLabel("Tracking: Secret, Celestial, Infinity, Void, Super Legendary")
+WebhookTab:CreateLabel("Images: cdn.bgsi.gg")
 WebhookTab:CreateLabel("Ping: "..(DISCORD_USER_ID ~= "" and "ON <@"..DISCORD_USER_ID..">" or "OFF"))
 
 print("Webhook udah bener, kalo masih jelek berarti lu nya 😭")
