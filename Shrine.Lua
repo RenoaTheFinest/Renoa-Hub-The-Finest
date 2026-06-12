@@ -62,11 +62,15 @@ end
 
 local function permShrine()
     pcall(function()
+        -- Step 1: Donate
         RemoteFunc:InvokeServer("DonateToPermanentShrine", "Lucky", 6, PERM_AMOUNT)
         task.wait(1)
+        -- Step 2: Claim the blessing for the selected egg
         RemoteEvent:FireServer("ClaimPermanentShrineBuff", PERM_EGG)
         task.wait(1)
+        -- Step 3: Claim again (matching standalone behavior)
         RemoteEvent:FireServer("ClaimPermanentShrineBuff", PERM_EGG)
+        print("[Perm Shrine] Claimed blessing for: " .. PERM_EGG)
     end)
 end
 
