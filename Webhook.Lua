@@ -1,5 +1,5 @@
 -- ================================================
--- WEBHOOK TAB (NUCLEAR FIX - MATCHES WORKING STANDALONE)
+-- WEBHOOK TAB (FINAL FIX - WORKS WITH ANIMATION TOGGLE)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -32,7 +32,7 @@ local HttpService = game:GetService("HttpService")
 local player = Players.LocalPlayer
 
 -- ======================================
--- WEBHOOK
+-- WEBHOOK (from config)
 -- ======================================
 local WEBHOOK_URL = config.PRIVATE_WEBHOOK_URL
 local DISCORD_USER_ID = config.DISCORD_USER_ID or ""
@@ -238,26 +238,23 @@ local function send(petName,eggName,ex)
     })
 
     process()
-    
-    -- 🔥 DEBUG PRINT
-    print("[Webhook] Queued: "..petName.." ("..rarity..")")
 end
 
 -- ======================================
--- HOOK - EXACT COPY OF WORKING STANDALONE
+-- HOOK (WORKS WITH ANIMATION TOGGLE)
 -- ======================================
-local success, HatchingModule = pcall(function()
+local success, mod = pcall(function()
     return require(ReplicatedStorage.Client.Effects.HatchEgg)
 end)
 
-if success and HatchingModule then
-    hookfunction(HatchingModule.Play, newcclosure(function(self, data)
+if success and mod then
+    local originalPlay = mod.Play
+
+    local hookedFunction = newcclosure(function(self, data)
         if type(data) == "table" and data.Pets then
-            print("[Webhook] Hatch detected! Pets: "..#data.Pets) -- 🔥 DEBUG
-            for _, petData in ipairs(data.Pets) do
-                local pet = petData.Pet
+            for _, p in ipairs(data.Pets) do
+                local pet = p.Pet or p
                 if pet and pet.Name then
-                    print("[Webhook] Pet: "..pet.Name.." | Shiny: "..tostring(pet.Shiny).." | Mythic: "..tostring(pet.Mythic)) -- 🔥 DEBUG
                     send(
                         pet.Name,
                         data.Name or "Egg",
@@ -266,8 +263,15 @@ if success and HatchingModule then
                 end
             end
         end
-        return
-    end))
+        -- Skip animation if hidden
+        if getgenv().animationHidden then
+            return
+        end
+        -- Otherwise play normal animation
+        return originalPlay(self, data)
+    end)
+
+    mod.Play = hookedFunction
     print("[Webhook] Hook installed! 🔥")
 else
     warn("[Webhook] Failed to hook HatchEgg module!")
@@ -279,7 +283,6 @@ end
 WebhookTab:CreateSection("✅ Status")
 WebhookTab:CreateLabel("Webhook is Running!")
 WebhookTab:CreateLabel("Tracking: Secret, Celestial, Infinity, Void, Super Legendary")
-WebhookTab:CreateLabel("Images: cdn.bgsi.gg")
 WebhookTab:CreateLabel("Ping: "..(DISCORD_USER_ID ~= "" and "ON <@"..DISCORD_USER_ID..">" or "OFF"))
 
-print("Webhook script loaded! Ready. 🔥")
+print("Webhook udah bener, kalo masih jelek berarti lu nya 😭")
