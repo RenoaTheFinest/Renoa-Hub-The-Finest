@@ -1,5 +1,5 @@
 -- ================================================
--- RIFT TAB (FIXED - HATCH + CHEST + HIGHEST LUCK)
+-- RIFT TAB (SUMMON ONLY)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -7,34 +7,8 @@ local Window = getgenv().Window
 local RiftTab = Window:CreateTab("Rift", nil)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
-local VirtualInputManager = game:GetService("VirtualInputManager")
 
-local player = Players.LocalPlayer
-
-local RemoteEvent = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
-local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
-local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
-local Rifts = require(ReplicatedStorage.Shared.Data.Rifts)
-
--- ======================================
--- EGG LOCATIONS
--- ======================================
-local EGG_LOCATIONS = {
-    ["Spikey Egg"] = Vector3.new(-128, 10, 9),
-    ["Magma Egg"] = Vector3.new(-137, 11, 3),
-    ["Crystal Egg"] = Vector3.new(-144, 10, -5),
-    ["Lunar Egg"] = Vector3.new(-148, 11, -15),
-    ["Void Egg"] = Vector3.new(-150, 11, -26),
-    ["Hell Egg"] = Vector3.new(-149, 11, -37),
-    ["Nightmare Egg"] = Vector3.new(9910, 20087, 208),
-    ["Rainbow Egg"] = Vector3.new(9919, 20089, 219),
-    ["Mining Egg"] = Vector3.new(-122, 11, -69),
-    ["Cyber Egg"] = Vector3.new(9916, 20088, 214),
-    ["Neon Egg"] = Vector3.new(9913, 20089, 212),
-}
-
-local WORLDS = {"The Overworld", "Minigame Paradise"}
+local WORLDS = {"The Overworld","Minigame Paradise"}
 
 local WORLD_EGGS = {
     ["The Overworld"] = {"Spikey Egg","Magma Egg","Crystal Egg","Lunar Egg","Void Egg","Hell Egg","Nightmare Egg","Rainbow Egg"},
@@ -48,6 +22,7 @@ local WORLD_CHESTS = {
 
 local selectedEggWorld = "The Overworld"
 local selectedEgg = "Spikey Egg"
+
 local selectedChestWorld = "The Overworld"
 local selectedChest = "Golden Chest"
 
@@ -56,116 +31,10 @@ local chestLoop = false
 local eggThread = nil
 local chestThread = nil
 
-local HATCH_AMOUNT = 12
-
--- ======================================
--- FUNCTIONS
--- ======================================
-local function getRoot()
-    local char = player.Character
-    if char then return char:FindFirstChild("HumanoidRootPart") end
-end
-
-local function eggNameToKey(name)
-    return name:lower():gsub("%s+", "-")
-end
-
-local function getRiftPosition(name)
-    local key = eggNameToKey(name)
-    local riftFolder = workspace:FindFirstChild("Rendered")
-    if riftFolder then
-        riftFolder = riftFolder:FindFirstChild("Rifts")
-        if riftFolder then
-            -- Find all rifts for this egg and pick highest luck
-            local bestRift = nil
-            local bestLuck = -1
-            
-            for _, rift in ipairs(riftFolder:GetChildren()) do
-                if rift.Name == key then
-                    local data = Rifts[key]
-                    local luck = 0
-                    if data and data.Luck then
-                        luck = tonumber(data.Luck) or 0
-                    end
-                    if luck > bestLuck then
-                        bestLuck = luck
-                        bestRift = rift
-                    end
-                end
-            end
-            
-            if bestRift then
-                -- Try EggPlatformSpawn first
-                local spawn = bestRift:FindFirstChild("EggPlatformSpawn")
-                if spawn then
-                    local part = spawn:FindFirstChild("Part")
-                    if part then return part.Position end
-                end
-                -- Fallback: any part
-                for _, child in ipairs(bestRift:GetDescendants()) do
-                    if child:IsA("BasePart") then
-                        return child.Position
-                    end
-                end
-            end
-        end
-    end
-    return nil
-end
-
-local function getChestPosition(name)
-    local key = eggNameToKey(name)
-    local riftFolder = workspace:FindFirstChild("Rendered")
-    if riftFolder then
-        riftFolder = riftFolder:FindFirstChild("Rifts")
-        if riftFolder then
-            local rift = riftFolder:FindFirstChild(key)
-            if rift then
-                local chest = rift:FindFirstChild("Chest")
-                if chest then
-                    for _, child in ipairs(chest:GetDescendants()) do
-                        if child:IsA("BasePart") then
-                            return child.Position
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return nil
-end
-
-local function teleportToRift(name)
-    local pos = getRiftPosition(name) or getChestPosition(name)
-    if pos then
-        local root = getRoot()
-        if root then
-            root.CFrame = CFrame.new(pos)
-            return true
-        end
-    end
-    -- Fallback to normal egg
-    local eggPos = EGG_LOCATIONS[name]
-    if eggPos then
-        local root = getRoot()
-        if root then
-            root.CFrame = CFrame.new(eggPos)
-            return true
-        end
-    end
-    return false
-end
-
-local function pressE()
-    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-    task.wait(0.01)
-    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
-end
-
 -- =========================
 -- EGG RIFT
 -- =========================
-RiftTab:CreateSection("🥚 Egg Rift")
+RiftTab:CreateSection("Egg Rift")
 
 RiftTab:CreateDropdown({
     Name = "Egg World",
@@ -186,19 +55,8 @@ RiftTab:CreateDropdown({
     end
 })
 
-RiftTab:CreateInput({
-    Name = "Hatch Amount",
-    CurrentValue = tostring(HATCH_AMOUNT),
-    PlaceholderText = "12",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(v)
-        local n = tonumber(v)
-        if n then HATCH_AMOUNT = n end
-    end
-})
-
 RiftTab:CreateToggle({
-    Name = "Auto Egg Rift (Summon + TP + Hatch)",
+    Name = "Auto Egg Rift",
     CurrentValue = false,
     Callback = function(v)
         eggLoop = v
@@ -206,34 +64,18 @@ RiftTab:CreateToggle({
         if v then
             eggThread = task.spawn(function()
                 while eggLoop do
-                    -- Summon rift
                     pcall(function()
-                        RemoteFunction:InvokeServer(
+                        ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction:InvokeServer(
                             "SummonRift",
                             {
-                                Type = "Egg",
-                                Name = selectedEgg,
-                                Time = 5,
-                                Luck = 5,
-                                World = selectedEggWorld
+                                Type="Egg",
+                                Name=selectedEgg,
+                                Time=5,
+                                Luck=5,
+                                World=selectedEggWorld
                             }
                         )
                     end)
-                    print("[Rift] 🌌 Summoned: " .. selectedEgg)
-                    
-                    -- Wait for rift
-                    task.wait(3)
-                    
-                    -- Teleport to highest luck rift
-                    teleportToRift(selectedEgg)
-                    
-                    -- Hatch using Remote:InvokeServer
-                    task.wait(0.5)
-                    pcall(function()
-                        Remote:InvokeServer("HatchEgg", selectedEgg, HATCH_AMOUNT)
-                    end)
-                    print("[Rift] 🥚 Hatched " .. HATCH_AMOUNT)
-                    
                     task.wait(1860)
                 end
             end)
@@ -247,7 +89,7 @@ RiftTab:CreateToggle({
 -- =========================
 -- CHEST RIFT
 -- =========================
-RiftTab:CreateSection("💎 Chest Rift")
+RiftTab:CreateSection("Chest Rift")
 
 RiftTab:CreateDropdown({
     Name = "Chest World",
@@ -269,7 +111,7 @@ RiftTab:CreateDropdown({
 })
 
 RiftTab:CreateToggle({
-    Name = "Auto Chest Rift (Summon + TP + Open)",
+    Name = "Auto Chest Rift",
     CurrentValue = false,
     Callback = function(v)
         chestLoop = v
@@ -277,38 +119,17 @@ RiftTab:CreateToggle({
         if v then
             chestThread = task.spawn(function()
                 while chestLoop do
-                    -- Summon chest rift
                     pcall(function()
-                        RemoteFunction:InvokeServer(
+                        ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction:InvokeServer(
                             "SummonRift",
                             {
-                                Type = "Chest",
-                                Name = selectedChest,
-                                Time = 5,
-                                World = selectedChestWorld
+                                Type="Chest",
+                                Name=selectedChest,
+                                Time=5,
+                                World=selectedChestWorld
                             }
                         )
                     end)
-                    print("[Rift] 🌌 Summoned chest: " .. selectedChest)
-                    
-                    -- Wait for rift
-                    task.wait(5)
-                    
-                    -- Teleport to chest
-                    local success = teleportToRift(selectedChest)
-                    if success then
-                        print("[Rift] 📍 At chest, spamming E...")
-                        task.wait(0.5)
-                        
-                        -- Spam E until toggle off
-                        while chestLoop do
-                            pressE()
-                            task.wait(0.01)
-                        end
-                    else
-                        print("[Rift] ❌ Couldn't find chest position")
-                    end
-                    
                     task.wait(1860)
                 end
             end)
