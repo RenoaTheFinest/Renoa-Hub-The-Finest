@@ -1,12 +1,145 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+-- ================================================
+-- DICE BOARD TAB (FIXED - ROLL + CLAIM)
+-- ================================================
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
 
-]]--
+local DiceBoardTab = Window:CreateTab("Dice Board", nil)
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v25,v26) local v27={};for v38=1, #v25 do v6(v27,v0(v4(v1(v2(v25,v38,v38 + 1 )),v1(v2(v26,1 + (v38% #v26) ,1 + (v38% #v26) + 1 )))%256 ));end return v5(v27);end repeat task.wait();until getgenv().Window local v8=getgenv().Window;local v9=v8:CreateTab(v7("\245\202\216\32\166\153\200\31\195\199","\126\177\163\187\69\134\219\167"),nil);local v10=game:GetService(v7("\17\200\58\201\245\32\204\62\192\248\16\217\37\215\253\36\200","\156\67\173\74\165"));local v11=game:GetService(v7("\4\187\72\15\185\52\85","\38\84\215\41\118\220\70"));local v12=v11.LocalPlayer;local v13=require(v10.Shared.Framework.Network.Remote);local v14=require(v10.Client.Gui.Frames.Board);local v15={[v7("\115\30\35\28\253\85","\158\48\118\66\114")]={5,13,5 + 20 ,29,32,36,193 -154 ,40,20 + 24 ,886 -(660 + 176) ,7 + 46 ,55,60,25 + 36 ,62,72,159 -83 ,78,79,83},[v7("\143\45\19\51\62\142\254\178","\155\203\68\112\86\19\197")]={19,21,78 -44 ,113 -66 ,947 -(550 + 317) },[v7("\98\212\53\249","\152\38\189\86\156\32\24\133")]={4,12,22 -6 ,41,1707 -(970 + 695) ,2044 -(582 + 1408) ,204 -145 },[v7("\219\94\166\72\232\26\131\79\255\82","\38\156\55\199")]={259 -190 },[v7("\143\114\112\44\22\122\183\103\161\126\121","\35\200\29\28\72\115\20\154")]={10,20,33 -7 ,28,825 -(162 + 618) ,35 + 14 ,159 -84 ,7 + 79 },[v7("\48\177\215\214\131\37\32\0\242\244\211\132\52\61\11","\84\121\223\177\191\237\76")]={1017 -(451 + 549) ,64},[v7("\136\70\204\163\51\81\60\140\158\81\206","\161\219\54\169\192\90\48\80")]={27,1441 -(746 + 638) ,63,27 + 44 ,82},[v7("\122\87\16\32\91\15\52\44\74\73\5\49","\69\41\34\96")]={8,352 -(218 + 123) ,18,52,10 + 55 ,5 + 61 },[v7("\158\194\196\3\1","\75\220\163\183\106\98")]={1468 -(899 + 568) ,4 + 2 ,16 -9 ,612 -(268 + 335) ,14,15,1478 -(282 + 1174) ,23,24,1054 -(706 + 318) ,1282 -(721 + 530) ,1306 -(945 + 326) ,33 + 4 ,48,1551 -(1408 + 92) ,1344 -(993 + 295) ,1229 -(418 + 753) ,7 + 60 ,18 + 50 ,70,1842 -(1749 + 20) ,1396 -(1249 + 73) ,81,201 -117 ,243 -158 ,1987 -(106 + 1794) }};local v16=v7("\33\178\138\57\218\7","\185\98\218\235\87");local v17=false;local v18=nil;local v19=true;local v20=1 + 1 ;local function v21() local v28=0 + 0 ;while true do if (v28==(0 -0)) then for v45,v46 in pairs(v14.Pieces) do if ((v45==v12.Name) and v46 and v46.Node) then return v46.Node.Part;end end return nil;end end end local function v22(v29,v30) local v31=nil;local v32=math.huge;for v39,v40 in ipairs(v30) do local v41=0 -0 ;local v42;while true do if (v41==(114 -(4 + 110))) then v42=((v40>=v29) and (v40-v29)) or (((672 -(57 + 527)) -v29) + v40) ;if (v42<v32) then v32=v42;v31=v40;end break;end end end return v31,v32;end local function v23(v33) pcall(function() v13:InvokeServer(v7("\249\51\43\234\250\163\200\57","\202\171\92\71\134\190"),v33);end);end local function v24() while v17 do local v43=1427 -(41 + 1386) ;local v44;while true do if (v43==(104 -(17 + 86))) then task.wait(3);break;end if ((0 + 0)==v43) then local v47=0 -0 ;while true do if (v47==(2 -1)) then v43=1;break;end if ((166 -(122 + 44))==v47) then local v50=0 -0 ;while true do if (v50==(3 -2)) then v47=1 + 0 ;break;end if (v50==(0 + 0)) then v44=v21();if v44 then local v51,v52=v22(v44,v15[v16]);local v53=v7("\13\200\47\141","\232\73\161\76");if (v19 and (v52<=v20)) then v53=v7("\156\214\78\89\27\181\153\102\84\29\190","\126\219\185\34\61");elseif (v52>=(20 -10)) then v53=v7("\43\199\95\124\106\55\215\238\15\203","\135\108\174\62\18\30\23\147");end print(v7("\141\205\35\200\29\140\60\198\164\237\23\139\54\161\55\194\236\169","\167\214\137\74\171\120\206\83")   .. v44   .. v7("\203\236\114\121\241\180\159\170\114","\199\235\144\82\61\152")   .. v52   .. v7("\71\10\249","\75\103\118\217")   .. v53 );v23(v53);else print(v7("\252\112\121\23\188\60\200\85\98\16\132\94\240\85\121\0\176\16\192\20\118\27\171\94\197\91\113\6\189\80\137\26","\126\167\52\16\116\217"));end v50=66 -(30 + 35) ;end end end end end end end end v9:CreateSection("ðŸŽ¯ Settings");v9:CreateDropdown({[v7("\230\47\45\133","\156\168\78\64\224\212\121")]=v7("\51\239\183\201\2\250\229\250\14\226\160","\174\103\142\197"),[v7("\117\61\77\42\32\80\236\121\56\75\49\42\80","\152\54\72\63\88\69\62")]={v7("\247\204\239\82\215\193","\60\180\164\142")},[v7("\119\78\17\32\40\227\1","\114\56\62\101\73\71\141")]={v7("\155\225\218\202\187\236","\164\216\137\187"),v7("\246\239\50\183\235\213\14\203","\107\178\134\81\210\198\158"),v7("\28\7\129\195","\202\88\110\226\166"),v7("\228\6\131\249\222\142\43\139\244\207","\170\163\111\226\151"),v7("\54\63\190\60\75\57\100\53\57\177\61","\73\113\80\210\88\46\87"),v7("\168\34\203\27\233\136\56\212\95\194\141\37\213\27\245","\135\225\76\173\114"),v7("\41\253\189\179\165\188\171\87\200\191\183","\199\122\141\216\208\204\221"),v7("\158\200\0\245\106\187\153\212\19\251\125\226","\150\205\189\112\144\24"),v7("\7\133\172\69\7","\112\69\228\223\44\100\232\113")},[v7("\247\30\11\223\180\125\133\223","\230\180\127\103\179\214\28")]=function(v34) v16=v34;end});v9:CreateToggle({[v7("\162\4\82\67","\128\236\101\63\38\132\33")]=v7("\153\186\20\4\145\228\195\168\172\31\4\146\226\204\169","\175\204\201\113\36\214\139"),[v7("\100\217\39\206\1\73\216\3\221\8\82\201","\100\39\172\85\188")]=v19,[v7("\142\121\181\140\49\172\123\178","\83\205\24\217\224")]=function(v35) v19=v35;end});v9:CreateToggle({[v7("\200\196\192\56","\93\134\165\173")]=v7("\159\231\213\205\122\234\187\125\187\178\227\205\59\220\182","\30\222\146\161\162\90\174\210"),[v7("\198\91\98\24\224\64\100\60\228\66\101\15","\106\133\46\16")]=false,[v7("\123\33\127\240\88\65\91\43","\32\56\64\19\156\58")]=function(v36) local v37=0 -0 ;while true do if (v37==(580 -(361 + 219))) then v17=v36;if v36 then v18=task.spawn(v24);print(v7("\97\236\236\85\95\208\143\91\218\225\107\26\193\148\91\218\241\83\94\179","\224\58\168\133\54\58\146"));else local v48=320 -(53 + 267) ;local v49;while true do if (v48==(0 + 0)) then v49=413 -(15 + 398) ;while true do if ((982 -(18 + 964))==v49) then if v18 then task.cancel(v18);end print(v7("\98\114\66\254\112\164\136\10\75\82\118\189\70\146\136\27\73\83\79\188","\107\57\54\43\157\21\230\231"));break;end end break;end end end break;end end end});print("[DiceBoard] Loaded! ðŸŽ²");
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
+local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
+
+-- ======================================
+-- TILE MAPPINGS
+-- ======================================
+local TILE_TYPES = {
+    ["Chance"] = {5,13,25,29,32,36,39,40,44,50,53,55,60,61,62,72,76,78,79,83},
+    ["Dice-Key"] = {19,21,34,47,80},
+    ["Dice"] = {4,12,16,41,42,54,59},
+    ["Giant-Dice"] = {69},
+    ["Golden-Dice"] = {10,20,26,28,45,49,75,86},
+    ["Infinity-Elixir"] = {17,64},
+    ["Special-Egg"] = {27,57,63,71,82},
+    ["Super-Ticket"] = {8,11,18,52,65,66},
+    ["Basic"] = {1,6,7,9,14,15,22,23,24,30,31,35,37,48,51,56,58,67,68,70,73,74,81,84,85,87},
+}
+
+-- ======================================
+-- SETTINGS
+-- ======================================
+local targetTile = "Chance"
+local running = false
+local thread = nil
+local USE_GOLDEN_DICE = true
+local GOLDEN_DICE_DIST = 2
+
+-- ======================================
+-- FUNCTIONS
+-- ======================================
+local function getNode()
+    for name, piece in pairs(Board.Pieces) do
+        if name == player.Name and piece and piece.Node then
+            return piece.Node.Part
+        end
+    end
+    return nil
+end
+
+local function getClosest(current, list)
+    local closest = nil
+    local dist = math.huge
+    for _, num in ipairs(list) do
+        local d = (num >= current) and (num - current) or (88 - current + num)
+        if d < dist then
+            dist = d
+            closest = num
+        end
+    end
+    return closest, dist
+end
+
+local function rollDice(diceName)
+    pcall(function()
+        Remote:InvokeServer("RollDice", diceName)
+    end)
+end
+
+local function claimTile()
+    pcall(function()
+        Remote:FireServer("ClaimTile")
+    end)
+end
+
+local function loop()
+    while running do
+        local node = getNode()
+        
+        if node then
+            local target, dist = getClosest(node, TILE_TYPES[targetTile])
+            
+            local dice = "Dice"
+            if USE_GOLDEN_DICE and dist <= GOLDEN_DICE_DIST then
+                dice = "Golden Dice"
+            elseif dist >= 10 then
+                dice = "Giant Dice"
+            end
+            
+            print("[DiceBoard] Node: "..node.." | Dist: "..dist.." | "..dice)
+            rollDice(dice)
+            
+            -- Wait for roll animation
+            task.wait(2)
+            
+            -- Claim whatever tile we landed on
+            claimTile()
+            print("[DiceBoard] Claimed tile!")
+        else
+            print("[DiceBoard] Waiting for board...")
+        end
+        
+        task.wait(2)
+    end
+end
+
+-- ======================================
+-- UI
+-- ======================================
+DiceBoardTab:CreateSection("🎯 Settings")
+
+DiceBoardTab:CreateDropdown({
+    Name = "Target Tile",
+    CurrentOption = {"Chance"},
+    Options = {"Chance","Dice-Key","Dice","Giant-Dice","Golden-Dice","Infinity-Elixir","Special-Egg","Super-Ticket","Basic"},
+    Callback = function(v)
+        targetTile = v
+    end
+})
+
+DiceBoardTab:CreateToggle({
+    Name = "Use Golden Dice",
+    CurrentValue = USE_GOLDEN_DICE,
+    Callback = function(v)
+        USE_GOLDEN_DICE = v
+    end
+})
+
+DiceBoardTab:CreateToggle({
+    Name = "Auto Dice Board",
+    CurrentValue = false,
+    Callback = function(v)
+        running = v
+        if v then
+            thread = task.spawn(loop)
+            print("[DiceBoard] Started!")
+        else
+            if thread then task.cancel(thread) end
+            print("[DiceBoard] Stopped!")
+        end
+    end
+})
+
+print("[DiceBoard] Loaded! 🎲")
