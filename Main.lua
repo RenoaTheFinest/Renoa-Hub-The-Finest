@@ -4,9 +4,9 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Renoa Hub",
+    Name = "Renoa Hub | The Finest Hub",
     LoadingTitle = "Loading...",
-    LoadingSubtitle = "by Renoa"
+    LoadingSubtitle = "by Renoa The Finest"
 })
 
 getgenv().Window = Window
