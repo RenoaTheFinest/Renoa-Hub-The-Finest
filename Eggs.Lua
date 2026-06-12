@@ -1,5 +1,5 @@
 -- =========================
--- EGGS TAB (FIX GLOBAL)
+-- EGGS TAB (FIXED)
 -- =========================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -37,15 +37,11 @@ EggTab:CreateToggle({
     Name = "Hide Hatch Animation",
     CurrentValue = false,
     Callback = function(V)
-        local ok, HatchEgg = pcall(function()
-            return require(game:GetService("ReplicatedStorage").Client.Effects:WaitForChild("HatchEgg"))
-        end)
-        if ok and HatchEgg then
-            if V then
-                HatchEgg.Play = function() return end
-            else
-                print("re-exec buat balikin anim")
-            end
+        getgenv().animationHidden = V
+        if V then
+            print("Animation hidden ✅")
+        else
+            print("Animation restored ✅")
         end
     end,
 })
