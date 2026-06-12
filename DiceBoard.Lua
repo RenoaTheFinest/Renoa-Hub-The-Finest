@@ -1,171 +1,142 @@
 -- ================================================
--- DICE BOARD TAB (SIMPLIFIED)
+-- DICE BOARD (SMART TARGET + DEBUG)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
 
 local DiceBoardTab = Window:CreateTab("Dice Board", nil)
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local player = Players.LocalPlayer
 local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
-local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
 
--- ======================================
--- TILE MAPPINGS
--- ======================================
-local TILE_TYPES = {
-    ["Chance"] = {5, 13, 25, 29, 32, 36, 39, 40, 44, 50, 53, 55, 60, 61, 62, 72, 76, 78, 79, 83},
-    ["Dice-Key"] = {19, 21, 34, 47, 80},
-    ["Dice"] = {4, 12, 16, 41, 42, 54, 59},
+-- ================================
+-- TILE DATA
+-- ================================
+local TILE_TARGETS = {
+    ["Chance"] = {5,13,25,29,32,36,39,40,44,50,53,55,60,61,62,72,76,78,79,83},
+    ["Dice-Key"] = {19,21,34,47,80},
+    ["Dice"] = {4,12,16,41,42,54,59},
     ["Giant-Dice"] = {69},
-    ["Golden-Dice"] = {10, 20, 26, 28, 45, 49, 75, 86},
-    ["Infinity-Elixir"] = {17, 64},
-    ["Random-Dice"] = {3, 33, 38, 46, 88},
-    ["Special-Egg"] = {27, 57, 63, 71, 82},
-    ["Super-Ticket"] = {8, 11, 18, 52, 65, 66},
-    ["Basic"] = {1, 6, 7, 9, 14, 15, 22, 23, 24, 30, 31, 35, 37, 48, 51, 56, 58, 67, 68, 70, 73, 74, 81, 84, 85, 87},
+    ["Golden-Dice"] = {10,20,26,28,45,49,75,86},
+    ["Infinity"] = {17,64},
+    ["Special-Egg"] = {27,57,63,71,82},
+    ["Super-Ticket"] = {8,11,18,52,65,66}
 }
 
--- ======================================
--- SETTINGS
--- ======================================
-local boardEnabled = false
-local boardThread = nil
-local targetTile = "Chance"
-local goldenDistance = 2
+-- ================================
+-- STATE
+-- ================================
+local enabled = false
+local selectedTarget = "Golden-Dice"
+local thread = nil
 
--- ======================================
--- FUNCTIONS
--- ======================================
-local function getMyNode()
-    for playerName, piece in pairs(Board.Pieces) do
-        if playerName == player.Name then
-            if piece and piece.Node then
-                return piece.Node.Part
+-- ================================
+-- DEBUG NODE DETECTION
+-- ================================
+local function getNode()
+    -- coba beberapa kemungkinan
+    local data = player:FindFirstChild("BoardData")
+    if data then
+        local node = data:FindFirstChild("Node")
+        if node then
+            print("[DEBUG] Node via BoardData:", node.Value)
+            return node.Value
+        end
+    end
+
+    -- fallback (kalau sistem beda)
+    if player:FindFirstChild("leaderstats") then
+        for _,v in pairs(player.leaderstats:GetChildren()) do
+            if string.lower(v.Name):find("node") then
+                print("[DEBUG] Node via leaderstats:", v.Value)
+                return v.Value
             end
         end
     end
+
+    print("[DEBUG] Node NOT FOUND")
     return nil
 end
 
-local function getClosestTarget(currentNode, targetType)
-    local tiles = TILE_TYPES[targetType] or {}
-    local closest = nil
-    local closestDist = 999
-    
-    for _, tileNum in ipairs(tiles) do
-        if tileNum >= currentNode then
-            local dist = tileNum - currentNode
-            if dist < closestDist then
-                closestDist = dist
-                closest = tileNum
-            end
-        end
-    end
-    
-    if not closest then
-        for _, tileNum in ipairs(tiles) do
-            local dist = (88 - currentNode) + tileNum
-            if dist < closestDist then
-                closestDist = dist
-                closest = tileNum
-            end
-        end
-    end
-    
-    return closest, closestDist
-end
-
-local function rollDice(diceName)
+local function roll(type)
+    print("[DEBUG] Rolling:", type)
     pcall(function()
-        Remote:InvokeServer("RollDice", diceName)
+        Remote:InvokeServer("RollDice", type)
     end)
 end
 
-local function smartRoll()
-    local myNode = getMyNode()
-    
-    if myNode then
-        local target, distance = getClosestTarget(myNode, targetTile)
-        
-        if target and distance <= goldenDistance then
-            rollDice("Golden Dice")
-            print("[DiceBoard] 🎯 Target " .. distance .. " tiles → Golden Dice!")
-            return
-        elseif target and distance <= 6 then
-            rollDice("Dice")
-            print("[DiceBoard] 🎯 Target " .. distance .. " tiles → Dice")
-            return
-        elseif target and distance <= 10 then
-            rollDice("Giant Dice")
-            print("[DiceBoard] 🎯 Target " .. distance .. " tiles → Giant Dice!")
-            return
-        end
+local function chooseDice(current, target)
+    local diff = target - current
+
+    if diff <= 6 then
+        return "Dice"
+    elseif diff <= 12 then
+        return "Giant Dice"
+    else
+        return "Dice"
     end
-    
-    rollDice("Dice")
-    print("[DiceBoard] Rolling Dice")
 end
 
--- ======================================
--- UI
--- ======================================
-DiceBoardTab:CreateSection("🎯 Target Settings")
+local function findClosestTarget(current)
+    local list = TILE_TARGETS[selectedTarget]
+    local best = nil
+    local bestDiff = math.huge
 
+    for _,tile in ipairs(list) do
+        if tile > current then
+            local diff = tile - current
+            if diff < bestDiff then
+                bestDiff = diff
+                best = tile
+            end
+        end
+    end
+
+    print("[DEBUG] Current:", current, "Target:", best)
+    return best
+end
+
+local function loop()
+    while enabled do
+        task.wait(2)
+
+        local node = getNode()
+        if not node then continue end
+
+        local target = findClosestTarget(node)
+        if not target then continue end
+
+        local dice = chooseDice(node, target)
+        roll(dice)
+    end
+end
+
+-- ================================
+-- UI
+-- ================================
 DiceBoardTab:CreateDropdown({
     Name = "Target Tile",
-    CurrentOption = {"Chance"},
-    Options = {
-        "Chance",
-        "Dice-Key",
-        "Dice",
-        "Giant-Dice",
-        "Golden-Dice",
-        "Infinity-Elixir",
-        "Random-Dice",
-        "Special-Egg",
-        "Super-Ticket",
-        "Basic"
-    },
+    Options = {"Chance","Dice-Key","Dice","Giant-Dice","Golden-Dice","Infinity","Special-Egg","Super-Ticket"},
+    CurrentOption = {"Golden-Dice"},
     Callback = function(v)
-        targetTile = v
+        selectedTarget = v[1]
     end
 })
-
-DiceBoardTab:CreateInput({
-    Name = "Golden Dice Distance",
-    CurrentValue = tostring(goldenDistance),
-    PlaceholderText = "2",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(v)
-        local n = tonumber(v)
-        if n then goldenDistance = n end
-    end
-})
-
-DiceBoardTab:CreateSection("🎮 Auto Roll")
 
 DiceBoardTab:CreateToggle({
-    Name = "Auto Dice Board",
+    Name = "Auto Smart Dice",
     CurrentValue = false,
     Callback = function(v)
-        boardEnabled = v
+        enabled = v
         if v then
-            boardThread = task.spawn(function()
-                while boardEnabled do
-                    smartRoll()
-                    task.wait(3)
-                end
-            end)
-            print("[DiceBoard] Started!")
+            thread = task.spawn(loop)
+            print("[DiceBoard] STARTED")
         else
-            if boardThread then task.cancel(boardThread) end
-            print("[DiceBoard] Stopped!")
+            if thread then task.cancel(thread) end
+            print("[DiceBoard] STOPPED")
         end
     end
 })
-
-print("[DiceBoard] Loaded! 🎲")
