@@ -1,12 +1,12 @@
 -- ======================================
--- RENOA HUB
+-- RENOA HUB | THE FINEST HUB
 -- ======================================
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
     Name = "Renoa Hub | The Finest Hub",
     LoadingTitle = "Loading...",
-    LoadingSubtitle = "by Renoa The Finest"
+    LoadingSubtitle = "By Renoa The Finest"
 })
 
 getgenv().Window = Window
@@ -22,6 +22,7 @@ local function loadTab(url)
 end
 
 loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Webhook.Lua")
+loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Auto.Lua")
 loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Eggs.Lua")
 loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Effect.Lua")
 loadTab("https://raw.githubusercontent.com/RenoaTheFinest/Renoa-Hub-The-Finest/main/Pets.Lua")
