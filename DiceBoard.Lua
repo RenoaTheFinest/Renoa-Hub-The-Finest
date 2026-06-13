@@ -1,5 +1,5 @@
 -- ================================================
--- DICE BOARD TAB (FIXED - ROLL + CLAIM)
+-- DICE BOARD TAB (SMART ROLL - FINAL)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -34,8 +34,7 @@ local TILE_TYPES = {
 local targetTile = "Chance"
 local running = false
 local thread = nil
-local USE_GOLDEN_DICE = true
-local GOLDEN_DICE_DIST = 2
+local goldenDistance = 2
 
 -- ======================================
 -- FUNCTIONS
@@ -62,47 +61,36 @@ local function getClosest(current, list)
     return closest, dist
 end
 
-local function rollDice(diceName)
-    pcall(function()
-        Remote:InvokeServer("RollDice", diceName)
-    end)
-end
-
-local function claimTile()
-    pcall(function()
-        Remote:FireServer("ClaimTile")
-    end)
-end
-
-local function loop()
-    while running do
-        local node = getNode()
-        
-        if node then
-            local target, dist = getClosest(node, TILE_TYPES[targetTile])
-            
-            local dice = "Dice"
-            if USE_GOLDEN_DICE and dist <= GOLDEN_DICE_DIST then
-                dice = "Golden Dice"
-            elseif dist >= 10 then
-                dice = "Giant Dice"
-            end
-            
-            print("[DiceBoard] Node: "..node.." | Dist: "..dist.." | "..dice)
-            rollDice(dice)
-            
-            -- Wait for roll animation
-            task.wait(2)
-            
-            -- Claim whatever tile we landed on
-            claimTile()
-            print("[DiceBoard] Claimed tile!")
-        else
-            print("[DiceBoard] Waiting for board...")
-        end
-        
-        task.wait(2)
+local function smartRoll()
+    local node = getNode()
+    if not node then
+        print("[DiceBoard] Waiting for board position...")
+        return
     end
+    
+    local target, dist = getClosest(node, TILE_TYPES[targetTile])
+    if not target then
+        -- No target found, just roll normal
+        Remote:InvokeServer("RollDice", "Dice")
+        print("[DiceBoard] No target, rolling Dice")
+        return
+    end
+    
+    local dice
+    if dist <= goldenDistance then
+        dice = "Golden Dice"
+    elseif dist >= 10 then
+        dice = "Giant Dice"
+    else
+        dice = "Dice"
+    end
+    
+    print("[DiceBoard] Node: " .. node .. " | Target: " .. target .. " | Dist: " .. dist .. " | " .. dice)
+    Remote:InvokeServer("RollDice", dice)
+    
+    -- Claim tile after roll
+    task.wait(2)
+    Remote:FireServer("ClaimTile")
 end
 
 -- ======================================
@@ -119,13 +107,18 @@ DiceBoardTab:CreateDropdown({
     end
 })
 
-DiceBoardTab:CreateToggle({
-    Name = "Use Golden Dice",
-    CurrentValue = USE_GOLDEN_DICE,
+DiceBoardTab:CreateInput({
+    Name = "Golden Dice Distance",
+    CurrentValue = tostring(goldenDistance),
+    PlaceholderText = "2",
+    RemoveTextAfterFocusLost = false,
     Callback = function(v)
-        USE_GOLDEN_DICE = v
+        local n = tonumber(v)
+        if n then goldenDistance = n end
     end
 })
+
+DiceBoardTab:CreateSection("🎮 Auto Roll")
 
 DiceBoardTab:CreateToggle({
     Name = "Auto Dice Board",
@@ -133,7 +126,12 @@ DiceBoardTab:CreateToggle({
     Callback = function(v)
         running = v
         if v then
-            thread = task.spawn(loop)
+            thread = task.spawn(function()
+                while running do
+                    smartRoll()
+                    task.wait(2)
+                end
+            end)
             print("[DiceBoard] Started!")
         else
             if thread then task.cancel(thread) end
