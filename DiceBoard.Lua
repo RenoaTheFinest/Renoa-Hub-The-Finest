@@ -1,5 +1,5 @@
 -- ================================================
--- DICE BOARD TAB (YOUR VERSION)
+-- DICE BOARD TAB (YOUR VERSION - FIXED)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -110,6 +110,16 @@ local function loop()
 
         local target, dist = getClosest(node, TILE_TYPES[targetTile])
 
+        -- If already on target, just claim and continue
+        if dist == 0 then
+            print("[DiceBoard] Already on target! Claiming...")
+            pcall(function()
+                RemoteEvent:FireServer("ClaimTile")
+            end)
+            task.wait(1.5)
+            continue
+        end
+
         -- Smart dice selection
         local dice = "Dice"
         local waitTime = 2.5
@@ -124,8 +134,6 @@ local function loop()
             dice = "Dice"
             waitTime = 2.5
         else
-            -- dist is 3-5, too close for normal dice but too far for golden
-            -- use normal dice as fallback
             dice = "Dice"
             waitTime = 2.5
         end
