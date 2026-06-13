@@ -1,6 +1,3 @@
--- ================================================
--- DICE BOARD TAB (SMART ROLL - FINAL)
--- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
 
@@ -10,12 +7,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
 local player = Players.LocalPlayer
-local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
-local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
+local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
+local RemoteEvent = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
 
--- ======================================
--- TILE MAPPINGS
--- ======================================
 local TILE_TYPES = {
     ["Chance"] = {5,13,25,29,32,36,39,40,44,50,53,55,60,61,62,72,76,78,79,83},
     ["Dice-Key"] = {19,21,34,47,80},
@@ -28,21 +22,42 @@ local TILE_TYPES = {
     ["Basic"] = {1,6,7,9,14,15,22,23,24,30,31,35,37,48,51,56,58,67,68,70,73,74,81,84,85,87},
 }
 
--- ======================================
--- SETTINGS
--- ======================================
 local targetTile = "Chance"
 local running = false
 local thread = nil
-local goldenDistance = 2
 
--- ======================================
--- FUNCTIONS
--- ======================================
+local USE_GOLDEN_DICE = true
+local GOLDEN_DICE_DIST = 2
+local GIANT_DICE_DIST = 10
+
+local function openBoard()
+    local gui = player:WaitForChild("PlayerGui")
+    for _, v in pairs(gui:GetDescendants()) do
+        if v.Name == "BoardHUD" or v.Name == "Minigame" then
+            pcall(function()
+                if v:IsA("Frame") then
+                    v.Visible = true
+                elseif v:IsA("ScreenGui") then
+                    v.Enabled = true
+                end
+            end)
+        end
+    end
+    print("[DiceBoard] UI opened!")
+end
+
 local function getNode()
+    local ok, Board = pcall(function()
+        return require(ReplicatedStorage.Client.Gui.Frames.Board)
+    end)
+    if not ok or not Board then return nil end
+
     for name, piece in pairs(Board.Pieces) do
-        if name == player.Name and piece and piece.Node then
-            return piece.Node.Part
+        if name == player.Name and piece.Node then
+            local raw = piece.Node.Part
+            if typeof(raw) == "number" then return raw end
+            if typeof(raw) == "string" then return tonumber(raw) end
+            if typeof(raw) == "Instance" then return tonumber(raw.Name) end
         end
     end
     return nil
@@ -61,64 +76,65 @@ local function getClosest(current, list)
     return closest, dist
 end
 
-local function smartRoll()
-    local node = getNode()
-    if not node then
-        print("[DiceBoard] Waiting for board position...")
-        return
+local function loop()
+    while running do
+        local node = getNode()
+
+        if not node then
+            warn("[DiceBoard] Node not found, retrying...")
+            openBoard()
+            task.wait(2)
+            continue
+        end
+
+        local target, dist = getClosest(node, TILE_TYPES[targetTile])
+
+        local dice = "Dice"
+        if USE_GOLDEN_DICE and dist <= GOLDEN_DICE_DIST then
+            dice = "Golden Dice"
+        elseif dist >= GIANT_DICE_DIST then
+            dice = "Giant Dice"
+        end
+
+        print("[DiceBoard] Node: "..node.." | Target: "..tostring(target).." | Dist: "..dist.." | Dice: "..dice)
+
+        pcall(function()
+            RemoteFunction:InvokeServer("RollDice", dice)
+        end)
+
+        task.wait(2.5)
+
+        pcall(function()
+            RemoteEvent:FireServer("ClaimTile")
+        end)
+
+        task.wait(2)
     end
-    
-    local target, dist = getClosest(node, TILE_TYPES[targetTile])
-    if not target then
-        -- No target found, just roll normal
-        Remote:InvokeServer("RollDice", "Dice")
-        print("[DiceBoard] No target, rolling Dice")
-        return
-    end
-    
-    local dice
-    if dist <= goldenDistance then
-        dice = "Golden Dice"
-    elseif dist >= 10 then
-        dice = "Giant Dice"
-    else
-        dice = "Dice"
-    end
-    
-    print("[DiceBoard] Node: " .. node .. " | Target: " .. target .. " | Dist: " .. dist .. " | " .. dice)
-    Remote:InvokeServer("RollDice", dice)
-    
-    -- Claim tile after roll
-    task.wait(2)
-    Remote:FireServer("ClaimTile")
 end
 
--- ======================================
 -- UI
--- ======================================
-DiceBoardTab:CreateSection("🎯 Settings")
+DiceBoardTab:CreateSection("Settings")
 
 DiceBoardTab:CreateDropdown({
     Name = "Target Tile",
     CurrentOption = {"Chance"},
-    Options = {"Chance","Dice-Key","Dice","Giant-Dice","Golden-Dice","Infinity-Elixir","Special-Egg","Super-Ticket","Basic"},
+    Options = {
+        "Chance","Dice-Key","Dice","Giant-Dice","Golden-Dice",
+        "Infinity-Elixir","Special-Egg","Super-Ticket","Basic"
+    },
     Callback = function(v)
-        targetTile = v
+        targetTile = v[1]
+        print("[DiceBoard] Target: " .. targetTile)
     end
 })
 
-DiceBoardTab:CreateInput({
-    Name = "Golden Dice Distance",
-    CurrentValue = tostring(goldenDistance),
-    PlaceholderText = "2",
-    RemoveTextAfterFocusLost = false,
+DiceBoardTab:CreateToggle({
+    Name = "Use Golden Dice",
+    CurrentValue = USE_GOLDEN_DICE,
     Callback = function(v)
-        local n = tonumber(v)
-        if n then goldenDistance = n end
+        USE_GOLDEN_DICE = v
     end
 })
-
-DiceBoardTab:CreateSection("🎮 Auto Roll")
 
 DiceBoardTab:CreateToggle({
     Name = "Auto Dice Board",
@@ -126,18 +142,18 @@ DiceBoardTab:CreateToggle({
     Callback = function(v)
         running = v
         if v then
-            thread = task.spawn(function()
-                while running do
-                    smartRoll()
-                    task.wait(2)
-                end
-            end)
+            openBoard()
+            task.wait(1)
+            thread = task.spawn(loop)
             print("[DiceBoard] Started!")
         else
-            if thread then task.cancel(thread) end
+            if thread then
+                task.cancel(thread)
+                thread = nil
+            end
             print("[DiceBoard] Stopped!")
         end
     end
 })
 
-print("[DiceBoard] Loaded! 🎲")
+print("[DiceBoard] Loaded!")
