@@ -1,12 +1,97 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+-- ================================================
+-- AUTO TAB (BUBBLE + PICKUP)
+-- ================================================
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
 
-]]--
+local AutoTab = Window:CreateTab("Auto", nil)
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v20,v21) local v22={};for v29=1, #v20 do v6(v22,v0(v4(v1(v2(v20,v29,v29 + 1 )),v1(v2(v21,1 + (v29% #v21) ,1 + (v29% #v21) + 1 )))%256 ));end return v5(v22);end repeat task.wait();until getgenv().Window local v8=getgenv().Window;local v9=v8:CreateTab(v7("\240\214\207\42","\126\177\163\187\69\134\219\167"),nil);local v10=game:GetService(v7("\17\200\58\201\245\32\204\62\192\248\16\217\37\215\253\36\200","\156\67\173\74\165"));local v11=game:GetService(v7("\4\187\72\15\185\52\85","\38\84\215\41\118\220\70"));local v12=v11.LocalPlayer;local v13=require(v10.Shared.Framework.Network.Remote);local v14=require(v10.Client.Framework.Services.LocalData);local v15=false;local v16=false;local v17=nil;local v18=nil;local function v19() local v23=v14:Get();local v24=v23.Teams[v23.TeamEquipped or (3 -2) ];if (v24 and v24.Pets) then for v30,v31 in ipairs(v24.Pets) do for v32,v33 in pairs(v23.Pets) do if (v33.Id==v31) then local v34=false;for v35,v36 in pairs(v33.Enchants) do if ((type(v36)==v7("\68\23\32\30\251","\158\48\118\66\114")) and (v36.Id==v7("\166\37\23\56\118\177\242\184\41","\155\203\68\112\86\19\197"))) then v34=true;break;end end if  not v34 then local v37=859 -(814 + 45) ;local v38;while true do if (v37==(0 -0)) then v38= #v33.Enchants + 1 + 0 ;v33.Enchants[v38]={[v7("\111\217","\152\38\189\86\156\32\24\133")]=v7("\241\86\160\72\249\67\174\85\241","\38\156\55\199"),[v7("\132\120\106\45\31","\35\200\29\28\72\115\20\154")]=1 + 0 ,[v7("\60\167\197\205\140","\84\121\223\177\191\237\76")]=1000884 -(261 + 624) };v37=1 -0 ;end if (v37==(1081 -(1020 + 60))) then print("[Auto] ðŸ§² Magnetism added to "   .. v33.Name );break;end end end end end end end print("[Auto] ðŸ§² Re-equip your pets to apply!");end v9:CreateSection("ðŸ«§ Bubble");v9:CreateToggle({[v7("\149\87\196\165","\161\219\54\169\192\90\48\80")]=v7("\104\87\20\42\9\96\12\42\94\2\34\48\75\64\12\32","\69\41\34\96"),[v7("\159\214\197\24\7\37\168\245\214\6\23\46","\75\220\163\183\106\98")]=false,[v7("\33\187\135\59\219\3\185\128","\185\98\218\235\87")]=function(v25) local v26=1423 -(630 + 793) ;while true do if (v26==(0 -0)) then v15=v25;if v25 then v17=task.spawn(function() while v15 do pcall(function() v13:FireServer(v7("\233\48\40\241\252\191\201\62\43\227","\202\171\92\71\134\190"));end);end end);print(v7("\18\224\57\156\38\252\108\170\60\195\46\132\44\129\63\156\40\211\56\141\45\128","\232\73\161\76"));else if v17 then task.cancel(v17);end print(v7("\128\248\87\73\17\134\153\96\72\28\185\213\71\29\13\175\214\82\77\27\191\152","\126\219\185\34\61"));end break;end end end});v9:CreateSection("ðŸ§² Pickup");v9:CreateToggle({[v7("\34\207\83\119","\135\108\174\62\18\30\23\147")]=v7("\151\252\62\196\88\158\58\196\189\252\58\139\80\135\61\205\179\234\62\139\53\175\52\201\179\253\35\216\21\231","\167\214\137\74\171\120\206\83"),[v7("\168\229\32\79\253\169\159\198\51\81\237\162","\199\235\144\82\61\152")]=false,[v7("\36\23\181\39\5\23\186\32","\75\103\118\217")]=function(v27) local v28=0 -0 ;while true do if (v28==(0 + 0)) then v16=v27;if v27 then v19();print("[Auto] ðŸ§² Magnetism injected! Re-equip pets now!");else print(v7("\252\117\101\0\182\35\135\100\121\23\178\11\215\20\116\29\170\31\197\88\117\16\248","\126\167\52\16\116\217"));end break;end end end});print("[Auto] Loaded! ðŸ”¥");
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
+local LocalData = require(ReplicatedStorage.Client.Framework.Services.LocalData)
+
+-- ======================================
+-- SETTINGS
+-- ======================================
+local bubbleEnabled = false
+local pickupEnabled = false
+local bubbleThread = nil
+local pickupThread = nil
+
+-- ======================================
+-- FUNCTIONS
+-- ======================================
+local function injectMagnetism()
+    local data = LocalData:Get()
+    local activeTeam = data.Teams[data.TeamEquipped or 1]
+    if activeTeam and activeTeam.Pets then
+        for _, petId in ipairs(activeTeam.Pets) do
+            for _, pet in pairs(data.Pets) do
+                if pet.Id == petId then
+                    local hasMagnetism = false
+                    for _, enchant in pairs(pet.Enchants) do
+                        if type(enchant) == "table" and enchant.Id == "magnetism" then
+                            hasMagnetism = true
+                            break
+                        end
+                    end
+                    if not hasMagnetism then
+                        local nextKey = #pet.Enchants + 1
+                        pet.Enchants[nextKey] = {
+                            Id = "magnetism",
+                            Level = 1,
+                            Extra = 999999
+                        }
+                        print("[Auto] 🧲 Magnetism added to " .. pet.Name)
+                    end
+                end
+            end
+        end
+    end
+    print("[Auto] 🧲 Re-equip your pets to apply!")
+end
+
+-- ======================================
+-- UI
+-- ======================================
+AutoTab:CreateSection("🫧 Bubble")
+
+AutoTab:CreateToggle({
+    Name = "Auto Blow Bubble",
+    CurrentValue = false,
+    Callback = function(v)
+        bubbleEnabled = v
+        if v then
+            bubbleThread = task.spawn(function()
+                while bubbleEnabled do
+                    pcall(function() Remote:FireServer("BlowBubble") end)
+                    task.wait(0.05)
+                end
+            end)
+            print("[Auto] Bubble started!")
+        else
+            if bubbleThread then task.cancel(bubbleThread) end
+            print("[Auto] Bubble stopped!")
+        end
+    end
+})
+
+AutoTab:CreateSection("🧲 Pickup")
+
+AutoTab:CreateToggle({
+    Name = "Auto Pickup (Inject Magnetism)",
+    CurrentValue = false,
+    Callback = function(v)
+        pickupEnabled = v
+        if v then
+            injectMagnetism()
+            print("[Auto] 🧲 Magnetism injected! Re-equip pets now!")
+        else
+            print("[Auto] Pickup disabled!")
+        end
+    end
+})
+
+print("[Auto] Loaded! 🔥")
