@@ -1,5 +1,5 @@
 -- ================================================
--- DICE BOARD TAB (YOUR VERSION - FIXED)
+-- DICE BOARD TAB (FIXED REFRESH)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -141,14 +141,17 @@ local function loop()
         print("[DiceBoard] Node: "..node.." | Target: "..tostring(target).." | Dist: "..dist.." | Using: "..dice)
 
         -- Roll
-        local ok1 = pcall(function()
+        pcall(function()
             RemoteFunction:InvokeServer("RollDice", dice)
         end)
 
-        if not ok1 then
-            warn("[DiceBoard] Roll failed!")
-            task.wait(2)
-            continue
+        -- Force refresh piece after roll
+        task.wait(1)
+        for name, piece in pairs(Board.Pieces) do
+            if name == player.Name then
+                myPiece = piece
+                break
+            end
         end
 
         -- Wait for node to update
