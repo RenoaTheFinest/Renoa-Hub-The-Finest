@@ -1,5 +1,5 @@
 -- ================================================
--- DICE BOARD TAB (FIXED REFRESH)
+-- DICE BOARD TAB (AUTO-DETECT GOLDEN DICE)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -117,14 +117,30 @@ local function loop()
                 RemoteEvent:FireServer("ClaimTile")
             end)
             task.wait(1.5)
+            -- Force refresh and find next target
+            for name, piece in pairs(Board.Pieces) do
+                if name == player.Name then
+                    myPiece = piece
+                    break
+                end
+            end
             continue
+        end
+
+        -- Check Golden Dice count
+        local hasGolden = false
+        local LocalData = require(ReplicatedStorage.Client.Framework.Services.LocalData)
+        local localData = LocalData:Get()
+        if localData and localData.Powerups then
+            local gd = localData.Powerups["Golden Dice"] or 0
+            if gd > 0 then hasGolden = true end
         end
 
         -- Smart dice selection
         local dice = "Dice"
         local waitTime = 2.5
 
-        if dist <= GOLDEN_DICE_DIST then
+        if hasGolden and dist <= GOLDEN_DICE_DIST then
             dice = "Golden Dice"
             waitTime = 1.5
         elseif dist >= 10 then
