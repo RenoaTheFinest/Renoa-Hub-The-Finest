@@ -1,97 +1,12 @@
--- ================================================
--- AUTO TAB (BUBBLE + PICKUP)
--- ================================================
-repeat task.wait() until getgenv().Window
-local Window = getgenv().Window
+--[[
+ .____                  ________ ___.    _____                           __                
+ |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
+ |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
+ |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
+ |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
+         \/          \/         \/    \/                \/     \/     \/                   
+          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
 
-local AutoTab = Window:CreateTab("Auto", nil)
+]]--
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
-local LocalData = require(ReplicatedStorage.Client.Framework.Services.LocalData)
-
--- ======================================
--- SETTINGS
--- ======================================
-local bubbleEnabled = false
-local pickupEnabled = false
-local bubbleThread = nil
-local pickupThread = nil
-
--- ======================================
--- FUNCTIONS
--- ======================================
-local function injectMagnetism()
-    local data = LocalData:Get()
-    local activeTeam = data.Teams[data.TeamEquipped or 1]
-    if activeTeam and activeTeam.Pets then
-        for _, petId in ipairs(activeTeam.Pets) do
-            for _, pet in pairs(data.Pets) do
-                if pet.Id == petId then
-                    local hasMagnetism = false
-                    for _, enchant in pairs(pet.Enchants) do
-                        if type(enchant) == "table" and enchant.Id == "magnetism" then
-                            hasMagnetism = true
-                            break
-                        end
-                    end
-                    if not hasMagnetism then
-                        local nextKey = #pet.Enchants + 1
-                        pet.Enchants[nextKey] = {
-                            Id = "magnetism",
-                            Level = 1,
-                            Extra = 999999
-                        }
-                        print("[Auto] 🧲 Magnetism added to " .. pet.Name)
-                    end
-                end
-            end
-        end
-    end
-    print("[Auto] 🧲 Re-equip your pets to apply!")
-end
-
--- ======================================
--- UI
--- ======================================
-AutoTab:CreateSection("🫧 Bubble")
-
-AutoTab:CreateToggle({
-    Name = "Auto Blow Bubble",
-    CurrentValue = false,
-    Callback = function(v)
-        bubbleEnabled = v
-        if v then
-            bubbleThread = task.spawn(function()
-                while bubbleEnabled do
-                    pcall(function() Remote:FireServer("BlowBubble") end)
-                    task.wait(0.05)
-                end
-            end)
-            print("[Auto] Bubble started!")
-        else
-            if bubbleThread then task.cancel(bubbleThread) end
-            print("[Auto] Bubble stopped!")
-        end
-    end
-})
-
-AutoTab:CreateSection("🧲 Pickup")
-
-AutoTab:CreateToggle({
-    Name = "Auto Pickup (Inject Magnetism)",
-    CurrentValue = false,
-    Callback = function(v)
-        pickupEnabled = v
-        if v then
-            injectMagnetism()
-            print("[Auto] 🧲 Magnetism injected! Re-equip pets now!")
-        else
-            print("[Auto] Pickup disabled!")
-        end
-    end
-})
-
-print("[Auto] Loaded! 🔥")
+local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v22,v23) local v24={};for v33=1, #v22 do v6(v24,v0(v4(v1(v2(v22,v33,v33 + 1 )),v1(v2(v23,1 + (v33% #v23) ,1 + (v33% #v23) + 1 )))%256 ));end return v5(v24);end repeat task.wait();until getgenv().Window local v8=getgenv().Window;local v9=v8:CreateTab(v7("\240\214\207\42","\126\177\163\187\69\134\219\167"),nil);local v10=game:GetService(v7("\17\200\58\201\245\32\204\62\192\248\16\217\37\215\253\36\200","\156\67\173\74\165"));local v11=game:GetService(v7("\4\187\72\15\185\52\85","\38\84\215\41\118\220\70"));local v12=v11.LocalPlayer;local v13=v10.Shared.Framework.Network.Remote.RemoteEvent;local v14=v10.Remotes.Pickups.CollectPickup;local function v15(v25,...) if v13 then v13:FireServer(v25,...);end end local v16=false;local v17=false;local v18=false;local v19=nil;local v20=nil;local v21=nil;v9:CreateSection(v7("\114\3\32\16\242\85","\158\48\118\66\114"));v9:CreateToggle({[v7("\133\37\29\51","\155\203\68\112\86\19\197")]=v7("\103\200\34\243\0\90\233\247\81\157\20\233\66\122\233\253","\152\38\189\86\156\32\24\133"),[v7("\223\66\181\84\249\89\179\112\253\91\178\67","\38\156\55\199")]=false,[v7("\139\124\112\36\17\117\249\72","\35\200\29\28\72\115\20\154")]=function(v26) local v27=0 -0 ;local v28;while true do if (0==v27) then v28=0 + 0 ;while true do if (v28==(1130 -(87 + 1043))) then v16=v26;if v26 then local v37=0;while true do if (v37==0) then v19=task.spawn(function() while v16 do local v39=448 -(10 + 438) ;while true do if (v39==(0 + 0)) then pcall(function() v15(v7("\59\179\222\200\175\57\54\27\179\212","\84\121\223\177\191\237\76"));end);task.wait();break;end end end end);print(v7("\128\119\220\180\53\109\112\227\174\84\203\172\63\16\35\213\186\68\221\165\62\17","\161\219\54\169\192\90\48\80"));break;end end else if v19 then task.cancel(v19);end print(v7("\114\99\21\49\70\127\64\7\92\64\2\41\76\2\19\49\70\82\16\32\77\3","\69\41\34\96"));end break;end end break;end end end});v9:CreateSection(v7("\143\198\219\6","\75\220\163\183\106\98"));v9:CreateToggle({[v7("\44\187\134\50","\185\98\218\235\87")]=v7("\234\41\51\233\158\153\206\48\43\166\252\191\201\62\43\227","\202\171\92\71\134\190"),[v7("\10\212\62\154\44\207\56\190\40\205\57\141","\232\73\161\76")]=false,[v7("\152\216\78\81\28\186\218\73","\126\219\185\34\61")]=function(v29) v18=v29;if v29 then local v34=0 -0 ;while true do if (v34==(0 + 0)) then v21=task.spawn(function() while v18 do local v36=1180 -(1123 + 57) ;while true do if (v36==(0 + 0)) then pcall(function() v15(v7("\63\203\82\126\92\98\241\229\0\203","\135\108\174\62\18\30\23\147"));end);task.wait(255 -(163 + 91) );break;end end end end);print(v7("\141\200\63\223\23\147\115\230\163\253\37\139\43\171\63\203\246\250\62\202\10\186\54\195\247","\167\214\137\74\171\120\206\83"));break;end end else local v35=0;while true do if (v35==(1930 -(1869 + 61))) then if v21 then task.cancel(v21);end print(v7("\176\209\39\73\247\154\203\209\39\73\247\231\184\245\62\81\184\180\159\255\34\77\253\163\202","\199\235\144\82\61\152"));break;end end end end});v9:CreateSection(v7("\55\31\186\32\18\6","\75\103\118\217"));v9:CreateToggle({[v7("\233\85\125\17","\126\167\52\16\116\217")]=v7("\233\59\52\143\244\58\243\196\34\37\131\160\89\204\193\45\43\149\164\10","\156\168\78\64\224\212\121"),[v7("\36\251\183\220\2\224\177\248\6\226\176\203","\174\103\142\197")]=false,[v7("\117\41\83\52\39\95\251\93","\152\54\72\63\88\69\62")]=function(v30) local v31=0 + 0 ;local v32;while true do if (v31==(0 -0)) then v32=0;while true do if (v32==(0 -0)) then v17=v30;if v30 then v20=task.spawn(function() while v17 do pcall(function() v14:FireServer(v7("\135\148\182\89\214\146\239\90\153\148\234\10\134\137\186\11\133\150\163\4\215\149\191\17\135\192\182\93\130\197\183\4\134\193\185\12","\60\180\164\142"));end);task.wait();end end);print(v7("\99\127\16\61\40\208\82\104\87\6\34\50\253\82\75\74\4\59\51\232\22\25","\114\56\62\101\73\71\141"));else local v38=0 + 0 ;while true do if (0==v38) then if v20 then task.cancel(v20);end print(v7("\131\200\206\208\183\212\155\244\177\234\208\209\168\169\200\208\183\249\203\193\188\168","\164\216\137\187"));break;end end end break;end end break;end end end});print(v7("\233\199\36\166\169\195\75\254\233\48\182\163\250\74","\107\178\134\81\210\198\158"));
