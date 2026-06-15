@@ -29,7 +29,14 @@ local GOLDEN_DICE_DIST = 5
 local function getNode()
     for name, piece in pairs(Board.Pieces) do
         if name == player.Name then
-            return piece.Node.Part
+            local raw = piece.Node.Part
+            if typeof(raw) == "number" then
+                return raw
+            elseif typeof(raw) == "string" then
+                return tonumber(raw)
+            elseif typeof(raw) == "Instance" then
+                return tonumber(raw.Name)
+            end
         end
     end
     return nil
@@ -117,7 +124,6 @@ local function loop()
 
         print("[DiceBoard] Node: "..node.." | Target: "..tostring(target).." | Dist: "..dist.." | Using: "..diceName)
 
-        -- Select dice type
         local selected = selectDice(diceName)
         if not selected then
             warn("[DiceBoard] Failed to select " .. diceName .. ", falling back to Dice")
@@ -128,7 +134,6 @@ local function loop()
 
         task.wait(0.3)
 
-        -- Press Roll
         local rolled = pressRoll()
         if not rolled then
             warn("[DiceBoard] Failed to press Roll button!")
@@ -136,7 +141,6 @@ local function loop()
             continue
         end
 
-        -- Wait for node to update
         local newNode = waitForNodeChange(node, waitTime + 2)
 
         print("[DiceBoard] Done! Now on node: " .. tostring(newNode))
