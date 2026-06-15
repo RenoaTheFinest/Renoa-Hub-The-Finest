@@ -83,11 +83,41 @@ local function pressRoll()
     return true
 end
 
+local function autoSkipPopups()
+    local ok, playerGui = pcall(function() return player.PlayerGui end)
+    if not ok then return end
+
+    for _, screenGui in ipairs(playerGui:GetChildren()) do
+        if screenGui:IsA("ScreenGui") and screenGui.Enabled then
+            for _, desc in ipairs(screenGui:GetDescendants()) do
+                if (desc.Name == "Skip" or desc.Name == "Continue" or desc.Name == "Claim" or desc.Name == "ClaimAll")
+                   and desc:IsA("GuiObject") then
+                    local visOk, isVisible = pcall(function() return desc.Visible end)
+                    if visOk and isVisible then
+                        local btn = desc:FindFirstChild("Button")
+                        if btn and (btn:IsA("ImageButton") or btn:IsA("TextButton")) then
+                            pcall(function() firesignal(btn.Activated) end)
+                            print("[DiceBoard] Auto-clicked: " .. desc:GetFullName())
+                        elseif desc:IsA("ImageButton") or desc:IsA("TextButton") then
+                            pcall(function() firesignal(desc.Activated) end)
+                            print("[DiceBoard] Auto-clicked: " .. desc:GetFullName())
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
 local function waitForNodeChange(oldNode, timeout)
     local elapsed = 0
     while elapsed < timeout do
         task.wait(0.3)
         elapsed = elapsed + 0.3
+
+        -- Check for popups while waiting
+        autoSkipPopups()
+
         local current = getNode()
         if current and current ~= oldNode then
             return current
@@ -142,6 +172,10 @@ local function loop()
         end
 
         local newNode = waitForNodeChange(node, waitTime + 2)
+
+        -- Final check for any leftover popups
+        task.wait(0.5)
+        autoSkipPopups()
 
         print("[DiceBoard] Done! Now on node: " .. tostring(newNode))
 
