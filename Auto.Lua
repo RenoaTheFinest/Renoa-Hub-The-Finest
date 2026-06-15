@@ -1,12 +1,181 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+-- ================================================
+-- AUTO TAB (BUBBLE + SELL + PICKUP)
+-- ================================================
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
 
-]]--
+local AutoTab = Window:CreateTab("Auto", nil)
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v21,v22) local v23={};for v31=1, #v21 do v6(v23,v0(v4(v1(v2(v21,v31,v31 + 1 )),v1(v2(v22,1 + (v31% #v22) ,1 + (v31% #v22) + 1 )))%256 ));end return v5(v23);end repeat task.wait();until getgenv().Window local v8=getgenv().Window;local v9=v8:CreateTab(v7("\240\214\207\42","\126\177\163\187\69\134\219\167"),nil);local v10=game:GetService(v7("\17\200\58\201\245\32\204\62\192\248\16\217\37\215\253\36\200","\156\67\173\74\165"));local v11=game:GetService(v7("\4\187\72\15\185\52\85","\38\84\215\41\118\220\70"));local v12=v11.LocalPlayer;local v13=v10.Shared.Framework.Network.Remote.RemoteEvent;local function v14(v24,...) if v13 then v13:FireServer(v24,...);end end local v15=false;local v16=false;local v17=false;local v18=nil;local v19=nil;local v20=nil;v9:CreateSection(v7("\114\3\32\16\242\85","\158\48\118\66\114"));v9:CreateToggle({[v7("\133\37\29\51","\155\203\68\112\86\19\197")]=v7("\103\200\34\243\0\90\233\247\81\157\20\233\66\122\233\253","\152\38\189\86\156\32\24\133"),[v7("\223\66\181\84\249\89\179\112\253\91\178\67","\38\156\55\199")]=false,[v7("\139\124\112\36\17\117\249\72","\35\200\29\28\72\115\20\154")]=function(v25) local v26=0 + 0 ;while true do if (v26==(254 -(163 + 91))) then v15=v25;if v25 then local v32=0 + 0 ;while true do if (v32==(0 + 0)) then v18=task.spawn(function() while v15 do pcall(function() v14(v7("\59\179\222\200\175\57\54\27\179\212","\84\121\223\177\191\237\76"));end);task.wait(0.01 -0 );end end);print(v7("\128\119\220\180\53\109\112\227\174\84\203\172\63\16\35\213\186\68\221\165\62\17","\161\219\54\169\192\90\48\80"));break;end end else local v33=0 -0 ;while true do if (0==v33) then if v18 then task.cancel(v18);end print(v7("\114\99\21\49\70\127\64\7\92\64\2\41\76\2\19\49\70\82\16\32\77\3","\69\41\34\96"));break;end end end break;end end end});v9:CreateSection(v7("\143\198\219\6","\75\220\163\183\106\98"));v9:CreateToggle({[v7("\44\187\134\50","\185\98\218\235\87")]=v7("\234\41\51\233\158\153\206\48\43\166\252\191\201\62\43\227","\202\171\92\71\134\190"),[v7("\10\212\62\154\44\207\56\190\40\205\57\141","\232\73\161\76")]=false,[v7("\152\216\78\81\28\186\218\73","\126\219\185\34\61")]=function(v27) local v28=14 -(9 + 5) ;while true do if (v28==(0 -0)) then v17=v27;if v27 then v20=task.spawn(function() while v17 do pcall(function() v14(v7("\63\203\82\126\92\98\241\229\0\203","\135\108\174\62\18\30\23\147"));end);task.wait(377 -(85 + 291) );end end);print(v7("\141\200\63\223\23\147\115\230\163\253\37\139\43\171\63\203\246\250\62\202\10\186\54\195\247","\167\214\137\74\171\120\206\83"));else local v34=1474 -(1329 + 145) ;while true do if (v34==(1265 -(243 + 1022))) then if v20 then task.cancel(v20);end print(v7("\176\209\39\73\247\154\203\209\39\73\247\231\184\245\62\81\184\180\159\255\34\77\253\163\202","\199\235\144\82\61\152"));break;end end end break;end end end});v9:CreateSection(v7("\55\31\186\32\18\6","\75\103\118\217"));v9:CreateToggle({[v7("\233\85\125\17","\126\167\52\16\116\217")]=v7("\233\59\52\143\244\58\243\196\34\37\131\160\89\204\193\45\43\149\164\10","\156\168\78\64\224\212\121"),[v7("\36\251\183\220\2\224\177\248\6\226\176\203","\174\103\142\197")]=false,[v7("\117\41\83\52\39\95\251\93","\152\54\72\63\88\69\62")]=function(v29) local v30=971 -(140 + 831) ;while true do if (v30==(0 -0)) then v16=v29;if v29 then local v35=718 -(15 + 703) ;while true do if (v35==(0 + 0)) then v19=task.spawn(function() local v36=0;local v37;while true do if (v36==0) then v37=v10:WaitForChild(v7("\230\193\227\83\192\193\253","\60\180\164\142")):WaitForChild(v7("\104\87\6\34\50\253\1","\114\56\62\101\73\71\141")):WaitForChild(v7("\155\230\215\200\189\234\207\244\177\234\208\209\168","\164\216\137\187"));while v16 do local v38=0;while true do if (v38==(1180 -(1123 + 57))) then pcall(function() v37:FireServer(v7("\129\182\105\183\164\168\10\212\171\97\182\240\172\70\134\177\96\224\235\166\8\131\183\124\225\162\166\10\132\231\104\234\244\251\92\130","\107\178\134\81\210\198\158"));end);task.wait();break;end end end break;end end end);print(v7("\3\47\151\210\165\5\78\178\207\169\51\27\146\134\185\44\15\144\210\175\60\79","\202\88\110\226\166"));break;end end else if v19 then task.cancel(v19);end print(v7("\248\46\151\227\197\254\79\178\254\201\200\26\146\183\217\215\0\146\231\207\199\78","\170\163\111\226\151"));end break;end end end});print(v7("\42\17\167\44\65\10\105\61\63\179\60\75\51\104","\73\113\80\210\88\46\87"));
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local LocalData = require(ReplicatedStorage.Client.Framework.Services.LocalData)
+
+local RE = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
+
+local function fire(action, ...)
+    if RE then RE:FireServer(action, ...) end
+end
+
+-- ======================================
+-- SETTINGS
+-- ======================================
+local bubbleEnabled = false
+local sellEnabled = false
+local pickupEnabled = false
+local bubbleThread = nil
+local sellThread = nil
+local pickupThread = nil
+
+-- ======================================
+-- FUNCTIONS
+-- ======================================
+local function injectMagnetism()
+    local data = LocalData:Get()
+    local activeTeam = data.Teams[data.TeamEquipped or 1]
+    if activeTeam and activeTeam.Pets then
+        for _, petId in ipairs(activeTeam.Pets) do
+            for _, pet in pairs(data.Pets) do
+                if pet.Id == petId then
+                    local hasMagnetism = false
+                    for _, enchant in pairs(pet.Enchants) do
+                        if type(enchant) == "table" and enchant.Id == "magnetism" then
+                            hasMagnetism = true
+                            break
+                        end
+                    end
+                    if not hasMagnetism then
+                        local nextKey = #pet.Enchants + 1
+                        pet.Enchants[nextKey] = {
+                            Id = "magnetism",
+                            Level = 1,
+                            Extra = 999999
+                        }
+                        print("[Auto] Magnetism added to " .. pet.Name)
+                    end
+                end
+            end
+        end
+    end
+    print("[Auto] Re-equip your pets to apply!")
+end
+
+local function getPickups()
+    local pickups = {}
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v.Name == "Pickup" or v:FindFirstChild("PickupId") then
+            local id = v:GetAttribute("Id") 
+                or v:GetAttribute("PickupId") 
+                or v.Name
+            if id then
+                table.insert(pickups, id)
+            end
+        end
+    end
+    return pickups
+end
+
+local function collectAll()
+    local list = getPickups()
+    for _, id in ipairs(list) do
+        pcall(function()
+            RE:FireServer("CollectPickup", id)
+        end)
+    end
+end
+
+-- ======================================
+-- UI
+-- ======================================
+AutoTab:CreateSection("Bubble")
+
+AutoTab:CreateToggle({
+    Name = "Auto Blow Bubble",
+    CurrentValue = false,
+    Callback = function(v)
+        bubbleEnabled = v
+        if v then
+            bubbleThread = task.spawn(function()
+                while bubbleEnabled do
+                    pcall(function() fire("BlowBubble") end)
+                    task.wait(0.01)
+                end
+            end)
+            print("[Auto] Bubble started!")
+        else
+            if bubbleThread then task.cancel(bubbleThread) end
+            print("[Auto] Bubble stopped!")
+        end
+    end
+})
+
+AutoTab:CreateSection("Sell")
+
+AutoTab:CreateToggle({
+    Name = "Auto Sell Bubble",
+    CurrentValue = false,
+    Callback = function(v)
+        sellEnabled = v
+        if v then
+            local sellRoot = nil
+            local originalPos = nil
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+                if obj.Name == "Root" and obj.Parent and obj.Parent.Name == "Sell" then
+                    sellRoot = obj
+                    originalPos = obj.Position
+                    break
+                end
+            end
+            
+            if not sellRoot then
+                print("[Auto] No sell area found!")
+                sellEnabled = false
+                return
+            end
+            
+            sellThread = task.spawn(function()
+                while sellEnabled do
+                    local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                    if root then
+                        sellRoot.Position = root.Position + Vector3.new(0, -3, 0)
+                    end
+                    pcall(function() fire("SellBubble") end)
+                    task.wait(1)
+                end
+                if originalPos then
+                    sellRoot.Position = originalPos
+                    print("[Auto] Sell Root returned!")
+                end
+            end)
+            print("[Auto] Auto Sell started!")
+        else
+            if sellThread then task.cancel(sellThread) end
+            print("[Auto] Auto Sell stopped!")
+        end
+    end
+})
+
+AutoTab:CreateSection("Pickup")
+
+AutoTab:CreateToggle({
+    Name = "Auto Collect Pickups",
+    CurrentValue = false,
+    Callback = function(v)
+        pickupEnabled = v
+        if v then
+            pickupThread = task.spawn(function()
+                while pickupEnabled do
+                    collectAll()
+                    task.wait(0.5)
+                end
+            end)
+            print("[Auto] Pickup started!")
+        else
+            if pickupThread then task.cancel(pickupThread) end
+            print("[Auto] Pickup stopped!")
+        end
+    end
+})
+
+print("[Auto] Loaded!")
