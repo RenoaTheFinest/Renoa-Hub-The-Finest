@@ -1,6 +1,3 @@
--- ================================================
--- DICE BOARD TAB (FIXED)
--- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
 
@@ -10,9 +7,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
-
-local Board = nil
+local Board = require(ReplicatedStorage.Client.Gui.Frames.Board)
 
 local TILE_TYPES = {
     ["Chance"] = {5,13,25,29,32,36,39,40,44,50,53,55,60,61,62,72,76,78,79,83},
@@ -31,27 +26,12 @@ local running = false
 local thread = nil
 local GOLDEN_DICE_DIST = 5
 
-local function getMyPiece()
-    local ok, b = pcall(function()
-        return require(ReplicatedStorage.Client.Gui.Frames.Board)
-    end)
-    if not ok or not b then return nil end
-    Board = b
-
+local function getNode()
     for name, piece in pairs(Board.Pieces) do
         if name == player.Name then
-            return piece
+            return piece.Node.Part
         end
     end
-    return nil
-end
-
-local function getNode(piece)
-    if not piece then return nil end
-    local raw = piece.Node.Part
-    if typeof(raw) == "number" then return raw end
-    if typeof(raw) == "string" then return tonumber(raw) end
-    if typeof(raw) == "Instance" then return tonumber(raw.Name) end
     return nil
 end
 
@@ -68,90 +48,100 @@ local function getClosest(current, list)
     return closest, dist
 end
 
-local function waitForNodeChange(piece, oldNode, timeout)
+local function getBoardHUD()
+    local ok, playerGui = pcall(function() return player.PlayerGui end)
+    if not ok then return nil end
+    local screenGui = playerGui:FindFirstChild("ScreenGui")
+    if not screenGui then return nil end
+    return screenGui:FindFirstChild("BoardHUD")
+end
+
+local function selectDice(diceName)
+    local hud = getBoardHUD()
+    if not hud then return false end
+    local diceFrame = hud.Dice.Inventory:FindFirstChild(diceName)
+    if not diceFrame then return false end
+    local button = diceFrame:FindFirstChild("Button")
+    if not button then return false end
+    firesignal(button.Activated)
+    return true
+end
+
+local function pressRoll()
+    local hud = getBoardHUD()
+    if not hud then return false end
+    local rollButton = hud.Dice.Actions.Roll.Button
+    if not rollButton then return false end
+    firesignal(rollButton.Activated)
+    return true
+end
+
+local function waitForNodeChange(oldNode, timeout)
     local elapsed = 0
     while elapsed < timeout do
         task.wait(0.3)
         elapsed = elapsed + 0.3
-        local current = getNode(piece)
+        local current = getNode()
         if current and current ~= oldNode then
             return current
         end
     end
-    return getNode(piece)
-end
-
-local function hasGoldenDice()
-    local ok, LocalData = pcall(function()
-        return require(ReplicatedStorage.Client.Framework.Services.LocalData)
-    end)
-    if not ok then return false end
-    local data = LocalData:Get()
-    if data and data.Powerups then
-        local gd = data.Powerups["Golden Dice"] or 0
-        return gd > 0
-    end
-    return false
+    return getNode()
 end
 
 local function loop()
-    local piece = getMyPiece()
-    if not piece then
-        warn("[DiceBoard] Could not find player piece! Walk to the board and press Continue first.")
-        running = false
-        return
-    end
-
     while running do
-        local node = getNode(piece)
+        local node = getNode()
 
         if not node then
-            warn("[DiceBoard] Lost node, retrying...")
-            task.wait(1)
-            piece = getMyPiece()
+            warn("[DiceBoard] No node found! Make sure the board UI is open.")
+            task.wait(2)
             continue
         end
 
         local target, dist = getClosest(node, TILE_TYPES[targetTile])
 
-        if dist == 0 then
-            print("[DiceBoard] On target tile! Claiming...")
-            pcall(function() Remote:FireServer("ClaimTile") end)
-            task.wait(1.5)
-            piece = getMyPiece()
-            continue
-        end
-
-        local golden = hasGoldenDice()
-        local dice = "Dice"
+        local diceName = "Dice"
         local waitTime = 2.5
 
-        if golden and dist <= GOLDEN_DICE_DIST then
-            dice = "Golden Dice"
+        if dist <= GOLDEN_DICE_DIST then
+            diceName = "Golden Dice"
             waitTime = 1.5
         elseif dist >= 10 then
-            dice = "Giant Dice"
+            diceName = "Giant Dice"
             waitTime = 4.5
         else
-            dice = "Dice"
+            diceName = "Dice"
             waitTime = 2.5
         end
 
-        print("[DiceBoard] Node: "..node.." | Target: "..tostring(target).." | Dist: "..dist.." | Using: "..dice)
+        print("[DiceBoard] Node: "..node.." | Target: "..tostring(target).." | Dist: "..dist.." | Using: "..diceName)
 
-        pcall(function()
-            Remote:InvokeServer("RollDice", dice)
-        end)
+        -- Select dice type
+        local selected = selectDice(diceName)
+        if not selected then
+            warn("[DiceBoard] Failed to select " .. diceName .. ", falling back to Dice")
+            selectDice("Dice")
+            diceName = "Dice"
+            waitTime = 2.5
+        end
 
-        local newNode = waitForNodeChange(piece, node, waitTime + 2)
+        task.wait(0.3)
 
-        pcall(function()
-            Remote:FireServer("ClaimTile")
-        end)
+        -- Press Roll
+        local rolled = pressRoll()
+        if not rolled then
+            warn("[DiceBoard] Failed to press Roll button!")
+            task.wait(2)
+            continue
+        end
 
-        task.wait(1.5)
+        -- Wait for node to update
+        local newNode = waitForNodeChange(node, waitTime + 2)
 
         print("[DiceBoard] Done! Now on node: " .. tostring(newNode))
+
+        task.wait(1)
     end
 end
 
@@ -193,6 +183,11 @@ DiceBoardTab:CreateToggle({
     Callback = function(v)
         running = v
         if v then
+            if not getBoardHUD() then
+                warn("[DiceBoard] Board UI not open! Open the dice board first.")
+                running = false
+                return
+            end
             thread = task.spawn(loop)
             print("[DiceBoard] Started!")
         else
