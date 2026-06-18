@@ -1,5 +1,5 @@
 -- ================================================
--- QUEST TAB (AUTO COMPLETE + SEASON PASS CLAIM)
+-- QUEST TAB (SEASON + GLOBAL + CLAIM)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -26,10 +26,12 @@ local EGG_LOCATIONS = {
 -- ======================================
 -- SETTINGS
 -- ======================================
-local questRunning = false
-local questThread = nil
 local seasonRunning = false
 local seasonThread = nil
+local globalRunning = false
+local globalThread = nil
+local claimRunning = false
+local claimThread = nil
 local HATCH_AMOUNT = 12
 local fallbackEgg = "Common Egg"
 
@@ -62,14 +64,14 @@ local function restorePosition(pos)
     end
 end
 
-local function getActiveQuests()
+local function getActiveQuests(filter)
     local data = LocalData:Get()
     local quests = {}
     if data and data.Quests then
         for _, quest in pairs(data.Quests) do
             if not quest.Claimed then
                 local name = quest.Id or ""
-                if name:find("hourly") or name:find("daily") then
+                if name:find(filter) then
                     local task = quest.Tasks and quest.Tasks[1]
                     if task then
                         table.insert(quests, {
@@ -87,99 +89,102 @@ local function getActiveQuests()
     return quests
 end
 
-local function questLoop()
-    while questRunning do
-        local quests = getActiveQuests()
+local function completeQuest(quest)
+    print("[Quest] Working on: " .. quest.id .. " (" .. quest.type .. ")")
+    
+    getgenv().questActive = true
+    
+    if quest.type == "Bubbles" then
+        getgenv().questEgg = nil
+        local prevPos = savePosition()
+        teleportTo(SELL_AREA)
+        while true do
+            pcall(function() Remote:FireServer("BlowBubble") end)
+            task.wait(0.01)
+            local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
+            local stillActive = false
+            for _, q in ipairs(newQuests) do
+                if q.id == quest.id then stillActive = true; break end
+            end
+            if not stillActive then break end
+        end
+        restorePosition(prevPos)
         
-        if #quests == 0 then
-            getgenv().questActive = false
-            getgenv().questEgg = nil
-            task.wait(10)
-            continue
+    elseif quest.type == "Hatch" then
+        local eggName = quest.egg
+        local needsTeleport = false
+        
+        if quest.rarity then
+            eggName = "Magma Egg"
+            needsTeleport = true
+        elseif quest.egg then
+            eggName = quest.egg
+            needsTeleport = true
+        else
+            eggName = fallbackEgg
         end
         
-        local quest = quests[1]
-        print("[Quest] Working on: " .. quest.id .. " (" .. quest.type .. ")")
+        getgenv().questEgg = eggName
         
-        getgenv().questActive = true
+        local prevPos = nil
+        if needsTeleport then
+            prevPos = savePosition()
+            local pos = EGG_LOCATIONS[eggName]
+            if pos then teleportTo(pos) end
+        end
         
-        if quest.type == "Bubbles" then
-            getgenv().questEgg = nil
-            local prevPos = savePosition()
-            teleportTo(SELL_AREA)
-            while questRunning do
-                pcall(function() Remote:FireServer("BlowBubble") end)
-                task.wait(0.01)
-                local newQuests = getActiveQuests()
-                local stillActive = false
-                for _, q in ipairs(newQuests) do
-                    if q.id == quest.id then stillActive = true; break end
-                end
-                if not stillActive then break end
+        while true do
+            pcall(function() Remote:FireServer("HatchEgg", eggName, HATCH_AMOUNT) end)
+            task.wait(0.3)
+            local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
+            local stillActive = false
+            for _, q in ipairs(newQuests) do
+                if q.id == quest.id then stillActive = true; break end
             end
-            restorePosition(prevPos)
-            
-        elseif quest.type == "Hatch" then
-            local eggName = quest.egg
-            local needsTeleport = false
-            
-            if quest.rarity then
-                eggName = "Magma Egg"
-                needsTeleport = true
-            elseif quest.egg then
-                eggName = quest.egg
-                needsTeleport = true
-            else
-                eggName = fallbackEgg
-            end
-            
-            getgenv().questEgg = eggName
-            
-            local prevPos = nil
-            if needsTeleport then
-                prevPos = savePosition()
-                local pos = EGG_LOCATIONS[eggName]
-                if pos then teleportTo(pos) end
-            end
-            
-            while questRunning do
-                pcall(function() Remote:FireServer("HatchEgg", eggName, HATCH_AMOUNT) end)
-                task.wait(0.3)
-                local newQuests = getActiveQuests()
-                local stillActive = false
-                for _, q in ipairs(newQuests) do
-                    if q.id == quest.id then stillActive = true; break end
-                end
-                if not stillActive then break end
-            end
-            
-            if needsTeleport then
-                restorePosition(prevPos)
-            end
-            
-        elseif quest.type == "Collect" then
-            getgenv().questEgg = nil
-            local prevPos = savePosition()
-            if quest.currency and quest.currency:lower():find("gem") then
-                teleportTo(GEM_AREA)
-            else
-                teleportTo(COIN_AREA)
-            end
-            while questRunning do
-                task.wait(5)
-                local newQuests = getActiveQuests()
-                local stillActive = false
-                for _, q in ipairs(newQuests) do
-                    if q.id == quest.id then stillActive = true; break end
-                end
-                if not stillActive then break end
-            end
+            if not stillActive then break end
+        end
+        
+        if needsTeleport then
             restorePosition(prevPos)
         end
+        
+    elseif quest.type == "Collect" then
+        getgenv().questEgg = nil
+        local prevPos = savePosition()
+        if quest.currency and quest.currency:lower():find("gem") then
+            teleportTo(GEM_AREA)
+        else
+            teleportTo(COIN_AREA)
+        end
+        while true do
+            task.wait(5)
+            local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
+            local stillActive = false
+            for _, q in ipairs(newQuests) do
+                if q.id == quest.id then stillActive = true; break end
+            end
+            if not stillActive then break end
+        end
+        restorePosition(prevPos)
     end
     
     getgenv().questActive = false
     getgenv().questEgg = nil
+end
+
+local function questLoop(filter)
+    return function()
+        while true do
+            local quests = getActiveQuests(filter)
+            
+            if #quests == 0 then
+                task.wait(10)
+                continue
+            end
+            
+            completeQuest(quests[1])
+        end
+    end
 end
 
 -- ======================================
@@ -209,18 +214,16 @@ QuestTab:CreateInput({
 })
 
 QuestTab:CreateToggle({
-    Name = "Auto Complete Quests",
+    Name = "Auto Season Quests",
     CurrentValue = false,
     Callback = function(v)
-        questRunning = v
+        seasonRunning = v
         if v then
-            questThread = task.spawn(questLoop)
-            print("[Quest] Auto Complete started!")
+            seasonThread = task.spawn(questLoop("hourly"))
+            print("[Quest] Season started!")
         else
-            if questThread then task.cancel(questThread) end
-            getgenv().questActive = false
-            getgenv().questEgg = nil
-            print("[Quest] Auto Complete stopped!")
+            if seasonThread then task.cancel(seasonThread) end
+            print("[Quest] Season stopped!")
         end
     end
 })
@@ -229,10 +232,10 @@ QuestTab:CreateToggle({
     Name = "Auto Claim Season Pass",
     CurrentValue = false,
     Callback = function(v)
-        seasonRunning = v
+        claimRunning = v
         if v then
-            seasonThread = task.spawn(function()
-                while seasonRunning do
+            claimThread = task.spawn(function()
+                while claimRunning do
                     pcall(function() Remote:FireServer("ClaimSeason") end)
                     print("[Quest] Season Pass claimed!")
                     task.wait(5)
@@ -240,8 +243,25 @@ QuestTab:CreateToggle({
             end)
             print("[Quest] Auto Claim started!")
         else
-            if seasonThread then task.cancel(seasonThread) end
+            if claimThread then task.cancel(claimThread) end
             print("[Quest] Auto Claim stopped!")
+        end
+    end
+})
+
+QuestTab:CreateSection("Global Incentive")
+
+QuestTab:CreateToggle({
+    Name = "Auto Global Incentive",
+    CurrentValue = false,
+    Callback = function(v)
+        globalRunning = v
+        if v then
+            globalThread = task.spawn(questLoop("global"))
+            print("[Quest] Global Incentive started!")
+        else
+            if globalThread then task.cancel(globalThread) end
+            print("[Quest] Global Incentive stopped!")
         end
     end
 })
