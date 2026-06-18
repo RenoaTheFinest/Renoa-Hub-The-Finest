@@ -233,14 +233,15 @@ QuestTab:CreateToggle({
     Callback = function(v)
         seasonRunning = v
         if v then
+            print("[Quest] Starting Season Pass thread...")
             seasonThread = task.spawn(function()
                 while seasonRunning do
+                    print("[Quest] Claiming Season Pass...")
                     pcall(function() Remote:FireServer("ClaimSeason") end)
                     print("[Quest] Season Pass claimed!")
                     task.wait(60)
                 end
             end)
-            print("[Quest] Auto Claim started!")
         else
             if seasonThread then task.cancel(seasonThread) end
             print("[Quest] Auto Claim stopped!")
