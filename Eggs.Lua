@@ -346,17 +346,8 @@ EggsTab:CreateToggle({
         if v then
             inventoryThread = task.spawn(function()
                 while inventoryEnabled do
-                    local data = LocalData:Get()
-                    local amount = data and data.Powerups and data.Powerups[selectedInventoryEgg] or 0
-                    
-                    if amount > 0 then
-                        pcall(function() Remote:FireServer("HatchPowerupEgg", selectedInventoryEgg, HATCH_AMOUNT) end)
-                        print("[Eggs] Opened " .. selectedInventoryEgg .. " | Remaining: " .. (amount - HATCH_AMOUNT))
-                        task.wait(0.5)
-                    else
-                        print("[Eggs] No " .. selectedInventoryEgg .. " left, waiting...")
-                        task.wait(30)
-                    end
+                    pcall(function() Remote:FireServer("HatchPowerupEgg", selectedInventoryEgg, HATCH_AMOUNT) end)
+                    task.wait(0.5)
                 end
             end)
             print("[Eggs] Inventory Egg opener started!")
