@@ -140,7 +140,7 @@ AutoTab:CreateToggle({
 })
 
 AutoTab:CreateToggle({
-    Name = "Auto Collect Pickups (Infinite Radius)",
+    Name = "Auto Collect Pickup (Re equip a pet)",
     CurrentValue = false,
     Callback = function(v)
         pickupEnabled = v
@@ -180,14 +180,15 @@ AutoTab:CreateToggle({
                     if amount > 0 then
                         local openAmount = math.min(amount, 25)
                         pcall(function() fire("UseGift", selectedBox, openAmount) end)
-                        task.wait(0.3)
+                        task.wait(0.2)
                         for i = 1, openAmount do
                             if not boxEnabled then break end
                             VIM:SendMouseButtonEvent(0, 0, 0, true, game, 1)
-                            task.wait(0.05)
+                            task.wait(0.03)
                             VIM:SendMouseButtonEvent(0, 0, 0, false, game, 1)
-                            task.wait(0.05)
+                            task.wait(0.03)
                         end
+                        task.wait(0.3)
                     else
                         task.wait(5)
                     end
