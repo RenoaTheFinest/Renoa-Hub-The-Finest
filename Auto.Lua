@@ -167,19 +167,27 @@ AutoTab:CreateDropdown({
 })
 
 AutoTab:CreateToggle({
-    Name = "Auto Open Box",
+    Name = "Auto Open Box (don't use near egg)",
     CurrentValue = false,
     Callback = function(v)
         boxEnabled = v
         if v then
             boxThread = task.spawn(function()
+                local VIM = game:GetService("VirtualInputManager")
                 while boxEnabled do
                     local data = LocalData:Get()
                     local amount = data and data.Powerups and data.Powerups[selectedBox] or 0
                     if amount > 0 then
                         local openAmount = math.min(amount, 25)
                         pcall(function() fire("UseGift", selectedBox, openAmount) end)
-                        task.wait(1)
+                        task.wait(0.3)
+                        for i = 1, openAmount do
+                            if not boxEnabled then break end
+                            VIM:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+                            task.wait(0.05)
+                            VIM:SendMouseButtonEvent(0, 0, 0, false, game, 1)
+                            task.wait(0.05)
+                        end
                     else
                         task.wait(5)
                     end
