@@ -3,7 +3,7 @@ local Window = getgenv().Window
 
 local EnchantTab = Window:CreateTab("Enchant", nil)
 
-local function RunEnchant(primary, secondary, item1, item2, targetLevel)
+local function RunEnchant(primary, secondary, item1, item2)
     getgenv().Settings = {
         Enchanting = {
             Enabled = true,
@@ -12,8 +12,7 @@ local function RunEnchant(primary, secondary, item1, item2, targetLevel)
             FIRST_SLOT_ITEM_TO_USE = item1,
             SECOND_SLOT_ITEM_TO_USE = item2,
             AUTO_SWITCH_TO_ORBS = true,
-            PRIORITIZE_PRIMARY = true,
-            TARGET_LEVEL = targetLevel or 5
+            PRIORITIZE_PRIMARY = true
         }
     }
 
@@ -32,8 +31,7 @@ EnchantTab:CreateButton({
             {"Secret Hunter","Ultra Roller"},
             {"Secret Hunter","Ultra Roller"},
             "Shadow Crystal",
-            "Shadow Crystal",
-            5
+            "Shadow Crystal"
         )
     end
 })
@@ -45,8 +43,7 @@ EnchantTab:CreateButton({
             {"High Roller","Ultra Roller"},
             {"High Roller","Ultra Roller"},
             "Shadow Crystal",
-            "Gems",
-            5
+            "Gems"
         )
     end
 })
@@ -58,8 +55,7 @@ EnchantTab:CreateButton({
             {"Shiny Seeker","Ultra Roller"},
             {"Shiny Seeker","Ultra Roller"},
             "Shadow Crystal",
-            "Shadow Crystal",
-            5
+            "Shadow Crystal"
         )
     end
 })
@@ -73,24 +69,22 @@ EnchantTab:CreateButton({
     Name = "Team Up V + Bubbler V",
     Callback = function()
         RunEnchant(
-            {"team-up","bubbler"},
-            {"team-up","bubbler"},
+            {"Team Up V","Bubbler V"},
+            {"Team Up V","Bubbler V"},
             "Gems",
-            "Gems",
-            5
+            "Gems"
         )
     end
 })
 
 EnchantTab:CreateButton({
-    Name = "Determination + Bubbler V",
+    Name = "Determination V + Bubbler V",
     Callback = function()
         RunEnchant(
-            {"determination","bubbler"},
-            {"determination","bubbler"},
+            {"Determination V","Bubbler V"},
+            {"Determination V","Bubbler V"},
             "Shadow Crystal",
-            "Gems",
-            5
+            "Gems"
         )
     end
 })
@@ -104,24 +98,22 @@ EnchantTab:CreateButton({
     Name = "Team Up V + Looter V",
     Callback = function()
         RunEnchant(
-            {"team-up","looter"},
-            {"team-up","looter"},
+            {"Team Up V","Looter V"},
+            {"Team Up V","Looter V"},
             "Gems",
-            "Gems",
-            5
+            "Gems"
         )
     end
 })
 
 EnchantTab:CreateButton({
-    Name = "Determination + Looter V",
+    Name = "Determination V + Looter V",
     Callback = function()
         RunEnchant(
-            {"determination","looter"},
-            {"determination","looter"},
+            {"Determination V","Looter V"},
+            {"Determination V","Looter V"},
             "Shadow Crystal",
-            "Gems",
-            5
+            "Gems"
         )
     end
 })
