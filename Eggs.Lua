@@ -46,9 +46,8 @@ local EGG_LOCATIONS = {
     ["Void Egg"] = Vector3.new(-150, 11, -26),
     ["Hell Egg"] = Vector3.new(-149, 11, -37),
     ["Secret Egg"] = Vector3.new(-19438, 8, 18839),
-    ["600M Egg"] = Vector3.new(2366, 3162, 972),
-    ["Frozen Egg"] = Vector3.new(680, 7608, -3464),
-    ["Flaming Egg"] = Vector3.new(769, 7608, -3464),
+    ["Frozen Egg"] = Vector3.new(684, 3842, -3465),
+    ["Flaming Egg"] = Vector3.new(764, 3842, -3466),
 }
 
 local EGG_WORLDS = {
@@ -63,8 +62,7 @@ local EGG_WORLDS = {
     ["Magma Egg"] = "The Overworld", ["Crystal Egg"] = "The Overworld",
     ["Lunar Egg"] = "The Overworld", ["Void Egg"] = "The Overworld",
     ["Hell Egg"] = "The Overworld", ["Secret Egg"] = "The Overworld",
-    ["600M Egg"] = "The Overworld", ["Frozen Egg"] = "The Overworld",
-    ["Flaming Egg"] = "The Overworld",
+    ["Frozen Egg"] = "The Overworld", ["Flaming Egg"] = "The Overworld",
 }
 
 local ALL_EGG_NAMES = {}
