@@ -20,7 +20,29 @@ local GEM_AREA = Vector3.new(2286, 3158, 842)
 local TICKET_AREA = Vector3.new(9888, 20089, 242)
 
 local EGG_LOCATIONS = {
+    ["Common Egg"] = Vector3.new(-80, 7, 5),
+    ["Classic Egg"] = Vector3.new(-90, 13, 30),
+    ["Vine Egg"] = Vector3.new(-61, 13, 11),
+    ["Lava Egg"] = Vector3.new(-69, 14, 19),
+    ["Icy Egg"] = Vector3.new(-55, 14, 0),
+    ["Iceshard Egg"] = Vector3.new(-119, 11, 13),
+    ["Spotted Egg"] = Vector3.new(-11, 10, -69),
+    ["Atlantis Egg"] = Vector3.new(-79, 14, 25),
+    ["Mining Egg"] = Vector3.new(-122, 11, -69),
+    ["Neon Egg"] = Vector3.new(-81, 10, -61),
+    ["Cyber Egg"] = Vector3.new(-92, 10, -67),
+    ["Rainbow Egg"] = Vector3.new(-140, 10, -57),
+    ["Nightmare Egg"] = Vector3.new(-146, 10, -47),
+    ["Infinity Egg"] = Vector3.new(-106, 12, -28),
+    ["Spikey Egg"] = Vector3.new(-128, 10, 9),
     ["Magma Egg"] = Vector3.new(-137, 11, 3),
+    ["Crystal Egg"] = Vector3.new(-144, 10, -5),
+    ["Lunar Egg"] = Vector3.new(-148, 11, -15),
+    ["Void Egg"] = Vector3.new(-150, 11, -26),
+    ["Hell Egg"] = Vector3.new(-149, 11, -37),
+    ["Secret Egg"] = Vector3.new(-19438, 8, 18839),
+    ["Frozen Egg"] = Vector3.new(684, 3842, -3465),
+    ["Flaming Egg"] = Vector3.new(764, 3842, -3466),
 }
 
 -- ======================================
