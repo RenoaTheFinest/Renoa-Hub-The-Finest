@@ -65,11 +65,11 @@ end
 
 local function getSellPosition()
     for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj.Name == "Root" and obj.Parent and obj.Parent.Name == "Sell" then
+        if obj.Name == "Ring" and obj.Parent and obj.Parent.Name == "Sell" then
             return obj.Position
         end
     end
-    return Vector3.new(79, 9, -112)
+    return Vector3.new(9921, 23, 137)
 end
 
 local function getActiveQuests(filter)
@@ -105,7 +105,12 @@ local function completeQuest(quest)
     if quest.type == "Bubbles" then
         getgenv().questEgg = nil
         local prevPos = savePosition()
-        teleportTo(getSellPosition())
+        local sellPos = getSellPosition()
+        local root = getRoot()
+        if root then
+            root.CFrame = CFrame.new(sellPos)
+        end
+        task.wait(0.5)
         while true do
             pcall(function() Remote:FireServer("BlowBubble") end)
             task.wait(0.01)
