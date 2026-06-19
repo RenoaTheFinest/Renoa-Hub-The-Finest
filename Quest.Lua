@@ -115,7 +115,7 @@ local function getActiveQuests(filter)
                             amount = task.Amount or 0,
                             rarity = task.Rarity,
                             egg = task.Egg,
-                            currency = task.Currency,
+                            currency = task.Currency or (task.Item and task.Item.Currency),
                         })
                     end
                 end
@@ -184,9 +184,10 @@ local function completeQuest(quest)
     elseif quest.type == "Collect" then
         getgenv().questEgg = nil
         local prevPos = savePosition()
-        if quest.currency and quest.currency:lower():find("gem") then
+        local curr = quest.currency or ""
+        if curr:lower():find("gem") then
             teleportTo(GEM_AREA)
-        elseif quest.currency and quest.currency:lower():find("ticket") then
+        elseif curr:lower():find("ticket") then
             teleportTo(TICKET_AREA)
         else
             teleportTo(COIN_AREA)
