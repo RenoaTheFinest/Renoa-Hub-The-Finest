@@ -64,12 +64,17 @@ local function restorePosition(pos)
 end
 
 local function getSellPosition()
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj.Name == "Ring" and obj.Parent and obj.Parent.Name == "Sell" then
-            return obj.Position
+    local overworld = workspace.Worlds["The Overworld"]
+    if overworld then
+        local sell = overworld:FindFirstChild("Sell")
+        if sell then
+            local ring = sell:FindFirstChild("Ring")
+            if ring then
+                return ring.Position
+            end
         end
     end
-    return Vector3.new(9921, 23, 137)
+    return Vector3.new(77, 6, -113)
 end
 
 local function getActiveQuests(filter)
