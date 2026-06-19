@@ -145,9 +145,10 @@ local function completeQuest(quest)
         local prevPos = savePosition()
         local pos = EGG_LOCATIONS[eggName] or EGG_LOCATIONS["Common Egg"]
         if pos then teleportTo(pos) end
+        task.wait(0.5)
         
         while true do
-            pcall(function() Remote:FireServer("HatchEgg", eggName, HATCH_AMOUNT) end)
+            pcall(function() Remote:InvokeServer("HatchEgg", eggName, HATCH_AMOUNT) end)
             task.wait(0.3)
             local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
             local stillActive = false
