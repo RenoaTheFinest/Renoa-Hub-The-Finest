@@ -32,7 +32,6 @@ local globalThread = nil
 local claimRunning = false
 local claimThread = nil
 local HATCH_AMOUNT = 12
-local fallbackEgg = "Common Egg"
 
 -- ======================================
 -- FUNCTIONS
@@ -129,14 +128,12 @@ local function completeQuest(quest)
         restorePosition(prevPos)
         
     elseif quest.type == "Hatch" then
-        local eggName = quest.egg
+        local eggName
         
-        if quest.rarity then
-            eggName = "Magma Egg"
-        elseif quest.egg then
+        if quest.egg then
             eggName = quest.egg
         else
-            eggName = fallbackEgg
+            eggName = "Magma Egg"
         end
         
         getgenv().questEgg = eggName
@@ -204,16 +201,6 @@ end
 -- UI
 -- ======================================
 QuestTab:CreateSection("Season Pass")
-
-QuestTab:CreateInput({
-    Name = "Fallback Egg (for 'any egg' quests)",
-    CurrentValue = fallbackEgg,
-    PlaceholderText = "Common Egg",
-    RemoveTextAfterFocusLost = false,
-    Callback = function(v)
-        fallbackEgg = v
-    end
-})
 
 QuestTab:CreateInput({
     Name = "Hatch Amount",
