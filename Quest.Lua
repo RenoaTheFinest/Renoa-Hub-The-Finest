@@ -274,7 +274,21 @@ QuestTab:CreateToggle({
     Callback = function(v)
         globalRunning = v
         if v then
-            globalThread = task.spawn(questLoop("global"))
+            globalThread = task.spawn(function()
+                while globalRunning do
+                    local quests = getActiveQuests("global")
+                    
+                    if #quests == 0 then
+                        pcall(function() Remote:FireServer("ClaimGlobalIncentiveQuest") end)
+                        print("[Quest] Global Incentive claimed!")
+                        getgenv().questActive = false
+                        getgenv().questEgg = nil
+                        task.wait(60)
+                    else
+                        completeQuest(quests[1])
+                    end
+                end
+            end)
             print("[Quest] Global Incentive started!")
         else
             if globalThread then task.cancel(globalThread) end
