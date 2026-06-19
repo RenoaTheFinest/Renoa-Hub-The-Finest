@@ -1,5 +1,5 @@
 -- ================================================
--- EGGS TAB (HATCH + INVENTORY + BOUNTY + RIFT + QUEST)
+-- EGGS TAB (HATCH + INVENTORY + BOUNTY + RIFT)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -277,18 +277,14 @@ EggsTab:CreateToggle({
         if v then
             autoHatchThread = task.spawn(function()
                 while autoHatchEnabled do
-                    -- Pause if quest is active and no quest egg set (bubble/collect quest)
-                    if getgenv().questActive and not getgenv().questEgg then
+                    if getgenv().questActive then
                         task.wait(0.5)
                         continue
                     end
                     
-                    -- Use quest egg if set, otherwise use selected egg
-                    local eggToUse = getgenv().questEgg or selectedEgg
-                    
-                    teleportToEgg(eggToUse)
+                    teleportToEgg(selectedEgg)
                     pcall(function()
-                        Remote:FireServer("HatchEgg", eggToUse, HATCH_AMOUNT)
+                        Remote:FireServer("HatchEgg", selectedEgg, HATCH_AMOUNT)
                     end)
                     task.wait(0.5)
                 end
@@ -400,20 +396,15 @@ EggsTab:CreateToggle({
             refreshBountyLabels()
             bountyThread = task.spawn(function()
                 while bountyEnabled do
-                    -- Pause if quest is active and no quest egg set
-                    if getgenv().questActive and not getgenv().questEgg then
+                    if getgenv().questActive then
                         task.wait(0.5)
                         continue
                     end
                     
                     refreshBountyLabels()
-                    
-                    -- Use quest egg if set, otherwise use bounty egg
-                    local eggToUse = getgenv().questEgg or currentBountyEgg
-                    
-                    teleportToEgg(eggToUse)
+                    teleportToEgg(currentBountyEgg)
                     pcall(function()
-                        Remote:FireServer("HatchEgg", eggToUse, HATCH_AMOUNT)
+                        Remote:FireServer("HatchEgg", currentBountyEgg, HATCH_AMOUNT)
                     end)
                     task.wait(0.5)
                 end
