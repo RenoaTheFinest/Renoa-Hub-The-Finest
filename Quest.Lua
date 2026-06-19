@@ -232,7 +232,7 @@ QuestTab:CreateToggle({
     Callback = function(v)
         seasonRunning = v
         if v then
-            seasonThread = task.spawn(questLoop("hourly"))
+            seasonThread = task.spawn(questLoop("challenge"))
             print("[Quest] Season started!")
         else
             if seasonThread then task.cancel(seasonThread) end
