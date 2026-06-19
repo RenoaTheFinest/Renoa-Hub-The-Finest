@@ -20,7 +20,6 @@ local GEM_AREA = Vector3.new(2286, 3158, 842)
 
 local EGG_LOCATIONS = {
     ["Magma Egg"] = Vector3.new(-137, 11, 3),
-    ["Common Egg"] = Vector3.new(-80, 7, 5),
 }
 
 -- ======================================
@@ -143,7 +142,7 @@ local function completeQuest(quest)
         getgenv().questEgg = eggName
         
         local prevPos = savePosition()
-        local pos = EGG_LOCATIONS[eggName] or EGG_LOCATIONS["Common Egg"]
+        local pos = EGG_LOCATIONS[eggName] or EGG_LOCATIONS["Magma Egg"]
         if pos then teleportTo(pos) end
         task.wait(0.5)
         
