@@ -1,12 +1,143 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+-- ================================================
+-- RIFT TAB (SUMMON ONLY)
+-- ================================================
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
 
-]]--
+local RiftTab = Window:CreateTab("Rift", nil)
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v22,v23) local v24={};for v37=1, #v22 do v6(v24,v0(v4(v1(v2(v22,v37,v37 + 1 )),v1(v2(v23,1 + (v37% #v23) ,1 + (v37% #v23) + 1 )))%256 ));end return v5(v24);end repeat task.wait();until getgenv().Window local v8=getgenv().Window;local v9=v8:CreateTab(v7("\227\202\221\49","\126\177\163\187\69\134\219\167"),nil);local v10=game:GetService(v7("\17\200\58\201\245\32\204\62\192\248\16\217\37\215\253\36\200","\156\67\173\74\165"));local v11={v7("\0\191\76\86\147\48\67\38\160\70\4\176\34","\38\84\215\41\118\220\70"),v7("\125\31\44\27\249\81\27\39\82\206\81\4\35\22\247\67\19","\158\48\118\66\114")};local v12={[v7("\159\44\21\118\92\179\254\185\51\31\36\127\161","\155\203\68\112\86\19\197")]={v7("\117\205\63\247\69\97\165\221\65\218","\152\38\189\86\156\32\24\133"),v7("\209\86\160\75\253\23\130\65\251","\38\156\55\199"),v7("\139\111\101\59\7\117\246\3\141\122\123","\35\200\29\28\72\115\20\154"),v7("\53\170\223\222\159\108\17\30\184","\84\121\223\177\191\237\76"),v7("\141\89\192\164\122\117\55\198","\161\219\54\169\192\90\48\80"),v7("\97\71\12\41\9\103\7\34","\69\41\34\96"),v7("\146\202\208\2\22\38\189\209\210\74\39\44\187","\75\220\163\183\106\98"),v7("\48\187\130\57\219\13\173\203\18\222\5","\185\98\218\235\87")},[v7("\230\53\41\239\217\171\198\57\103\214\223\184\202\56\46\245\219","\202\171\92\71\134\190")]={v7("\4\200\34\129\39\198\108\173\46\198","\232\73\161\76"),v7("\152\192\64\88\12\251\252\69\90","\126\219\185\34\61"),v7("\34\203\81\124\62\82\244\224","\135\108\174\62\18\30\23\147")}};local v13={[v7("\130\225\47\139\55\184\54\213\161\230\56\199\28","\167\214\137\74\171\120\206\83")]={v7("\172\255\62\89\253\169\203\211\58\88\235\179","\199\235\144\82\61\152"),v7("\53\25\160\42\11\86\154\35\2\5\173","\75\103\118\217"),v7("\244\65\96\17\171\94\228\92\117\7\173","\126\167\52\16\116\217")},[v7("\229\39\46\137\179\24\241\205\110\16\129\166\24\248\193\61\37","\156\168\78\64\224\212\121")]={v7("\35\231\166\203\71\205\173\203\20\250","\174\103\142\197")}};local v14=v7("\98\32\90\120\10\72\253\68\63\80\42\41\90","\152\54\72\63\88\69\62");local v15=v7("\231\212\231\87\209\221\174\121\211\195","\60\180\164\142");local v16=v7("\108\86\0\105\8\251\23\74\73\10\59\43\233","\114\56\62\101\73\71\141");local v17=v7("\159\230\215\192\189\231\155\231\176\236\200\208","\164\216\137\187");local v18=false;local v19=false;local v20=nil;local v21=nil;v9:CreateSection(v7("\247\225\54\242\148\247\13\198","\107\178\134\81\210\198\158"));v9:CreateDropdown({[v7("\22\15\143\195","\202\88\110\226\166")]=v7("\230\8\133\183\253\204\29\142\243","\170\163\111\226\151"),[v7("\62\32\166\49\65\57\58","\73\113\80\210\88\46\87")]=v11,[v7("\162\57\223\0\226\143\56\226\2\243\136\35\195","\135\225\76\173\114")]={v14},[v7("\57\236\180\188\174\188\164\17","\199\122\141\216\208\204\221")]=function(v25) v14=v25[604 -(268 + 335) ];v15=v12[v14][291 -(60 + 230) ];end});v9:CreateDropdown({[v7("\131\220\29\245","\150\205\189\112\144\24")]=v7("\0\131\184","\112\69\228\223\44\100\232\113"),[v7("\251\15\19\218\185\114\149","\230\180\127\103\179\214\28")]=v12[v14],[v7("\175\16\77\84\225\79\244\163\21\75\79\235\79","\128\236\101\63\38\132\33")]={v15},[v7("\143\168\29\72\180\234\204\167","\175\204\201\113\36\214\139")]=function(v28) v15=v28[1 + 0 ];end});v9:CreateToggle({[v7("\105\205\56\217","\100\39\172\85\188")]=v7("\140\109\173\143\115\136\127\190\192\1\164\126\173","\83\205\24\217\224"),[v7("\197\208\223\47\227\203\217\11\231\201\216\56","\93\134\165\173")]=false,[v7("\157\243\205\206\56\207\177\117","\30\222\146\161\162\90\174\210")]=function(v30) v18=v30;if v30 then v20=task.spawn(function() while v18 do local v40=0;while true do if (v40==(1456 -(282 + 1174))) then pcall(function() v10.Shared.Framework.Network.Remote.RemoteFunction:InvokeServer(v7("\214\91\125\7\234\64\66\3\227\90","\106\133\46\16"),{[v7("\108\57\99\249","\32\56\64\19\156\58")]=v7("\127\207\226","\224\58\168\133\54\58\146"),[v7("\119\87\70\248","\107\57\54\43\157\21\230\231")]=v15,[v7("\239\130\28\240","\175\187\235\113\149\217\188")]=816 -(569 + 242) ,[v7("\16\186\130\71","\24\92\207\225\44\131\25")]=14 -9 ,[v7("\124\220\170\64\31","\29\43\179\216\44\123")]=v14});end);task.wait(107 + 1753 );break;end end end end);else local v38=0;while true do if (v38==(1024 -(706 + 318))) then v18=false;if v20 then task.cancel(v20);end break;end end end end});v9:CreateSection(v7("\158\209\37\95\169\153\18\69\187\205","\44\221\185\64"));v9:CreateDropdown({[v7("\47\230\69\90","\19\97\135\40\63")]=v7("\141\84\54\40\59\113\153\83\33\55\43","\81\206\60\83\91\79"),[v7("\97\187\196\123\32\205\94","\196\46\203\176\18\79\163\45")]=v11,[v7("\155\55\108\12\33\245\251\151\50\106\23\43\245","\143\216\66\30\126\68\155")]={v16},[v7("\137\201\1\199\199\162\212\234","\129\202\168\109\171\165\195\183")]=function(v31) v16=v31[1272 -(945 + 326) ];v17=v13[v16][1];end});v9:CreateDropdown({[v7("\12\89\58\221","\134\66\56\87\184\190\116")]=v7("\31\57\12\168\13","\85\92\81\105\219\121\139\65"),[v7("\210\163\68\76\115\209\238","\191\157\211\48\37\28")]=v13[v16],[v7("\252\10\230\14\63\209\11\219\12\46\214\16\250","\90\191\127\148\124")]={v17},[v7("\91\134\34\27\122\134\45\28","\119\24\231\78")]=function(v34) v17=v34[1];end});v9:CreateToggle({[v7("\172\44\168\79","\113\226\77\197\42\188\32")]=v7("\27\3\224\186\122\53\252\176\41\2\180\135\51\16\224","\213\90\118\148"),[v7("\120\59\166\68\72\85\58\130\87\65\78\43","\45\59\78\212\54")]=false,[v7("\51\87\143\135\132\47\174\251","\144\112\54\227\235\230\78\205")]=function(v36) v19=v36;if v36 then v21=task.spawn(function() while v19 do local v41=0 -0 ;local v42;while true do if (v41==0) then v42=0 + 0 ;while true do if (v42==(700 -(271 + 429))) then pcall(function() v10.Shared.Framework.Network.Remote.RemoteFunction:InvokeServer(v7("\128\61\2\241\223\85\129\33\9\232","\59\211\72\111\156\176"),{[v7("\122\158\243\40","\77\46\231\131")]=v7("\153\92\179\83\174","\32\218\52\214"),[v7("\96\22\60\173","\58\46\119\81\200\145\208\37")]=v17,[v7("\31\133\61\169","\86\75\236\80\204\201\221")]=5 + 0 ,[v7("\69\78\101\137\250","\235\18\33\23\229\158")]=v16});end);task.wait(3360 -(1408 + 92) );break;end end break;end end end end);else local v39=0;while true do if (v39==(1086 -(461 + 625))) then v19=false;if v21 then task.cancel(v21);end break;end end end end});print("[Rift] Loaded! ðŸ”¥");
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local WORLDS = {"The Overworld","Minigame Paradise"}
+
+local WORLD_EGGS = {
+    ["The Overworld"] = {"Spikey Egg","Magma Egg","Crystal Egg","Lunar Egg","Void Egg","Hell Egg","Nightmare Egg","Rainbow Egg","Obsidian Egg"},
+    ["Minigame Paradise"] = {"Mining Egg","Cyber Egg","Neon Egg"},
+}
+
+local WORLD_CHESTS = {
+    ["The Overworld"] = {"Golden Chest","Royal Chest","Super Chest","Obsidian Chest"},
+    ["Minigame Paradise"] = {"Dice Chest"},
+}
+
+local selectedEggWorld = "The Overworld"
+local selectedEgg = "Spikey Egg"
+
+local selectedChestWorld = "The Overworld"
+local selectedChest = "Golden Chest"
+
+local eggLoop = false
+local chestLoop = false
+local eggThread = nil
+local chestThread = nil
+
+-- =========================
+-- EGG RIFT
+-- =========================
+RiftTab:CreateSection("Egg Rift")
+
+RiftTab:CreateDropdown({
+    Name = "Egg World",
+    Options = WORLDS,
+    CurrentOption = {selectedEggWorld},
+    Callback = function(v)
+        selectedEggWorld = v[1]
+        selectedEgg = WORLD_EGGS[selectedEggWorld][1]
+    end
+})
+
+RiftTab:CreateDropdown({
+    Name = "Egg",
+    Options = WORLD_EGGS[selectedEggWorld],
+    CurrentOption = {selectedEgg},
+    Callback = function(v)
+        selectedEgg = v[1]
+    end
+})
+
+RiftTab:CreateToggle({
+    Name = "Auto Egg Rift",
+    CurrentValue = false,
+    Callback = function(v)
+        eggLoop = v
+
+        if v then
+            eggThread = task.spawn(function()
+                while eggLoop do
+                    pcall(function()
+                        ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction:InvokeServer(
+                            "SummonRift",
+                            {
+                                Type="Egg",
+                                Name=selectedEgg,
+                                Time=5,
+                                Luck=5,
+                                World=selectedEggWorld
+                            }
+                        )
+                    end)
+                    task.wait(1860)
+                end
+            end)
+        else
+            eggLoop = false
+            if eggThread then task.cancel(eggThread) end
+        end
+    end
+})
+
+-- =========================
+-- CHEST RIFT
+-- =========================
+RiftTab:CreateSection("Chest Rift")
+
+RiftTab:CreateDropdown({
+    Name = "Chest World",
+    Options = WORLDS,
+    CurrentOption = {selectedChestWorld},
+    Callback = function(v)
+        selectedChestWorld = v[1]
+        selectedChest = WORLD_CHESTS[selectedChestWorld][1]
+    end
+})
+
+RiftTab:CreateDropdown({
+    Name = "Chest",
+    Options = WORLD_CHESTS[selectedChestWorld],
+    CurrentOption = {selectedChest},
+    Callback = function(v)
+        selectedChest = v[1]
+    end
+})
+
+RiftTab:CreateToggle({
+    Name = "Auto Chest Rift",
+    CurrentValue = false,
+    Callback = function(v)
+        chestLoop = v
+
+        if v then
+            chestThread = task.spawn(function()
+                while chestLoop do
+                    pcall(function()
+                        ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction:InvokeServer(
+                            "SummonRift",
+                            {
+                                Type="Chest",
+                                Name=selectedChest,
+                                Time=5,
+                                World=selectedChestWorld
+                            }
+                        )
+                    end)
+                    task.wait(1860)
+                end
+            end)
+        else
+            chestLoop = false
+            if chestThread then task.cancel(chestThread) end
+        end
+    end
+})
+
+print("[Rift] Loaded!")
