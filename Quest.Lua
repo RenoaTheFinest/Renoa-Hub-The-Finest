@@ -20,6 +20,7 @@ local GEM_AREA = Vector3.new(2286, 3158, 842)
 
 local EGG_LOCATIONS = {
     ["Magma Egg"] = Vector3.new(-137, 11, 3),
+    ["Common Egg"] = Vector3.new(-80, 7, 5),
 }
 
 -- ======================================
@@ -130,26 +131,20 @@ local function completeQuest(quest)
         
     elseif quest.type == "Hatch" then
         local eggName = quest.egg
-        local needsTeleport = false
         
         if quest.rarity then
             eggName = "Magma Egg"
-            needsTeleport = true
         elseif quest.egg then
             eggName = quest.egg
-            needsTeleport = true
         else
             eggName = fallbackEgg
         end
         
         getgenv().questEgg = eggName
         
-        local prevPos = nil
-        if needsTeleport then
-            prevPos = savePosition()
-            local pos = EGG_LOCATIONS[eggName]
-            if pos then teleportTo(pos) end
-        end
+        local prevPos = savePosition()
+        local pos = EGG_LOCATIONS[eggName] or EGG_LOCATIONS["Common Egg"]
+        if pos then teleportTo(pos) end
         
         while true do
             pcall(function() Remote:FireServer("HatchEgg", eggName, HATCH_AMOUNT) end)
@@ -162,9 +157,7 @@ local function completeQuest(quest)
             if not stillActive then break end
         end
         
-        if needsTeleport then
-            restorePosition(prevPos)
-        end
+        restorePosition(prevPos)
         
     elseif quest.type == "Collect" then
         getgenv().questEgg = nil
