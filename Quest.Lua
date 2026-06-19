@@ -130,33 +130,34 @@ local function completeQuest(quest)
         restorePosition(prevPos)
         
     elseif quest.type == "Hatch" then
-        local eggName
-        
         if quest.egg then
-            eggName = quest.egg
-        else
-            eggName = "Magma Egg"
-        end
-        
-        getgenv().questEgg = eggName
-        
-        local prevPos = savePosition()
-        local pos = EGG_LOCATIONS[eggName] or EGG_LOCATIONS["Magma Egg"]
-        if pos then teleportTo(pos) end
-        task.wait(0.5)
-        
-        while true do
-            pcall(function() Remote:InvokeServer("HatchEgg", eggName, HATCH_AMOUNT) end)
-            task.wait(0.3)
-            local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
-            local stillActive = false
-            for _, q in ipairs(newQuests) do
-                if q.id == quest.id then stillActive = true; break end
+            local eggName = quest.egg
+            
+            getgenv().questEgg = eggName
+            
+            local prevPos = savePosition()
+            local pos = EGG_LOCATIONS[eggName] or EGG_LOCATIONS["Magma Egg"]
+            if pos then teleportTo(pos) end
+            task.wait(0.5)
+            
+            while true do
+                pcall(function() Remote:InvokeServer("HatchEgg", eggName, HATCH_AMOUNT) end)
+                task.wait(0.3)
+                local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
+                local stillActive = false
+                for _, q in ipairs(newQuests) do
+                    if q.id == quest.id then stillActive = true; break end
+                end
+                if not stillActive then break end
             end
-            if not stillActive then break end
+            
+            restorePosition(prevPos)
+        else
+            print("[Quest] Skipping hatch quest (no specific egg), Eggs tab will handle")
+            getgenv().questActive = false
+            getgenv().questEgg = nil
+            task.wait(5)
         end
-        
-        restorePosition(prevPos)
         
     elseif quest.type == "Collect" then
         getgenv().questEgg = nil
