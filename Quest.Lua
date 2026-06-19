@@ -17,6 +17,7 @@ local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
 -- ======================================
 local COIN_AREA = Vector3.new(36, 15971, 41)
 local GEM_AREA = Vector3.new(2286, 3158, 842)
+local TICKET_AREA = Vector3.new(9888, 20089, 242)
 
 local EGG_LOCATIONS = {
     ["Magma Egg"] = Vector3.new(-137, 11, 3),
@@ -92,6 +93,7 @@ local function getActiveQuests(filter)
                             amount = task.Amount or 0,
                             rarity = task.Rarity,
                             egg = task.Egg,
+                            currency = task.Currency,
                         })
                     end
                 end
@@ -161,6 +163,8 @@ local function completeQuest(quest)
         local prevPos = savePosition()
         if quest.currency and quest.currency:lower():find("gem") then
             teleportTo(GEM_AREA)
+        elseif quest.currency and quest.currency:lower():find("ticket") then
+            teleportTo(TICKET_AREA)
         else
             teleportTo(COIN_AREA)
         end
