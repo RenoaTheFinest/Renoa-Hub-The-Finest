@@ -1,12 +1,194 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+-- ================================================
+-- AUTO TAB (ALL IN ONE)
+-- ================================================
+repeat task.wait() until getgenv().Window
+local Window = getgenv().Window
 
-]]--
+local AutoTab = Window:CreateTab("Auto", nil)
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v25,v26) local v27={};for v34=1, #v25 do v6(v27,v0(v4(v1(v2(v25,v34,v34 + 1 )),v1(v2(v26,1 + (v34% #v26) ,1 + (v34% #v26) + 1 )))%256 ));end return v5(v27);end repeat task.wait();until getgenv().Window local v8=getgenv().Window;local v9=v8:CreateTab(v7("\240\214\207\42","\126\177\163\187\69\134\219\167"),nil);local v10=game:GetService(v7("\17\200\58\201\245\32\204\62\192\248\16\217\37\215\253\36\200","\156\67\173\74\165"));local v11=game:GetService(v7("\3\184\91\29\175\54\71\55\178","\38\84\215\41\118\220\70"));local v12=game:GetService(v7("\96\26\35\11\251\66\5","\158\48\118\66\114"));local v13=v12.LocalPlayer;local v14=require(v10.Shared.Constants);local v15=v10.Shared.Framework.Network.Remote.RemoteEvent;local function v16(v28,...) if v15 then v15:FireServer(v28,...);end end local v17=false;local v18=false;local v19=false;local v20=false;local v21=nil;local v22=nil;local v23=nil;local v24=v14.DefaultPickupRadius;v9:CreateSection(v7("\137\49\18\52\127\160","\155\203\68\112\86\19\197"));v9:CreateToggle({[v7("\104\220\59\249","\152\38\189\86\156\32\24\133")]=v7("\221\66\179\73\188\117\171\73\235\23\133\83\254\85\171\67","\38\156\55\199"),[v7("\139\104\110\58\22\122\238\117\169\113\105\45","\35\200\29\28\72\115\20\154")]=false,[v7("\58\190\221\211\143\45\55\18","\84\121\223\177\191\237\76")]=function(v29) local v30=0;while true do if (v30==0) then v17=v29;if v29 then v21=task.spawn(function() while v17 do local v50=0 -0 ;while true do if ((120 -(30 + 90))==v50) then pcall(function() v16(v7("\153\90\198\183\24\69\50\195\183\83","\161\219\54\169\192\90\48\80"));end);task.wait(0.01 + 0 );break;end end end end);print(v7("\114\99\21\49\70\127\64\7\92\64\2\41\76\2\19\49\72\80\20\32\77\3","\69\41\34\96"));else if v21 then task.cancel(v21);end print(v7("\135\226\194\30\13\22\252\225\194\8\0\39\185\131\196\30\13\59\172\198\211\75","\75\220\163\183\106\98"));end break;end end end});v9:CreateSection(v7("\49\191\135\59","\185\98\218\235\87"));v9:CreateToggle({[v7("\229\61\42\227","\202\171\92\71\134\190")]=v7("\8\212\56\135\105\242\41\132\37\129\14\157\43\195\32\141","\232\73\161\76"),[v7("\152\204\80\79\27\181\205\116\92\18\174\220","\126\219\185\34\61")]=false,[v7("\47\207\82\126\124\118\240\236","\135\108\174\62\18\30\23\147")]=function(v31) v18=v31;if v31 then local v35=0 + 0 ;local v36;local v37;while true do if (v35==1) then for v47,v48 in ipairs(v11:GetDescendants()) do if ((v48.Name==v7("\132\230\37\223","\167\214\137\74\171\120\206\83")) and v48.Parent and (v48.Parent.Name==v7("\184\245\62\81","\199\235\144\82\61\152"))) then v36=v48;v37=v48.Position;break;end end if  not v36 then local v51=0 + 0 ;while true do local v54=0;while true do if (v54==0) then if (v51==(0 + 0)) then print(v7("\60\55\172\63\8\43\249\5\8\86\170\46\11\26\249\42\21\19\184\107\1\25\172\37\3\87","\75\103\118\217"));v18=false;v51=1 -0 ;end if (v51==(1 -0)) then return;end break;end end end end v35=5 -3 ;end if (v35==(2 + 0)) then v22=task.spawn(function() local v49=0;while true do if (v49==0) then while v18 do local v55=0 + 0 ;local v56;while true do if (v55==(396 -(115 + 281))) then v56=v13.Character and v13.Character:FindFirstChild(v7("\239\65\125\21\183\17\206\80\66\27\182\10\247\85\98\0","\126\167\52\16\116\217")) ;if v56 then v36.Position=v56.Position + Vector3.new(0, -(6 -3),0 + 0 ) ;end v55=1;end if (v55==(2 -1)) then pcall(function() v16(v7("\251\43\44\140\150\12\254\202\34\37","\156\168\78\64\224\212\121"));end);task.wait(3 -2 );break;end end end if v37 then local v57=0;while true do if (v57==0) then v36.Position=v37;print(v7("\60\207\176\218\8\211\229\253\2\226\169\142\53\225\170\218\71\252\160\218\18\252\171\203\3\175","\174\103\142\197"));break;end end end break;end end end);print(v7("\109\9\74\44\42\99\184\119\61\75\55\101\109\253\90\36\31\43\49\95\234\66\45\91\121","\152\54\72\63\88\69\62"));break;end if ((867 -(550 + 317))==v35) then v36=nil;v37=nil;v35=1 -0 ;end end else local v38=0 -0 ;local v39;while true do if (v38==(0 -0)) then v39=0;while true do if (v39==(285 -(134 + 151))) then if v22 then task.cancel(v22);end print(v7("\239\229\251\72\219\249\174\125\193\208\225\28\231\193\226\80\148\215\250\83\196\212\235\88\149","\60\180\164\142"));break;end end break;end end end end});v9:CreateSection(v7("\127\81\9\45\34\227\82\119\76\7","\114\56\62\101\73\71\141"));v9:CreateToggle({[v7("\150\232\214\193","\164\216\137\187")]=v7("\243\243\37\189\230\203\24\215\166\22\189\170\250\14\220\166\30\160\164","\107\178\134\81\210\198\158"),[v7("\27\27\144\212\175\54\26\180\199\166\45\11","\202\88\110\226\166")]=false,[v7("\224\14\142\251\200\194\12\137","\170\163\111\226\151")]=function(v32) v20=v32;if v32 then local v40=1665 -(970 + 695) ;while true do if (v40==(0 -0)) then v23=task.spawn(function() while v20 do local v52=1990 -(582 + 1408) ;while true do if ((3 -2)==v52) then task.wait(1 -0 );break;end if (v52==(0 -0)) then pcall(function() v16(v7("\36\35\183\31\65\59\45\20\62\157\42\76","\73\113\80\210\88\46\87"));end);print(v7("\186\13\216\6\232\188\108\234\29\235\133\41\195\82\200\147\46\141\7\244\132\40\140","\135\225\76\173\114"));v52=1825 -(1195 + 629) ;end end end end);print(v7("\33\204\173\164\163\128\231\61\226\180\180\169\179\231\53\255\186\240\191\169\166\8\249\189\180\237","\199\122\141\216\208\204\221"));break;end end else local v41=0;while true do if (v41==(0 -0)) then if v23 then task.cancel(v23);end print(v7("\150\252\5\228\119\203\237\250\31\252\124\243\163\157\63\226\122\182\190\201\31\224\104\243\169\156","\150\205\189\112\144\24"));break;end end end end});v9:CreateSection(v7("\21\141\188\71\17\152","\112\69\228\223\44\100\232\113"));v9:CreateToggle({[v7("\250\30\10\214","\230\180\127\103\179\214\28")]=v7("\173\16\75\73\164\98\239\128\9\90\69\240\1\208\133\6\84\83\244\82\160\196\44\81\64\237\79\233\152\0\31\116\229\69\233\153\22\22","\128\236\101\63\38\132\33"),[v7("\143\188\3\86\179\229\219\154\168\29\81\179","\175\204\201\113\36\214\139")]=false,[v7("\100\205\57\208\6\70\207\62","\100\39\172\85\188")]=function(v33) v19=v33;if v33 then local v42=241 -(187 + 54) ;while true do if (v42==(780 -(162 + 618))) then v14.DefaultPickupRadius=math.huge;print(v7("\150\89\172\148\60\144\56\137\137\48\166\109\169\192\33\172\124\176\149\32\237\107\188\148\115\185\119\249\137\61\171\113\183\137\39\168\57","\83\205\24\217\224"));break;end end else local v43=0 + 0 ;while true do if (v43==(0 + 0)) then v14.DefaultPickupRadius=v24;print(v7("\221\228\216\41\233\248\141\13\239\198\198\40\246\133\223\60\226\204\216\46\166\215\200\46\242\202\223\56\226\132","\93\134\165\173"));break;end end end end});print(v7("\133\211\212\214\53\243\242\82\177\243\197\199\62\143","\30\222\146\161\162\90\174\210"));
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local constants = require(ReplicatedStorage.Shared.Constants)
+local LocalData = require(ReplicatedStorage.Client.Framework.Services.LocalData)
+
+local RE = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
+
+local function fire(action, ...)
+    if RE then RE:FireServer(action, ...) end
+end
+
+-- ======================================
+-- SETTINGS
+-- ======================================
+local bubbleEnabled = false
+local sellEnabled = false
+local orbEnabled = false
+local pickupEnabled = false
+local boxEnabled = false
+local bubbleThread = nil
+local sellThread = nil
+local orbThread = nil
+local boxThread = nil
+
+local originalRadius = constants.DefaultPickupRadius
+
+-- ======================================
+-- GET BOXES FROM INVENTORY
+-- ======================================
+local function getBoxes()
+    local boxes = {}
+    local data = LocalData:Get()
+    if data and data.Powerups then
+        for name, amount in pairs(data.Powerups) do
+            if (name:find("Box") or name:find("Crate") or name:find("Giftbox") or name:find("Present")) and amount > 0 then
+                table.insert(boxes, name)
+            end
+        end
+    end
+    if #boxes == 0 then
+        boxes = {"Mystery Box", "Golden Crate", "Wooden Crate"}
+    end
+    table.sort(boxes)
+    return boxes
+end
+
+local boxList = getBoxes()
+local selectedBox = boxList[1] or "Mystery Box"
+
+-- ======================================
+-- UI
+-- ======================================
+AutoTab:CreateSection("Auto")
+
+AutoTab:CreateToggle({
+    Name = "Auto Blow Bubble",
+    CurrentValue = false,
+    Callback = function(v)
+        bubbleEnabled = v
+        if v then
+            bubbleThread = task.spawn(function()
+                while bubbleEnabled do
+                    pcall(function() fire("BlowBubble") end)
+                    task.wait(0.01)
+                end
+            end)
+        else
+            if bubbleThread then task.cancel(bubbleThread) end
+        end
+    end
+})
+
+AutoTab:CreateToggle({
+    Name = "Auto Sell Bubble",
+    CurrentValue = false,
+    Callback = function(v)
+        sellEnabled = v
+        if v then
+            local sellRoot = nil
+            local originalPos = nil
+            for _, obj in ipairs(Workspace:GetDescendants()) do
+                if obj.Name == "Root" and obj.Parent and obj.Parent.Name == "Sell" then
+                    sellRoot = obj
+                    originalPos = obj.Position
+                    break
+                end
+            end
+            
+            if not sellRoot then
+                print("[Auto] No sell area found!")
+                sellEnabled = false
+                return
+            end
+            
+            sellThread = task.spawn(function()
+                while sellEnabled do
+                    local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                    if root then
+                        sellRoot.Position = root.Position + Vector3.new(0, -3, 0)
+                    end
+                    pcall(function() fire("SellBubble") end)
+                    task.wait(1)
+                end
+                if originalPos then
+                    sellRoot.Position = originalPos
+                end
+            end)
+        else
+            if sellThread then task.cancel(sellThread) end
+        end
+    end
+})
+
+AutoTab:CreateToggle({
+    Name = "Auto Use Golden Orb",
+    CurrentValue = false,
+    Callback = function(v)
+        orbEnabled = v
+        if v then
+            orbThread = task.spawn(function()
+                while orbEnabled do
+                    pcall(function() fire("UseGoldenOrb") end)
+                    task.wait(1)
+                end
+            end)
+        else
+            if orbThread then task.cancel(orbThread) end
+        end
+    end
+})
+
+AutoTab:CreateToggle({
+    Name = "Auto Collect Pickups (Infinite Radius)",
+    CurrentValue = false,
+    Callback = function(v)
+        pickupEnabled = v
+        if v then
+            constants.DefaultPickupRadius = math.huge
+        else
+            constants.DefaultPickupRadius = originalRadius
+        end
+    end
+})
+
+-- ======================================
+-- AUTO OPEN BOX
+-- ======================================
+AutoTab:CreateSection("Auto Open Box")
+
+AutoTab:CreateDropdown({
+    Name = "Select Box",
+    CurrentOption = {selectedBox},
+    Options = boxList,
+    Callback = function(v)
+        selectedBox = v[1] or v
+    end
+})
+
+AutoTab:CreateToggle({
+    Name = "Auto Open Box",
+    CurrentValue = false,
+    Callback = function(v)
+        boxEnabled = v
+        if v then
+            boxThread = task.spawn(function()
+                while boxEnabled do
+                    local data = LocalData:Get()
+                    local amount = data and data.Powerups and data.Powerups[selectedBox] or 0
+                    if amount > 0 then
+                        local openAmount = math.min(amount, 25)
+                        pcall(function() fire("UseGift", selectedBox, openAmount) end)
+                        task.wait(1)
+                    else
+                        task.wait(5)
+                    end
+                end
+            end)
+        else
+            if boxThread then task.cancel(boxThread) end
+        end
+    end
+})
+
+print("[Auto] Loaded!")
