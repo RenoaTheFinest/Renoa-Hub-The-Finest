@@ -15,7 +15,6 @@ local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
 -- ======================================
 -- TELEPORT LOCATIONS
 -- ======================================
-local SELL_AREA = Vector3.new(79, 9, -112)
 local COIN_AREA = Vector3.new(36, 15971, 41)
 local GEM_AREA = Vector3.new(2286, 3158, 842)
 
@@ -46,7 +45,7 @@ end
 local function teleportTo(pos)
     local root = getRoot()
     if root then
-        root.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
+        root.CFrame = CFrame.new(pos + Vector3.new(0, 3, 0))
     end
 end
 
@@ -62,6 +61,15 @@ local function restorePosition(pos)
             root.CFrame = CFrame.new(pos)
         end
     end
+end
+
+local function getSellPosition()
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj.Name == "Root" and obj.Parent and obj.Parent.Name == "Sell" then
+            return obj.Position
+        end
+    end
+    return Vector3.new(79, 9, -112)
 end
 
 local function getActiveQuests(filter)
@@ -97,7 +105,7 @@ local function completeQuest(quest)
     if quest.type == "Bubbles" then
         getgenv().questEgg = nil
         local prevPos = savePosition()
-        teleportTo(SELL_AREA)
+        teleportTo(getSellPosition())
         while true do
             pcall(function() Remote:FireServer("BlowBubble") end)
             task.wait(0.01)
@@ -178,6 +186,8 @@ local function questLoop(filter)
             local quests = getActiveQuests(filter)
             
             if #quests == 0 then
+                getgenv().questActive = false
+                getgenv().questEgg = nil
                 task.wait(10)
                 continue
             end
@@ -223,6 +233,8 @@ QuestTab:CreateToggle({
             print("[Quest] Season started!")
         else
             if seasonThread then task.cancel(seasonThread) end
+            getgenv().questActive = false
+            getgenv().questEgg = nil
             print("[Quest] Season stopped!")
         end
     end
@@ -261,6 +273,8 @@ QuestTab:CreateToggle({
             print("[Quest] Global Incentive started!")
         else
             if globalThread then task.cancel(globalThread) end
+            getgenv().questActive = false
+            getgenv().questEgg = nil
             print("[Quest] Global Incentive stopped!")
         end
     end
