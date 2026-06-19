@@ -1,5 +1,5 @@
 -- ================================================
--- RIFT TAB (SUMMON ONLY)
+-- RIFT TAB (SUMMON + AUTO TP + OPEN CHEST)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -7,6 +7,11 @@ local Window = getgenv().Window
 local RiftTab = Window:CreateTab("Rift", nil)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
+local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
 
 local WORLDS = {"The Overworld","Minigame Paradise"}
 
@@ -30,6 +35,41 @@ local eggLoop = false
 local chestLoop = false
 local eggThread = nil
 local chestThread = nil
+
+-- ======================================
+-- FUNCTIONS
+-- ======================================
+local function getRoot()
+    local char = player.Character
+    if char then return char:FindFirstChild("HumanoidRootPart") end
+end
+
+local function getChestRiftPosition(chestName)
+    local key = chestName:lower():gsub("%s+", "-")
+    local riftFolder = workspace:FindFirstChild("Rendered")
+    if riftFolder then
+        riftFolder = riftFolder:FindFirstChild("Rifts")
+        if riftFolder then
+            local rift = riftFolder:FindFirstChild(key)
+            if rift then
+                local chest = rift:FindFirstChild("Chest")
+                if chest then
+                    for _, child in ipairs(chest:GetDescendants()) do
+                        if child:IsA("BasePart") then
+                            return child.Position
+                        end
+                    end
+                end
+                for _, child in ipairs(rift:GetDescendants()) do
+                    if child:IsA("BasePart") then
+                        return child.Position
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
 
 -- =========================
 -- EGG RIFT
@@ -65,7 +105,7 @@ RiftTab:CreateToggle({
             eggThread = task.spawn(function()
                 while eggLoop do
                     pcall(function()
-                        ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction:InvokeServer(
+                        RemoteFunction:InvokeServer(
                             "SummonRift",
                             {
                                 Type="Egg",
@@ -111,7 +151,7 @@ RiftTab:CreateDropdown({
 })
 
 RiftTab:CreateToggle({
-    Name = "Auto Chest Rift",
+    Name = "Auto Chest Rift (Summon + TP + Open)",
     CurrentValue = false,
     Callback = function(v)
         chestLoop = v
@@ -119,8 +159,9 @@ RiftTab:CreateToggle({
         if v then
             chestThread = task.spawn(function()
                 while chestLoop do
+                    -- Summon
                     pcall(function()
-                        ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction:InvokeServer(
+                        RemoteFunction:InvokeServer(
                             "SummonRift",
                             {
                                 Type="Chest",
@@ -130,6 +171,29 @@ RiftTab:CreateToggle({
                             }
                         )
                     end)
+                    print("[Rift] Summoned chest: " .. selectedChest)
+                    
+                    -- Wait for rift to appear
+                    task.wait(3)
+                    
+                    -- Teleport to chest rift
+                    local pos = getChestRiftPosition(selectedChest)
+                    if pos then
+                        local root = getRoot()
+                        if root then
+                            root.CFrame = CFrame.new(pos + Vector3.new(0, 3, 0))
+                            print("[Rift] Teleported to chest!")
+                        end
+                    end
+                    
+                    task.wait(0.5)
+                    
+                    -- Open/Claim chest
+                    pcall(function()
+                        Remote:FireServer("ClaimChest", selectedChest, true)
+                    end)
+                    print("[Rift] Chest opened!")
+                    
                     task.wait(1860)
                 end
             end)
