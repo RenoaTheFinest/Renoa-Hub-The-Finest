@@ -78,11 +78,11 @@ EnchantTab:CreateButton({
 })
 
 EnchantTab:CreateButton({
-    Name = "Determination V + Bubbler V",
+    Name = "Determination + Bubbler V",
     Callback = function()
         RunEnchant(
-            {"Determination V","Bubbler V"},
-            {"Determination V","Bubbler V"},
+            {"Determination","Bubbler V"},
+            {"Determination","Bubbler V"},
             "Shadow Crystal",
             "Gems"
         )
@@ -107,11 +107,11 @@ EnchantTab:CreateButton({
 })
 
 EnchantTab:CreateButton({
-    Name = "Determination V + Looter V",
+    Name = "Determination + Looter V",
     Callback = function()
         RunEnchant(
-            {"Determination V","Looter V"},
-            {"Determination V","Looter V"},
+            {"Determination","Looter V"},
+            {"Determination","Looter V"},
             "Shadow Crystal",
             "Gems"
         )
