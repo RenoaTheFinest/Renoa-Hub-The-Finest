@@ -193,18 +193,6 @@ local function completeQuest(quest)
         
         getgenv().questEgg = nil
         local prevPos = savePosition()
-        
-        -- For coins: hatch eggs first to make space
-        if not curr:lower():find("gem") and not curr:lower():find("ticket") then
-            print("[Quest] Hatching eggs to make space for coins...")
-            local rainbowPos = EGG_LOCATIONS["Rainbow Egg"]
-            if rainbowPos then teleportTo(rainbowPos) end
-            for i = 1, 20 do
-                pcall(function() Remote:FireServer("HatchEgg", "Rainbow Egg", 10) end)
-                task.wait(0.3)
-            end
-        end
-        
         if curr:lower():find("gem") then
             teleportTo(GEM_AREA)
         elseif curr:lower():find("ticket") then
