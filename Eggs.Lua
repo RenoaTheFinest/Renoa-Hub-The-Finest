@@ -1,5 +1,5 @@
 -- ================================================
--- EGGS TAB (HATCH + INVENTORY + BOUNTY + RIFT)
+-- EGGS TAB (HATCH + INVENTORY + BOUNTY + RIFT + FUSION)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -106,12 +106,14 @@ local hideAnimEnabled = false
 local inventoryEnabled = false
 local bountyEnabled = false
 local riftEnabled = false
+local fusionEnabled = false
 
 local autoHatchThread = nil
 local spamEThread = nil
 local inventoryThread = nil
 local bountyThread = nil
 local riftThread = nil
+local fusionThread = nil
 
 local inventoryEggList = getInventoryEggs()
 local selectedInventoryEgg = inventoryEggList[1]
@@ -241,6 +243,56 @@ local function getTimeUntilReset()
     end
     return "Unknown"
 end
+
+-- ======================================
+-- UI - FUSION EGG
+-- ======================================
+EggsTab:CreateSection("------- Fusion Egg -------")
+
+EggsTab:CreateToggle({
+    Name = "Auto Fusion Egg (Admin Spawn)",
+    CurrentValue = false,
+    Callback = function(v)
+        fusionEnabled = v
+        if v then
+            fusionThread = task.spawn(function()
+                while fusionEnabled do
+                    local fusionPos = nil
+                    for _, obj in ipairs(workspace:GetDescendants()) do
+                        if obj.Name == "Fusion Egg" and obj:IsA("Model") then
+                            fusionPos = obj:GetPivot().Position
+                            break
+                        end
+                    end
+                    
+                    if fusionPos then
+                        getgenv().questActive = true
+                        getgenv().questEgg = "Fusion Egg"
+                        
+                        local root = getRoot()
+                        if root then
+                            root.CFrame = CFrame.new(fusionPos + Vector3.new(0, 5, 0))
+                        end
+                        task.wait(0.3)
+                        pcall(function() Remote:FireServer("HatchEgg", "Fusion Egg", HATCH_AMOUNT) end)
+                        print("[Eggs] Hatching Fusion Egg!")
+                    else
+                        getgenv().questActive = false
+                        getgenv().questEgg = nil
+                    end
+                    
+                    task.wait(1)
+                end
+            end)
+            print("[Eggs] Fusion Egg scanner started!")
+        else
+            if fusionThread then task.cancel(fusionThread) end
+            getgenv().questActive = false
+            getgenv().questEgg = nil
+            print("[Eggs] Fusion Egg scanner stopped!")
+        end
+    end
+})
 
 -- ======================================
 -- UI - HATCH EGG
