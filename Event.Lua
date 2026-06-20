@@ -103,7 +103,7 @@ EventTab:CreateToggle({
                     pcall(function() Remote:FireServer("HatchEgg", "Obsidian Egg", 12) end)
                     print("[Event] Hatching Obsidian Egg!")
                     
-                    task.wait(1860)
+                    task.wait(17400)
                 end
             end)
             print("[Event] Obsidian Egg started!")
@@ -140,7 +140,7 @@ EventTab:CreateToggle({
                     pcall(function() Remote:FireServer("UnlockRiftChest", "obsidian-chest", false) end)
                     print("[Event] Obsidian Chest opened!")
                     
-                    task.wait(1860)
+                    task.wait(17400)
                 end
             end)
             print("[Event] Obsidian Chest started!")
