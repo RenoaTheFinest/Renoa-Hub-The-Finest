@@ -84,7 +84,6 @@ EventTab:CreateToggle({
         if v then
             obsidianEggThread = task.spawn(function()
                 while obsidianEggRunning do
-                    -- Wait if another quest is active
                     while getgenv().questActive and obsidianEggRunning do
                         task.wait(5)
                     end
@@ -101,7 +100,7 @@ EventTab:CreateToggle({
                     task.wait(3)
                     
                     pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
-                    task.wait(0.5)
+                    task.wait(1)
                     
                     pcall(function() Remote:FireServer("HatchEgg", "Obsidian Egg", 12) end)
                     print("[Event] Hatching Obsidian Egg!")
@@ -125,7 +124,6 @@ EventTab:CreateToggle({
         if v then
             obsidianChestThread = task.spawn(function()
                 while obsidianChestRunning do
-                    -- Wait if another quest is active
                     while getgenv().questActive and obsidianChestRunning do
                         task.wait(5)
                     end
@@ -141,7 +139,7 @@ EventTab:CreateToggle({
                     task.wait(3)
                     
                     pcall(function() Remote:FireServer("TeleportToRift", "obsidian-chest") end)
-                    task.wait(0.5)
+                    task.wait(1)
                     
                     pcall(function() Remote:FireServer("UnlockRiftChest", "obsidian-chest", false) end)
                     print("[Event] Obsidian Chest opened!")
