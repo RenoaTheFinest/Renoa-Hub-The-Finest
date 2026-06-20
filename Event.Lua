@@ -1,5 +1,5 @@
 -- ================================================
--- EVENT TAB (OBSIDIAN RIFT + SHRINE)
+-- EVENT TAB (OBSIDIAN SHOP + OBSIDIAN RIFT + SHRINE)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -20,6 +20,9 @@ end
 -- ======================================
 -- SETTINGS
 -- ======================================
+local obsidianShopRunning = false
+local obsidianShopThread = nil
+
 local obsidianEggRunning = false
 local obsidianEggThread = nil
 local obsidianChestRunning = false
@@ -41,6 +44,32 @@ local function fireiceShrine()
         print("[Event] Fire & Ice Shrine claimed!")
     end)
 end
+
+-- ======================================
+-- UI - OBSIDIAN SHOP
+-- ======================================
+EventTab:CreateSection("Obsidian Shop")
+
+EventTab:CreateToggle({
+    Name = "Auto Buy Obsidian Key",
+    CurrentValue = false,
+    Callback = function(v)
+        obsidianShopRunning = v
+        if v then
+            obsidianShopThread = task.spawn(function()
+                while obsidianShopRunning do
+                    pcall(function() Remote:FireServer("BuyShopItem", "obsidian-shop", 1, true) end)
+                    print("[Event] Bought Obsidian Key!")
+                    task.wait(3600)
+                end
+            end)
+            print("[Event] Obsidian Shop started!")
+        else
+            if obsidianShopThread then task.cancel(obsidianShopThread) end
+            print("[Event] Obsidian Shop stopped!")
+        end
+    end
+})
 
 -- ======================================
 -- UI - OBSIDIAN RIFT
