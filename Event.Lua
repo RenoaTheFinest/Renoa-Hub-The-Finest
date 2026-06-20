@@ -12,7 +12,6 @@ local player = Players.LocalPlayer
 
 local RE = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
 local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
-local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
 
 local function fire(action, ...)
     if RE then RE:FireServer(action, ...) end
@@ -129,26 +128,21 @@ EventTab:CreateToggle({
         if v then
             obsidianEggThread = task.spawn(function()
                 while obsidianEggRunning do
-                    -- Summon
                     pcall(function()
-                        RemoteFunction:InvokeServer("SummonMoonRift", {
+                        Remote:InvokeServer("SummonMoonRift", {
                             Type = "Egg",
-                            Name = "Obsidian Egg",
-                            Time = 5,
                             Luck = 5,
-                            World = "The Overworld"
+                            Time = 5
                         })
                     end)
                     print("[Event] Obsidian Egg Rift summoned!")
                     
                     task.wait(3)
                     
-                    -- Teleport to rift
-                    pcall(function() fire("TeleportToRift", "obsidian-rift") end)
+                    pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
                     task.wait(0.5)
                     
-                    -- Hatch
-                    pcall(function() fire("HatchEgg", "Obsidian Egg", 12) end)
+                    pcall(function() Remote:FireServer("HatchEgg", "Obsidian Egg", 12) end)
                     print("[Event] Hatching Obsidian Egg!")
                     
                     task.wait(1860)
@@ -170,25 +164,20 @@ EventTab:CreateToggle({
         if v then
             obsidianChestThread = task.spawn(function()
                 while obsidianChestRunning do
-                    -- Summon
                     pcall(function()
-                        RemoteFunction:InvokeServer("SummonMoonRift", {
+                        Remote:InvokeServer("SummonMoonRift", {
                             Type = "Chest",
-                            Name = "Obsidian Chest",
-                            Time = 5,
-                            World = "The Overworld"
+                            Time = 5
                         })
                     end)
                     print("[Event] Obsidian Chest Rift summoned!")
                     
                     task.wait(3)
                     
-                    -- Teleport to chest rift
-                    pcall(function() fire("TeleportToRift", "obsidian-chest") end)
+                    pcall(function() Remote:FireServer("TeleportToRift", "obsidian-chest") end)
                     task.wait(0.5)
                     
-                    -- Open chest
-                    pcall(function() fire("UnlockRiftChest", "obsidian-chest", false) end)
+                    pcall(function() Remote:FireServer("UnlockRiftChest", "obsidian-chest", false) end)
                     print("[Event] Obsidian Chest opened!")
                     
                     task.wait(1860)
