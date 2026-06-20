@@ -154,7 +154,6 @@ local function completeQuest(quest)
     elseif quest.type == "Hatch" then
         if quest.egg then
             local eggName = quest.egg
-            
             getgenv().questEgg = eggName
             
             local prevPos = savePosition()
@@ -164,7 +163,7 @@ local function completeQuest(quest)
             
             while true do
                 pcall(function() Remote:InvokeServer("HatchEgg", eggName, HATCH_AMOUNT) end)
-                task.wait(0.3)
+                task.wait(1)
                 local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
                 local stillActive = false
                 for _, q in ipairs(newQuests) do
@@ -175,9 +174,10 @@ local function completeQuest(quest)
             
             restorePosition(prevPos)
         else
-            print("[Quest] Skipping hatch quest (no specific egg), Eggs tab will handle")
+            print("[Quest] Skipping hatch quest, Eggs tab will handle")
             getgenv().questActive = false
             getgenv().questEgg = nil
+            task.wait(5)
         end
         
     elseif quest.type == "Collect" then
