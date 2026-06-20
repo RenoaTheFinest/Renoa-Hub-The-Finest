@@ -55,6 +55,7 @@ local globalThread = nil
 local claimRunning = false
 local claimThread = nil
 local HATCH_AMOUNT = 12
+local COIN_CAP = 5000000000000
 
 -- ======================================
 -- FUNCTIONS
@@ -205,15 +206,25 @@ local function completeQuest(quest)
         end
         
         while true do
-            for i = 1, 5 do
-                task.wait(1)
-                local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
-                local stillActive = false
-                for _, q in ipairs(newQuests) do
-                    if q.id == quest.id then stillActive = true; break end
+            if isCoinQuest then
+                local data = LocalData:Get()
+                local coins = data and data.Coins or 0
+                
+                if coins >= COIN_CAP then
+                    print("[Quest] Coin cap reached, hatching to make space...")
+                    local rainbowPos = EGG_LOCATIONS["Rainbow Egg"]
+                    if rainbowPos then teleportTo(rainbowPos) end
+                    task.wait(0.5)
+                    for i = 1, 3 do
+                        pcall(function() Remote:FireServer("HatchEgg", "Rainbow Egg", 12) end)
+                        task.wait(1)
+                    end
+                    teleportTo(COIN_AREA)
+                    task.wait(0.5)
                 end
-                if not stillActive then break end
             end
+            
+            task.wait(3)
             
             local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
             local stillActive = false
@@ -221,14 +232,6 @@ local function completeQuest(quest)
                 if q.id == quest.id then stillActive = true; break end
             end
             if not stillActive then break end
-            
-            if isCoinQuest then
-                local rainbowPos = EGG_LOCATIONS["Rainbow Egg"]
-                if rainbowPos then teleportTo(rainbowPos) end
-                pcall(function() Remote:FireServer("HatchEgg", "Rainbow Egg", 12) end)
-                task.wait(1)
-                teleportTo(COIN_AREA)
-            end
         end
         restorePosition(prevPos)
     end
