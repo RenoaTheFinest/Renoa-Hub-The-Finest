@@ -82,10 +82,13 @@ EventTab:CreateToggle({
     Callback = function(v)
         obsidianEggRunning = v
         if v then
-            getgenv().questActive = true
-            getgenv().questEgg = "Obsidian Egg"
             obsidianEggThread = task.spawn(function()
                 while obsidianEggRunning do
+                    -- Wait if another quest is active
+                    while getgenv().questActive and obsidianEggRunning do
+                        task.wait(5)
+                    end
+                    
                     pcall(function()
                         Remote:InvokeServer("SummonMoonRift", {
                             Type = "Egg",
@@ -109,8 +112,6 @@ EventTab:CreateToggle({
             print("[Event] Obsidian Egg started!")
         else
             if obsidianEggThread then task.cancel(obsidianEggThread) end
-            getgenv().questActive = false
-            getgenv().questEgg = nil
             print("[Event] Obsidian Egg stopped!")
         end
     end
@@ -124,6 +125,11 @@ EventTab:CreateToggle({
         if v then
             obsidianChestThread = task.spawn(function()
                 while obsidianChestRunning do
+                    -- Wait if another quest is active
+                    while getgenv().questActive and obsidianChestRunning do
+                        task.wait(5)
+                    end
+                    
                     pcall(function()
                         Remote:InvokeServer("SummonMoonRift", {
                             Type = "Chest",
