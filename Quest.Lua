@@ -193,6 +193,18 @@ local function completeQuest(quest)
         
         getgenv().questEgg = nil
         local prevPos = savePosition()
+        
+        -- For coins: hatch eggs first to make space
+        if not curr:lower():find("gem") and not curr:lower():find("ticket") then
+            print("[Quest] Hatching eggs to make space for coins...")
+            local rainbowPos = EGG_LOCATIONS["Rainbow Egg"]
+            if rainbowPos then teleportTo(rainbowPos) end
+            for i = 1, 20 do
+                pcall(function() Remote:FireServer("HatchEgg", "Rainbow Egg", 10) end)
+                task.wait(0.3)
+            end
+        end
+        
         if curr:lower():find("gem") then
             teleportTo(GEM_AREA)
         elseif curr:lower():find("ticket") then
@@ -228,14 +240,11 @@ local function questLoop(filter)
                 continue
             end
             
-            -- Find first non-pearl quest
             local questToDo = nil
             for _, q in ipairs(quests) do
                 local curr = q.currency or ""
                 if q.type == "Hatch" and not q.egg and not q.rarity then
-                    -- Skip "any egg" hatch quests
                 elseif q.type == "Collect" and curr:lower():find("pearl") then
-                    -- Skip pearl quests
                 else
                     questToDo = q
                     break
@@ -327,12 +336,10 @@ QuestTab:CreateToggle({
                         getgenv().questEgg = nil
                         task.wait(60)
                     else
-                        -- Find first non-pearl quest
                         local questToDo = nil
                         for _, q in ipairs(quests) do
                             local curr = q.currency or ""
                             if q.type == "Collect" and curr:lower():find("pearl") then
-                                -- Skip
                             else
                                 questToDo = q
                                 break
