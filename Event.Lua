@@ -126,6 +126,8 @@ EventTab:CreateToggle({
     Callback = function(v)
         obsidianEggRunning = v
         if v then
+            getgenv().questActive = true
+            getgenv().questEgg = "Obsidian Egg"
             obsidianEggThread = task.spawn(function()
                 while obsidianEggRunning do
                     pcall(function()
@@ -151,6 +153,8 @@ EventTab:CreateToggle({
             print("[Event] Obsidian Egg started!")
         else
             if obsidianEggThread then task.cancel(obsidianEggThread) end
+            getgenv().questActive = false
+            getgenv().questEgg = nil
             print("[Event] Obsidian Egg stopped!")
         end
     end
