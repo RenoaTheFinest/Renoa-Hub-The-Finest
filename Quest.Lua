@@ -193,6 +193,9 @@ local function completeQuest(quest)
         
         getgenv().questEgg = nil
         local prevPos = savePosition()
+        
+        local isCoinQuest = not curr:lower():find("gem") and not curr:lower():find("ticket")
+        
         if curr:lower():find("gem") then
             teleportTo(GEM_AREA)
         elseif curr:lower():find("ticket") then
@@ -200,14 +203,32 @@ local function completeQuest(quest)
         else
             teleportTo(COIN_AREA)
         end
+        
         while true do
-            task.wait(5)
+            for i = 1, 5 do
+                task.wait(1)
+                local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
+                local stillActive = false
+                for _, q in ipairs(newQuests) do
+                    if q.id == quest.id then stillActive = true; break end
+                end
+                if not stillActive then break end
+            end
+            
             local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
             local stillActive = false
             for _, q in ipairs(newQuests) do
                 if q.id == quest.id then stillActive = true; break end
             end
             if not stillActive then break end
+            
+            if isCoinQuest then
+                local rainbowPos = EGG_LOCATIONS["Rainbow Egg"]
+                if rainbowPos then teleportTo(rainbowPos) end
+                pcall(function() Remote:FireServer("HatchEgg", "Rainbow Egg", 12) end)
+                task.wait(1)
+                teleportTo(COIN_AREA)
+            end
         end
         restorePosition(prevPos)
     end
