@@ -1,5 +1,5 @@
 -- ================================================
--- AUTO TAB (ALL IN ONE)
+-- AUTO TAB (PRESENT RAIN + BUBBLE + SELL + ORB + PICKUP + BOX)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -22,11 +22,13 @@ end
 -- ======================================
 -- SETTINGS
 -- ======================================
+local presentEnabled = false
 local bubbleEnabled = false
 local sellEnabled = false
 local orbEnabled = false
 local pickupEnabled = false
 local boxEnabled = false
+local presentThread = nil
 local bubbleThread = nil
 local sellThread = nil
 local orbThread = nil
@@ -58,7 +60,40 @@ local boxList = getBoxes()
 local selectedBox = boxList[1] or "Mystery Box"
 
 -- ======================================
--- UI
+-- UI - PRESENT RAIN
+-- ======================================
+AutoTab:CreateSection("Present Rain")
+
+AutoTab:CreateToggle({
+    Name = "Auto Collect Presents",
+    CurrentValue = false,
+    Callback = function(v)
+        presentEnabled = v
+        if v then
+            presentThread = task.spawn(function()
+                while presentEnabled do
+                    local rendered = workspace:FindFirstChild("Rendered")
+                    if rendered then
+                        local presentRain = rendered:FindFirstChild("PresentRain")
+                        if presentRain then
+                            for _, model in ipairs(presentRain:GetChildren()) do
+                                if model:IsA("Model") then
+                                    pcall(function() fire("CollectPresentRain", model.Name) end)
+                                end
+                            end
+                        end
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        else
+            if presentThread then task.cancel(presentThread) end
+        end
+    end
+})
+
+-- ======================================
+-- UI - AUTO
 -- ======================================
 AutoTab:CreateSection("Auto")
 
