@@ -182,9 +182,18 @@ local function completeQuest(quest)
         end
         
     elseif quest.type == "Collect" then
+        local curr = quest.currency or ""
+        
+        if curr:lower():find("pearl") then
+            print("[Quest] Skipping Pearls quest, can't auto-collect")
+            getgenv().questActive = false
+            getgenv().questEgg = nil
+            task.wait(30)
+            return
+        end
+        
         getgenv().questEgg = nil
         local prevPos = savePosition()
-        local curr = quest.currency or ""
         if curr:lower():find("gem") then
             teleportTo(GEM_AREA)
         elseif curr:lower():find("ticket") then
