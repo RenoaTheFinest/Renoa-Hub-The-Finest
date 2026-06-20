@@ -178,7 +178,6 @@ local function completeQuest(quest)
             print("[Quest] Skipping hatch quest (no specific egg), Eggs tab will handle")
             getgenv().questActive = false
             getgenv().questEgg = nil
-            task.wait(5)
         end
         
     elseif quest.type == "Collect" then
@@ -188,7 +187,7 @@ local function completeQuest(quest)
             print("[Quest] Skipping Pearls quest, can't auto-collect")
             getgenv().questActive = false
             getgenv().questEgg = nil
-            task.wait(30)
+            task.wait(1)
             return
         end
         
@@ -229,7 +228,28 @@ local function questLoop(filter)
                 continue
             end
             
-            completeQuest(quests[1])
+            -- Find first non-pearl quest
+            local questToDo = nil
+            for _, q in ipairs(quests) do
+                local curr = q.currency or ""
+                if q.type == "Hatch" and not q.egg and not q.rarity then
+                    -- Skip "any egg" hatch quests
+                elseif q.type == "Collect" and curr:lower():find("pearl") then
+                    -- Skip pearl quests
+                else
+                    questToDo = q
+                    break
+                end
+            end
+            
+            if questToDo then
+                completeQuest(questToDo)
+            else
+                print("[Quest] All available quests are pearl/any-hatch, waiting...")
+                getgenv().questActive = false
+                getgenv().questEgg = nil
+                task.wait(30)
+            end
         end
     end
 end
@@ -307,7 +327,23 @@ QuestTab:CreateToggle({
                         getgenv().questEgg = nil
                         task.wait(60)
                     else
-                        completeQuest(quests[1])
+                        -- Find first non-pearl quest
+                        local questToDo = nil
+                        for _, q in ipairs(quests) do
+                            local curr = q.currency or ""
+                            if q.type == "Collect" and curr:lower():find("pearl") then
+                                -- Skip
+                            else
+                                questToDo = q
+                                break
+                            end
+                        end
+                        if questToDo then
+                            completeQuest(questToDo)
+                        else
+                            print("[Quest] All global quests are pearl, waiting...")
+                            task.wait(30)
+                        end
                     end
                 end
             end)
