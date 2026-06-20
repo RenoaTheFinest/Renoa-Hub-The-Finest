@@ -100,7 +100,7 @@ EventTab:CreateToggle({
                     pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
                     task.wait(0.5)
                     
-                    pcall(function() Remote:FireServer("HatchEgg", "Obsidian Eg", 12) end)
+                    pcall(function() Remote:FireServer("HatchEgg", "Obsidian Egg", 12) end)
                     print("[Event] Hatching Obsidian Egg!")
                     
                     task.wait(1860)
