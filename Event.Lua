@@ -88,6 +88,7 @@ EventTab:CreateToggle({
                         task.wait(5)
                     end
                     
+                    -- Summon
                     pcall(function()
                         Remote:InvokeServer("SummonMoonRift", {
                             Type = "Egg",
@@ -98,16 +99,18 @@ EventTab:CreateToggle({
                     print("[Event] Obsidian Egg Rift summoned!")
                     task.wait(3)
                     
+                    -- Teleport
                     pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
                     task.wait(1)
                     
+                    -- Hatch for 5 hours
                     local riftEndTime = os.time() + 18000
                     while obsidianEggRunning and os.time() < riftEndTime do
                         pcall(function() Remote:FireServer("HatchEgg", "Obsidian Egg", 12) end)
                         task.wait(0.3)
                     end
                     
-                    task.wait(18000)
+                    -- Immediately summon next one
                 end
             end)
             print("[Event] Obsidian Egg started!")
@@ -130,6 +133,7 @@ EventTab:CreateToggle({
                         task.wait(5)
                     end
                     
+                    -- Summon
                     pcall(function()
                         Remote:InvokeServer("SummonMoonRift", {
                             Type = "Chest",
@@ -139,16 +143,18 @@ EventTab:CreateToggle({
                     print("[Event] Obsidian Chest Rift summoned!")
                     task.wait(3)
                     
+                    -- Teleport
                     pcall(function() Remote:FireServer("TeleportToRift", "obsidian-chest") end)
                     task.wait(1)
                     
+                    -- Open for 5 hours
                     local riftEndTime = os.time() + 18000
                     while obsidianChestRunning and os.time() < riftEndTime do
                         pcall(function() Remote:FireServer("UnlockRiftChest", "obsidian-chest", false) end)
                         task.wait(0.3)
                     end
                     
-                    task.wait(18000)
+                    -- Immediately summon next one
                 end
             end)
             print("[Event] Obsidian Chest started!")
