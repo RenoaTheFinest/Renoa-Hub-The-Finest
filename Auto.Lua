@@ -60,6 +60,51 @@ local boxList = getBoxes()
 local selectedBox = boxList[1] or "Mystery Box"
 
 -- ======================================
+-- FUNCTIONS
+-- ======================================
+local function getRoot()
+    local char = player.Character
+    if char then return char:FindFirstChild("HumanoidRootPart") end
+end
+
+local function collectAllPresents()
+    local rendered = workspace:FindFirstChild("Rendered")
+    if not rendered then return 0 end
+    
+    local presentRain = rendered:FindFirstChild("PresentRain")
+    if not presentRain then return 0 end
+    
+    local root = getRoot()
+    local previousPos = root and root.Position or nil
+    
+    local collected = 0
+    for _, model in ipairs(presentRain:GetChildren()) do
+        if model:IsA("Model") then
+            for _, part in ipairs(model:GetChildren()) do
+                if part:IsA("BasePart") then
+                    local root = getRoot()
+                    if root then
+                        root.CFrame = CFrame.new(part.Position + Vector3.new(0, 2, 0))
+                        collected = collected + 1
+                        task.wait(0.02)
+                    end
+                    break
+                end
+            end
+        end
+    end
+    
+    if previousPos then
+        local root = getRoot()
+        if root then
+            root.CFrame = CFrame.new(previousPos)
+        end
+    end
+    
+    return collected
+end
+
+-- ======================================
 -- UI - PRESENT RAIN
 -- ======================================
 AutoTab:CreateSection("Present Rain")
@@ -72,18 +117,11 @@ AutoTab:CreateToggle({
         if v then
             presentThread = task.spawn(function()
                 while presentEnabled do
-                    local rendered = workspace:FindFirstChild("Rendered")
-                    if rendered then
-                        local presentRain = rendered:FindFirstChild("PresentRain")
-                        if presentRain then
-                            for _, model in ipairs(presentRain:GetChildren()) do
-                                if model:IsA("Model") then
-                                    pcall(function() fire("CollectPresentRain", model.Name) end)
-                                end
-                            end
-                        end
+                    local count = collectAllPresents()
+                    if count > 0 then
+                        print("[Auto] Collected " .. count .. " presents!")
                     end
-                    task.wait(0.1)
+                    task.wait(0.5)
                 end
             end)
         else
