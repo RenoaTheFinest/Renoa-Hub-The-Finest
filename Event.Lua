@@ -98,14 +98,16 @@ EventTab:CreateToggle({
                     print("[Event] Obsidian Egg Rift summoned!")
                     task.wait(3)
                     
+                    pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
+                    task.wait(1)
+                    
                     local riftEndTime = os.time() + 18000
                     while obsidianEggRunning and os.time() < riftEndTime do
-                        pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
                         pcall(function() Remote:FireServer("HatchEgg", "Obsidian Egg", 12) end)
                         task.wait(0.3)
                     end
                     
-                    task.wait(17400)
+                    task.wait(18000)
                 end
             end)
             print("[Event] Obsidian Egg started!")
@@ -137,14 +139,16 @@ EventTab:CreateToggle({
                     print("[Event] Obsidian Chest Rift summoned!")
                     task.wait(3)
                     
+                    pcall(function() Remote:FireServer("TeleportToRift", "obsidian-chest") end)
+                    task.wait(1)
+                    
                     local riftEndTime = os.time() + 18000
                     while obsidianChestRunning and os.time() < riftEndTime do
-                        pcall(function() Remote:FireServer("TeleportToRift", "obsidian-chest") end)
                         pcall(function() Remote:FireServer("UnlockRiftChest", "obsidian-chest", false) end)
                         task.wait(0.3)
                     end
                     
-                    task.wait(17400)
+                    task.wait(18000)
                 end
             end)
             print("[Event] Obsidian Chest started!")
