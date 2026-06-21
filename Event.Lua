@@ -96,14 +96,14 @@ EventTab:CreateToggle({
                         })
                     end)
                     print("[Event] Obsidian Egg Rift summoned!")
-                    
                     task.wait(3)
                     
-                    pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
-                    task.wait(1)
-                    
-                    pcall(function() Remote:FireServer("HatchEgg", "Obsidian Egg", 12) end)
-                    print("[Event] Hatching Obsidian Egg!")
+                    local riftEndTime = os.time() + 18000
+                    while obsidianEggRunning and os.time() < riftEndTime do
+                        pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
+                        pcall(function() Remote:FireServer("HatchEgg", "Obsidian Egg", 12) end)
+                        task.wait(0.3)
+                    end
                     
                     task.wait(17400)
                 end
@@ -135,14 +135,14 @@ EventTab:CreateToggle({
                         })
                     end)
                     print("[Event] Obsidian Chest Rift summoned!")
-                    
                     task.wait(3)
                     
-                    pcall(function() Remote:FireServer("TeleportToRift", "obsidian-chest") end)
-                    task.wait(1)
-                    
-                    pcall(function() Remote:FireServer("UnlockRiftChest", "obsidian-chest", false) end)
-                    print("[Event] Obsidian Chest opened!")
+                    local riftEndTime = os.time() + 18000
+                    while obsidianChestRunning and os.time() < riftEndTime do
+                        pcall(function() Remote:FireServer("TeleportToRift", "obsidian-chest") end)
+                        pcall(function() Remote:FireServer("UnlockRiftChest", "obsidian-chest", false) end)
+                        task.wait(0.3)
+                    end
                     
                     task.wait(17400)
                 end
