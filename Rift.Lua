@@ -1,207 +1,213 @@
 -- ================================================
--- RIFT TAB (SUMMON + AUTO TP + OPEN CHEST)
+-- EVENT TAB (OBSIDIAN SHOP + OBSIDIAN RIFT + SHRINE)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
 
-local RiftTab = Window:CreateTab("Rift", nil)
+local EventTab = Window:CreateTab("Event", nil)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-local RemoteFunction = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteFunction
+local RE = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
 local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
 
-local WORLDS = {"The Overworld","Minigame Paradise"}
+local function fire(action, ...)
+    if RE then RE:FireServer(action, ...) end
+end
 
-local WORLD_EGGS = {
-    ["The Overworld"] = {"Spikey Egg","Magma Egg","Crystal Egg","Lunar Egg","Void Egg","Hell Egg","Nightmare Egg","Rainbow Egg","Obsidian Egg"},
-    ["Minigame Paradise"] = {"Mining Egg","Cyber Egg","Neon Egg"},
-}
+-- ======================================
+-- SETTINGS
+-- ======================================
+local obsidianShopRunning = false
+local obsidianShopThread = nil
 
-local WORLD_CHESTS = {
-    ["The Overworld"] = {"Golden Chest","Royal Chest","Super Chest","Obsidian Chest"},
-    ["Minigame Paradise"] = {"Dice Chest"},
-}
+local obsidianEggRunning = false
+local obsidianEggThread = nil
+local obsidianChestRunning = false
+local obsidianChestThread = nil
 
-local selectedEggWorld = "The Overworld"
-local selectedEgg = "Spikey Egg"
-
-local selectedChestWorld = "The Overworld"
-local selectedChest = "Golden Chest"
-
-local eggLoop = false
-local chestLoop = false
-local eggThread = nil
-local chestThread = nil
+local fireiceEnabled = false
+local fireiceThread = nil
+local FIREICE_AMOUNT = 400
+local INTERVAL = 43200
 
 -- ======================================
 -- FUNCTIONS
 -- ======================================
-local function getRoot()
-    local char = player.Character
-    if char then return char:FindFirstChild("HumanoidRootPart") end
+local function fireiceShrine()
+    pcall(function()
+        Remote:InvokeServer("DonateToFireIceShrine", "Speed", 6, FIREICE_AMOUNT)
+        task.wait(1)
+        RE:FireServer("ClaimFireIceBuff")
+        print("[Event] Fire & Ice Shrine claimed!")
+    end)
 end
 
-local function getChestRiftPosition(chestName)
-    local key = chestName:lower():gsub("%s+", "-")
-    local riftFolder = workspace:FindFirstChild("Rendered")
-    if riftFolder then
-        riftFolder = riftFolder:FindFirstChild("Rifts")
-        if riftFolder then
-            local rift = riftFolder:FindFirstChild(key)
-            if rift then
-                local chest = rift:FindFirstChild("Chest")
-                if chest then
-                    for _, child in ipairs(chest:GetDescendants()) do
-                        if child:IsA("BasePart") then
-                            return child.Position
-                        end
-                    end
-                end
-                for _, child in ipairs(rift:GetDescendants()) do
-                    if child:IsA("BasePart") then
-                        return child.Position
-                    end
-                end
-            end
-        end
-    end
-    return nil
-end
+-- ======================================
+-- UI - OBSIDIAN SHOP
+-- ======================================
+EventTab:CreateSection("Obsidian Shop")
 
--- =========================
--- EGG RIFT
--- =========================
-RiftTab:CreateSection("Egg Rift")
-
-RiftTab:CreateDropdown({
-    Name = "Egg World",
-    Options = WORLDS,
-    CurrentOption = {selectedEggWorld},
-    Callback = function(v)
-        selectedEggWorld = v[1]
-        selectedEgg = WORLD_EGGS[selectedEggWorld][1]
-    end
-})
-
-RiftTab:CreateDropdown({
-    Name = "Egg",
-    Options = WORLD_EGGS[selectedEggWorld],
-    CurrentOption = {selectedEgg},
-    Callback = function(v)
-        selectedEgg = v[1]
-    end
-})
-
-RiftTab:CreateToggle({
-    Name = "Auto Egg Rift",
+EventTab:CreateToggle({
+    Name = "Auto Buy Obsidian Key",
     CurrentValue = false,
     Callback = function(v)
-        eggLoop = v
-
+        obsidianShopRunning = v
         if v then
-            eggThread = task.spawn(function()
-                while eggLoop do
-                    pcall(function()
-                        RemoteFunction:InvokeServer(
-                            "SummonRift",
-                            {
-                                Type="Egg",
-                                Name=selectedEgg,
-                                Time=5,
-                                Luck=5,
-                                World=selectedEggWorld
-                            }
-                        )
-                    end)
-                    task.wait(1860)
+            obsidianShopThread = task.spawn(function()
+                while obsidianShopRunning do
+                    pcall(function() Remote:FireServer("BuyShopItem", "obsidian-shop", 1, true) end)
+                    print("[Event] Bought Obsidian Key!")
+                    task.wait(3600)
                 end
             end)
+            print("[Event] Obsidian Shop started!")
         else
-            eggLoop = false
-            if eggThread then task.cancel(eggThread) end
+            if obsidianShopThread then task.cancel(obsidianShopThread) end
+            print("[Event] Obsidian Shop stopped!")
         end
     end
 })
 
--- =========================
--- CHEST RIFT
--- =========================
-RiftTab:CreateSection("Chest Rift")
+-- ======================================
+-- UI - OBSIDIAN RIFT
+-- ======================================
+EventTab:CreateSection("Obsidian Rift")
 
-RiftTab:CreateDropdown({
-    Name = "Chest World",
-    Options = WORLDS,
-    CurrentOption = {selectedChestWorld},
-    Callback = function(v)
-        selectedChestWorld = v[1]
-        selectedChest = WORLD_CHESTS[selectedChestWorld][1]
-    end
-})
-
-RiftTab:CreateDropdown({
-    Name = "Chest",
-    Options = WORLD_CHESTS[selectedChestWorld],
-    CurrentOption = {selectedChest},
-    Callback = function(v)
-        selectedChest = v[1]
-    end
-})
-
-RiftTab:CreateToggle({
-    Name = "Auto Chest Rift (Summon + TP + Open)",
+EventTab:CreateToggle({
+    Name = "Auto Obsidian Egg (Summon + TP + Hatch)",
     CurrentValue = false,
     Callback = function(v)
-        chestLoop = v
-
+        obsidianEggRunning = v
         if v then
-            chestThread = task.spawn(function()
-                while chestLoop do
-                    -- Summon
+            obsidianEggThread = task.spawn(function()
+                while obsidianEggRunning do
+                    while getgenv().questActive and obsidianEggRunning do
+                        task.wait(5)
+                    end
+                    
                     pcall(function()
-                        RemoteFunction:InvokeServer(
-                            "SummonRift",
-                            {
-                                Type="Chest",
-                                Name=selectedChest,
-                                Time=5,
-                                World=selectedChestWorld
-                            }
-                        )
+                        Remote:InvokeServer("SummonMoonRift", {
+                            Type = "Egg",
+                            Luck = 5,
+                            Time = 5
+                        })
                     end)
-                    print("[Rift] Summoned chest: " .. selectedChest)
+                    print("[Event] Obsidian Egg Rift summoned!")
                     
-                    -- Wait for rift to appear
-                    task.wait(3)
-                    
-                    -- Teleport to chest rift
-                    local pos = getChestRiftPosition(selectedChest)
-                    if pos then
-                        local root = getRoot()
-                        if root then
-                            root.CFrame = CFrame.new(pos + Vector3.new(0, 3, 0))
-                            print("[Rift] Teleported to chest!")
+                    -- Spam teleport until it works
+                    local teleported = false
+                    while obsidianEggRunning and not teleported do
+                        pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
+                        task.wait(0.5)
+                        local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                        if root and root.Position.Y > 1000 then
+                            teleported = true
+                            print("[Event] Teleported to rift!")
                         end
                     end
                     
-                    task.wait(0.5)
-                    
-                    -- Open/Claim chest
-                    pcall(function()
-                        Remote:FireServer("ClaimChest", selectedChest, true)
-                    end)
-                    print("[Rift] Chest opened!")
-                    
-                    task.wait(1860)
+                    -- Hatch for 5 hours
+                    local riftEndTime = os.time() + 18000
+                    while obsidianEggRunning and os.time() < riftEndTime do
+                        pcall(function() Remote:FireServer("HatchEgg", "Obsidian Egg", 12) end)
+                        task.wait(0.3)
+                    end
                 end
             end)
+            print("[Event] Obsidian Egg started!")
         else
-            chestLoop = false
-            if chestThread then task.cancel(chestThread) end
+            if obsidianEggThread then task.cancel(obsidianEggThread) end
+            print("[Event] Obsidian Egg stopped!")
         end
     end
 })
 
-print("[Rift] Loaded!")
+EventTab:CreateToggle({
+    Name = "Auto Obsidian Chest (Summon + TP + Open)",
+    CurrentValue = false,
+    Callback = function(v)
+        obsidianChestRunning = v
+        if v then
+            obsidianChestThread = task.spawn(function()
+                while obsidianChestRunning do
+                    while getgenv().questActive and obsidianChestRunning do
+                        task.wait(5)
+                    end
+                    
+                    pcall(function()
+                        Remote:InvokeServer("SummonMoonRift", {
+                            Type = "Chest",
+                            Time = 5
+                        })
+                    end)
+                    print("[Event] Obsidian Chest Rift summoned!")
+                    
+                    -- Spam teleport until it works
+                    local teleported = false
+                    while obsidianChestRunning and not teleported do
+                        pcall(function() Remote:FireServer("TeleportToRift", "obsidian-chest") end)
+                        task.wait(0.5)
+                        local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                        if root and root.Position.Y > 1000 then
+                            teleported = true
+                            print("[Event] Teleported to chest rift!")
+                        end
+                    end
+                    
+                    -- Open for 5 hours
+                    local riftEndTime = os.time() + 18000
+                    while obsidianChestRunning and os.time() < riftEndTime do
+                        pcall(function() Remote:FireServer("UnlockRiftChest", "obsidian-chest", false) end)
+                        task.wait(0.3)
+                    end
+                end
+            end)
+            print("[Event] Obsidian Chest started!")
+        else
+            if obsidianChestThread then task.cancel(obsidianChestThread) end
+            print("[Event] Obsidian Chest stopped!")
+        end
+    end
+})
+
+-- ======================================
+-- UI - SHRINE
+-- ======================================
+EventTab:CreateSection("Shrine")
+
+EventTab:CreateInput({
+    Name = "Amount",
+    CurrentValue = tostring(FIREICE_AMOUNT),
+    PlaceholderText = "400",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(v)
+        local n = tonumber(v)
+        if n then FIREICE_AMOUNT = n end
+    end
+})
+
+EventTab:CreateToggle({
+    Name = "Auto Fire & Ice Shrine",
+    CurrentValue = false,
+    Callback = function(v)
+        fireiceEnabled = v
+        if v then
+            fireiceShrine()
+            fireiceThread = task.spawn(function()
+                while fireiceEnabled do
+                    task.wait(INTERVAL)
+                    fireiceShrine()
+                end
+            end)
+            print("[Event] Fire & Ice Shrine started!")
+        else
+            if fireiceThread then task.cancel(fireiceThread) end
+            print("[Event] Fire & Ice Shrine stopped!")
+        end
+    end
+})
+
+print("[Event] Loaded!")
