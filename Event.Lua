@@ -88,7 +88,6 @@ EventTab:CreateToggle({
                         task.wait(5)
                     end
                     
-                    -- Summon
                     pcall(function()
                         Remote:InvokeServer("SummonMoonRift", {
                             Type = "Egg",
@@ -97,11 +96,18 @@ EventTab:CreateToggle({
                         })
                     end)
                     print("[Event] Obsidian Egg Rift summoned!")
-                    task.wait(3)
                     
-                    -- Teleport
-                    pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
-                    task.wait(1)
+                    -- Spam teleport until it works
+                    local teleported = false
+                    while obsidianEggRunning and not teleported do
+                        pcall(function() Remote:FireServer("TeleportToRift", "obsidian-rift") end)
+                        task.wait(0.5)
+                        local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                        if root and root.Position.Y > 1000 then
+                            teleported = true
+                            print("[Event] Teleported to rift!")
+                        end
+                    end
                     
                     -- Hatch for 5 hours
                     local riftEndTime = os.time() + 18000
@@ -109,8 +115,6 @@ EventTab:CreateToggle({
                         pcall(function() Remote:FireServer("HatchEgg", "Obsidian Egg", 12) end)
                         task.wait(0.3)
                     end
-                    
-                    -- Immediately summon next one
                 end
             end)
             print("[Event] Obsidian Egg started!")
@@ -133,7 +137,6 @@ EventTab:CreateToggle({
                         task.wait(5)
                     end
                     
-                    -- Summon
                     pcall(function()
                         Remote:InvokeServer("SummonMoonRift", {
                             Type = "Chest",
@@ -141,11 +144,18 @@ EventTab:CreateToggle({
                         })
                     end)
                     print("[Event] Obsidian Chest Rift summoned!")
-                    task.wait(3)
                     
-                    -- Teleport
-                    pcall(function() Remote:FireServer("TeleportToRift", "obsidian-chest") end)
-                    task.wait(1)
+                    -- Spam teleport until it works
+                    local teleported = false
+                    while obsidianChestRunning and not teleported do
+                        pcall(function() Remote:FireServer("TeleportToRift", "obsidian-chest") end)
+                        task.wait(0.5)
+                        local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                        if root and root.Position.Y > 1000 then
+                            teleported = true
+                            print("[Event] Teleported to chest rift!")
+                        end
+                    end
                     
                     -- Open for 5 hours
                     local riftEndTime = os.time() + 18000
@@ -153,8 +163,6 @@ EventTab:CreateToggle({
                         pcall(function() Remote:FireServer("UnlockRiftChest", "obsidian-chest", false) end)
                         task.wait(0.3)
                     end
-                    
-                    -- Immediately summon next one
                 end
             end)
             print("[Event] Obsidian Chest started!")
