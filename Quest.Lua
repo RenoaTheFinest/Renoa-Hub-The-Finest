@@ -41,6 +41,7 @@ local EGG_LOCATIONS = {
     ["Void Egg"] = Vector3.new(-150, 11, -26),
     ["Hell Egg"] = Vector3.new(-149, 11, -37),
     ["Secret Egg"] = Vector3.new(-19438, 8, 18839),
+    ["Showman Egg"] = Vector3.new(-130, 10, -60),
     ["Frozen Egg"] = Vector3.new(684, 3842, -3465),
     ["Flaming Egg"] = Vector3.new(764, 3842, -3466),
 }
