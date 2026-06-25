@@ -128,8 +128,6 @@ local function getActiveQuests(filter)
 end
 
 local function completeQuest(quest)
-    print("[Quest] Working on: " .. quest.id .. " (" .. quest.type .. ")")
-    
     getgenv().questActive = true
     
     if quest.type == "Bubbles" then
@@ -137,9 +135,7 @@ local function completeQuest(quest)
         local prevPos = savePosition()
         local sellPos = getSellPosition()
         local root = getRoot()
-        if root then
-            root.CFrame = CFrame.new(sellPos)
-        end
+        if root then root.CFrame = CFrame.new(sellPos) end
         task.wait(0.5)
         while true do
             pcall(function() Remote:FireServer("BlowBubble") end)
@@ -157,12 +153,10 @@ local function completeQuest(quest)
         if quest.egg then
             local eggName = quest.egg
             getgenv().questEgg = eggName
-            
             local prevPos = savePosition()
             local pos = EGG_LOCATIONS[eggName] or EGG_LOCATIONS["Magma Egg"]
             if pos then teleportTo(pos) end
             task.wait(0.5)
-            
             while true do
                 pcall(function() Remote:InvokeServer("HatchEgg", eggName, HATCH_AMOUNT) end)
                 task.wait(1)
@@ -173,10 +167,8 @@ local function completeQuest(quest)
                 end
                 if not stillActive then break end
             end
-            
             restorePosition(prevPos)
         else
-            print("[Quest] Skipping hatch quest, Eggs tab will handle")
             getgenv().questActive = false
             getgenv().questEgg = nil
             task.wait(5)
@@ -184,9 +176,7 @@ local function completeQuest(quest)
         
     elseif quest.type == "Collect" then
         local curr = quest.currency or ""
-        
         if curr:lower():find("pearl") then
-            print("[Quest] Skipping Pearls quest, can't auto-collect")
             getgenv().questActive = false
             getgenv().questEgg = nil
             task.wait(1)
@@ -195,24 +185,17 @@ local function completeQuest(quest)
         
         getgenv().questEgg = nil
         local prevPos = savePosition()
-        
         local isCoinQuest = not curr:lower():find("gem") and not curr:lower():find("ticket")
         
-        if curr:lower():find("gem") then
-            teleportTo(GEM_AREA)
-        elseif curr:lower():find("ticket") then
-            teleportTo(TICKET_AREA)
-        else
-            teleportTo(COIN_AREA)
-        end
+        if curr:lower():find("gem") then teleportTo(GEM_AREA)
+        elseif curr:lower():find("ticket") then teleportTo(TICKET_AREA)
+        else teleportTo(COIN_AREA) end
         
         while true do
             if isCoinQuest then
                 local data = LocalData:Get()
                 local coins = data and data.Coins or 0
-                
                 if coins >= COIN_CAP then
-                    print("[Quest] Coin cap reached, hatching to make space...")
                     local rainbowPos = EGG_LOCATIONS["Rainbow Egg"]
                     if rainbowPos then teleportTo(rainbowPos) end
                     task.wait(0.5)
@@ -224,9 +207,7 @@ local function completeQuest(quest)
                     task.wait(0.5)
                 end
             end
-            
             task.wait(3)
-            
             local newQuests = getActiveQuests(quest.id:match("^(.-)%d+$") or "")
             local stillActive = false
             for _, q in ipairs(newQuests) do
@@ -245,7 +226,6 @@ local function questLoop(filter)
     return function()
         while true do
             local quests = getActiveQuests(filter)
-            
             if #quests == 0 then
                 getgenv().questActive = false
                 getgenv().questEgg = nil
@@ -267,7 +247,6 @@ local function questLoop(filter)
             if questToDo then
                 completeQuest(questToDo)
             else
-                print("[Quest] All available quests are pearl/any-hatch, waiting...")
                 getgenv().questActive = false
                 getgenv().questEgg = nil
                 task.wait(30)
@@ -299,12 +278,10 @@ QuestTab:CreateToggle({
         seasonRunning = v
         if v then
             seasonThread = task.spawn(questLoop("challenge"))
-            print("[Quest] Season started!")
         else
             if seasonThread then task.cancel(seasonThread) end
             getgenv().questActive = false
             getgenv().questEgg = nil
-            print("[Quest] Season stopped!")
         end
     end
 })
@@ -318,14 +295,11 @@ QuestTab:CreateToggle({
             claimThread = task.spawn(function()
                 while claimRunning do
                     pcall(function() Remote:FireServer("ClaimSeason") end)
-                    print("[Quest] Season Pass claimed!")
                     task.wait(5)
                 end
             end)
-            print("[Quest] Auto Claim started!")
         else
             if claimThread then task.cancel(claimThread) end
-            print("[Quest] Auto Claim stopped!")
         end
     end
 })
@@ -341,10 +315,8 @@ QuestTab:CreateToggle({
             globalThread = task.spawn(function()
                 while globalRunning do
                     local quests = getActiveQuests("global")
-                    
                     if #quests == 0 then
                         pcall(function() Remote:FireServer("ClaimGlobalIncentiveQuest") end)
-                        print("[Quest] Global Incentive claimed!")
                         getgenv().questActive = false
                         getgenv().questEgg = nil
                         task.wait(60)
@@ -361,18 +333,17 @@ QuestTab:CreateToggle({
                         if questToDo then
                             completeQuest(questToDo)
                         else
-                            print("[Quest] All global quests are pearl, waiting...")
+                            getgenv().questActive = false
+                            getgenv().questEgg = nil
                             task.wait(30)
                         end
                     end
                 end
             end)
-            print("[Quest] Global Incentive started!")
         else
             if globalThread then task.cancel(globalThread) end
             getgenv().questActive = false
             getgenv().questEgg = nil
-            print("[Quest] Global Incentive stopped!")
         end
     end
 })
