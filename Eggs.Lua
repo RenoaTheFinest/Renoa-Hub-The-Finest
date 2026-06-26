@@ -46,8 +46,10 @@ local EGG_LOCATIONS = {
     ["Void Egg"] = Vector3.new(-150, 11, -26),
     ["Hell Egg"] = Vector3.new(-149, 11, -37),
     ["Secret Egg"] = Vector3.new(-19438, 8, 18839),
-    ["Frozen Egg"] = Vector3.new(684, 3842, -3465),
-    ["Flaming Egg"] = Vector3.new(764, 3842, -3466),
+    ["Showman Egg"] = Vector3.new(-130, 10, -60),
+    ["Popcorn Egg"] = Vector3.new(-3601, 162, 882),
+    ["Sweet Egg"] = Vector3.new(-3586, 162, 883),
+    ["Exotic Egg"] = Vector3.new(-3576, 162, 882),
 }
 
 local EGG_WORLDS = {
@@ -62,7 +64,9 @@ local EGG_WORLDS = {
     ["Magma Egg"] = "The Overworld", ["Crystal Egg"] = "The Overworld",
     ["Lunar Egg"] = "The Overworld", ["Void Egg"] = "The Overworld",
     ["Hell Egg"] = "The Overworld", ["Secret Egg"] = "The Overworld",
-    ["Frozen Egg"] = "The Overworld", ["Flaming Egg"] = "The Overworld",
+    ["Showman Egg"] = "The Overworld",
+    ["Popcorn Egg"] = "The Overworld", ["Sweet Egg"] = "The Overworld",
+    ["Exotic Egg"] = "The Overworld",
 }
 
 local ALL_EGG_NAMES = {}
@@ -182,7 +186,6 @@ local function teleportToEgg(eggName)
             local root = getRoot()
             if root then
                 root.CFrame = CFrame.new(riftPos + Vector3.new(0, 5, 0))
-                print("[Eggs] Teleported to RIFT: " .. eggName)
             end
         end
         return true
@@ -195,7 +198,6 @@ local function teleportToEgg(eggName)
             local root = getRoot()
             if root then
                 root.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
-                print("[Eggs] Teleported to: " .. eggName)
             end
         end
         return true
@@ -348,10 +350,8 @@ EggsTab:CreateToggle({
                     task.wait(0.5)
                 end
             end)
-            print("[Eggs] Inventory Egg opener started!")
         else
             if inventoryThread then task.cancel(inventoryThread) end
-            print("[Eggs] Inventory Egg opener stopped!")
         end
     end
 })
