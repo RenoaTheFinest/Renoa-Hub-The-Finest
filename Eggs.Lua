@@ -260,6 +260,10 @@ EggsTab:CreateToggle({
         if v then
             fourXThread = task.spawn(function()
                 while fourXEnabled do
+                    while getgenv().questActive and fourXEnabled do
+                        task.wait(1)
+                    end
+                    
                     local eggFound = false
                     for _, obj in ipairs(workspace:GetDescendants()) do
                         if obj.Name == "4x Luck Exotic Egg" and obj:IsA("Model") then
@@ -327,9 +331,8 @@ EggsTab:CreateToggle({
         if v then
             autoHatchThread = task.spawn(function()
                 while autoHatchEnabled do
-                    if getgenv().questActive then
-                        task.wait(0.5)
-                        continue
+                    while getgenv().questActive and autoHatchEnabled do
+                        task.wait(1)
                     end
                     
                     teleportToEgg(selectedEgg)
@@ -435,9 +438,8 @@ EggsTab:CreateToggle({
             refreshBountyLabels()
             bountyThread = task.spawn(function()
                 while bountyEnabled do
-                    if getgenv().questActive then
-                        task.wait(0.5)
-                        continue
+                    while getgenv().questActive and bountyEnabled do
+                        task.wait(1)
                     end
                     
                     refreshBountyLabels()
