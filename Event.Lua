@@ -1,12 +1,49 @@
 -- ================================================
--- EVENT TAB
+-- EVENT TAB (CARNIVAL CHEST)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
 
 local EventTab = Window:CreateTab("Event", nil)
 
-EventTab:CreateSection("Coming Soon")
-EventTab:CreateLabel("In Progress, please wait for the update")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local RE = ReplicatedStorage.Shared.Framework.Network.Remote.RemoteEvent
+local Remote = require(ReplicatedStorage.Shared.Framework.Network.Remote)
+
+local function fire(action, ...)
+    if RE then RE:FireServer(action, ...) end
+end
+
+-- ======================================
+-- SETTINGS
+-- ======================================
+local carnivalRunning = false
+local carnivalThread = nil
+
+-- ======================================
+-- UI - CARNIVAL CHEST
+-- ======================================
+EventTab:CreateSection("Carnival Chest")
+
+EventTab:CreateToggle({
+    Name = "Auto Claim Carnival Chest",
+    CurrentValue = false,
+    Callback = function(v)
+        carnivalRunning = v
+        if v then
+            carnivalThread = task.spawn(function()
+                while carnivalRunning do
+                    pcall(function() Remote:FireServer("ClaimChest", "Carnival Chest") end)
+                    task.wait(5)
+                end
+            end)
+        else
+            if carnivalThread then task.cancel(carnivalThread) end
+        end
+    end
+})
 
 print("[Event] Loaded!")
