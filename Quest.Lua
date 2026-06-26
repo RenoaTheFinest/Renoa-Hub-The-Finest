@@ -278,7 +278,7 @@ QuestTab:CreateToggle({
     Callback = function(v)
         seasonRunning = v
         if v then
-            seasonThread = task.spawn(questLoop("challenge"))
+            seasonThread = task.spawn(questLoop("hourly-challenge"))
         else
             if seasonThread then task.cancel(seasonThread) end
             getgenv().questActive = false
