@@ -109,7 +109,7 @@ local function getActiveQuests(filter)
         for _, quest in pairs(data.Quests) do
             if not quest.Claimed then
                 local name = quest.Id or ""
-                if name:find(filter) then
+                if name:find(filter) and not name:find("bubble") then
                     local task = quest.Tasks and quest.Tasks[1]
                     if task then
                         table.insert(quests, {
@@ -278,7 +278,7 @@ QuestTab:CreateToggle({
     Callback = function(v)
         seasonRunning = v
         if v then
-            seasonThread = task.spawn(questLoop("hourly-challenge"))
+            seasonThread = task.spawn(questLoop("challenge"))
         else
             if seasonThread then task.cancel(seasonThread) end
             getgenv().questActive = false
