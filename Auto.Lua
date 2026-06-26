@@ -25,12 +25,14 @@ end
 local presentEnabled = false
 local bubbleEnabled = false
 local sellEnabled = false
+local powerOrbEnabled = false
 local orbEnabled = false
 local pickupEnabled = false
 local boxEnabled = false
 local presentThread = nil
 local bubbleThread = nil
 local sellThread = nil
+local powerOrbThread = nil
 local orbThread = nil
 local boxThread = nil
 
@@ -190,6 +192,41 @@ AutoTab:CreateToggle({
             end)
         else
             if sellThread then task.cancel(sellThread) end
+        end
+    end
+})
+
+AutoTab:CreateToggle({
+    Name = "Auto Use Power Orb",
+    CurrentValue = false,
+    Callback = function(v)
+        powerOrbEnabled = v
+        if v then
+            powerOrbThread = task.spawn(function()
+                local petIDs = {
+                    "a0a3c245-ff67-4723-b85c-5d141d0a9649",
+                    "2ac153c7-11b7-49c1-85e3-354f80941818",
+                    "bd2d105a-1fcb-4e81-a420-80224d8830ad",
+                    "10ee81b6-f9c3-4ec3-a829-9b2f868b6400",
+                    "8a69932e-e1bf-4f0f-b23d-16d2c0449eb",
+                    "d89b08da-0523-4598-9640-eae1cd880e70",
+                    "a67d8c44-1c52-4787-8f55-81bb9bdafa",
+                    "16a93d1f-a19a-4057-860b-bcf0c227d2kd",
+                    "ac52d576-fcbe-4502-9753-57e271a16e00",
+                    "742c65af-b0e9-43e5-b107-0e3a3fd6e57",
+                    "d4142051-aecc-4c3f-8339-149f4cbb95a7",
+                    "4a9c203f-8d7e-49ae-abe1-e07bb7559980",
+                    "1b809029-dee6-4eb4-8414-7139037kb19",
+                }
+                for i = 1, #petIDs do
+                    if not powerOrbEnabled then break end
+                    pcall(function() fire("UsePowerOrb", petIDs[i]) end)
+                    task.wait(0.5)
+                end
+                powerOrbEnabled = false
+            end)
+        else
+            if powerOrbThread then task.cancel(powerOrbThread) end
         end
     end
 })
