@@ -1,5 +1,5 @@
 -- ================================================
--- EGGS TAB (HATCH + INVENTORY + BOUNTY + RIFT)
+-- EGGS TAB (HATCH + 4X + INVENTORY + BOUNTY + RIFT)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -50,6 +50,7 @@ local EGG_LOCATIONS = {
     ["Popcorn Egg"] = Vector3.new(-3601, 162, 882),
     ["Sweet Egg"] = Vector3.new(-3586, 162, 883),
     ["Exotic Egg"] = Vector3.new(-3576, 162, 882),
+    ["4x Luck Exotic Egg"] = Vector3.new(-3622, 161, 897),
 }
 
 local EGG_WORLDS = {
@@ -66,7 +67,7 @@ local EGG_WORLDS = {
     ["Hell Egg"] = "The Overworld", ["Secret Egg"] = "The Overworld",
     ["Showman Egg"] = "The Overworld",
     ["Popcorn Egg"] = "The Overworld", ["Sweet Egg"] = "The Overworld",
-    ["Exotic Egg"] = "The Overworld",
+    ["Exotic Egg"] = "The Overworld", ["4x Luck Exotic Egg"] = "The Overworld",
 }
 
 local ALL_EGG_NAMES = {}
@@ -104,6 +105,7 @@ local currentBountyPet = "Unknown"
 local currentBountyEgg = "Unknown"
 local currentBountyChance = "Unknown"
 
+local fourXEnabled = false
 local autoHatchEnabled = false
 local spamEEnabled = false
 local hideAnimEnabled = false
@@ -111,6 +113,7 @@ local inventoryEnabled = false
 local bountyEnabled = false
 local riftEnabled = false
 
+local fourXThread = nil
 local autoHatchThread = nil
 local spamEThread = nil
 local inventoryThread = nil
@@ -245,6 +248,53 @@ local function getTimeUntilReset()
 end
 
 -- ======================================
+-- UI - 4X LUCK EXOTIC EGG
+-- ======================================
+EggsTab:CreateSection("------- 4x Luck Exotic Egg -------")
+
+EggsTab:CreateToggle({
+    Name = "Auto 4x Luck Exotic Egg (Admin Spawn)",
+    CurrentValue = false,
+    Callback = function(v)
+        fourXEnabled = v
+        if v then
+            fourXThread = task.spawn(function()
+                while fourXEnabled do
+                    local eggFound = false
+                    for _, obj in ipairs(workspace:GetDescendants()) do
+                        if obj.Name == "4x Luck Exotic Egg" and obj:IsA("Model") then
+                            eggFound = true
+                            getgenv().questActive = true
+                            getgenv().questEgg = "4x Luck Exotic Egg"
+                            
+                            local pos = obj:GetPivot().Position
+                            local root = getRoot()
+                            if root then
+                                root.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
+                            end
+                            task.wait(0.1)
+                            pcall(function() Remote:FireServer("HatchEgg", "4x Luck Exotic Egg", HATCH_AMOUNT) end)
+                            break
+                        end
+                    end
+                    
+                    if not eggFound then
+                        getgenv().questActive = false
+                        getgenv().questEgg = nil
+                    end
+                    
+                    task.wait(0.1)
+                end
+            end)
+        else
+            if fourXThread then task.cancel(fourXThread) end
+            getgenv().questActive = false
+            getgenv().questEgg = nil
+        end
+    end
+})
+
+-- ======================================
 -- UI - HATCH EGG
 -- ======================================
 EggsTab:CreateSection("------- Hatch Egg -------")
@@ -286,7 +336,7 @@ EggsTab:CreateToggle({
                     pcall(function()
                         Remote:FireServer("HatchEgg", selectedEgg, HATCH_AMOUNT)
                     end)
-                    task.wait(0.5)
+                    task.wait(0.1)
                 end
             end)
         else
@@ -395,7 +445,7 @@ EggsTab:CreateToggle({
                     pcall(function()
                         Remote:FireServer("HatchEgg", currentBountyEgg, HATCH_AMOUNT)
                     end)
-                    task.wait(0.5)
+                    task.wait(0.1)
                 end
             end)
         else
