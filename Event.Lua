@@ -40,8 +40,8 @@ EventTab:CreateToggle({
         if v then
             carnivalThread = task.spawn(function()
                 while carnivalRunning do
-                    pcall(function() Remote:FireServer("ClaimChest", "Carnival Chest") end)
-                    task.wait(5)
+                    pcall(function() RE:FireServer("ClaimChest", "Carnival Chest") end)
+                    task.wait(0.1)
                 end
             end)
         else
@@ -63,8 +63,8 @@ EventTab:CreateToggle({
         if v then
             rebirthThread = task.spawn(function()
                 while rebirthRunning do
-                    pcall(function() Remote:FireServer("CarnivalRebirth") end)
-                    task.wait(5)
+                    pcall(function() RE:FireServer("CarnivalRebirth") end)
+                    task.wait(0.1)
                 end
             end)
         else
@@ -86,11 +86,11 @@ EventTab:CreateToggle({
         if v then
             upgradeThread = task.spawn(function()
                 while upgradeRunning do
-                    pcall(function() Remote:FireServer("BuyCarnivalUpgrade", "Currency") end)
-                    pcall(function() Remote:FireServer("BuyCarnivalUpgrade", "Luck") end)
-                    pcall(function() Remote:FireServer("BuyCarnivalUpgrade", "SecretLuck") end)
-                    pcall(function() Remote:FireServer("BuyCarnivalUpgrade", "InfinityLuck") end)
-                    task.wait(5)
+                    pcall(function() RE:FireServer("BuyCarnivalUpgrade", "Currency") end)
+                    pcall(function() RE:FireServer("BuyCarnivalUpgrade", "Luck") end)
+                    pcall(function() RE:FireServer("BuyCarnivalUpgrade", "SecretLuck") end)
+                    pcall(function() RE:FireServer("BuyCarnivalUpgrade", "InfinityLuck") end)
+                    task.wait(0.1)
                 end
             end)
         else
