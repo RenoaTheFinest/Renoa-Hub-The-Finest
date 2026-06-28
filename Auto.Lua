@@ -82,6 +82,20 @@ local function getBubbles()
     return 0
 end
 
+local function getSellPosition()
+    local overworld = workspace.Worlds["The Overworld"]
+    if overworld then
+        local sell = overworld:FindFirstChild("Sell")
+        if sell then
+            local ring = sell:FindFirstChild("Ring")
+            if ring then
+                return ring.Position
+            end
+        end
+    end
+    return Vector3.new(77, 6, -113)
+end
+
 local function collectAllPresents()
     local rendered = workspace:FindFirstChild("Rendered")
     if not rendered then return 0 end
@@ -175,36 +189,37 @@ AutoTab:CreateToggle({
         sellEnabled = v
         if v then
             sellThread = task.spawn(function()
-                local sellPos = nil
-                local overworld = workspace.Worlds["The Overworld"]
-                if overworld then
-                    local sell = overworld:FindFirstChild("Sell")
-                    if sell then
-                        local ring = sell:FindFirstChild("Ring")
-                        if ring then
-                            sellPos = ring.Position
-                        end
-                    end
-                end
-                if not sellPos then sellPos = Vector3.new(77, 6, -113) end
+                local sellPos = getSellPosition()
+                local needsSell = false
                 
                 while sellEnabled do
                     local bubbles = getBubbles()
+                    
                     if bubbles >= BUBBLE_CAP then
+                        needsSell = true
+                    elseif bubbles < 100000000 then
+                        needsSell = false
+                    end
+                    
+                    if needsSell and bubbles >= BUBBLE_CAP then
                         local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
                         local prevPos = root and root.Position or nil
-                        if root then
-                            root.CFrame = CFrame.new(sellPos)
+                        
+                        if root then root.CFrame = CFrame.new(sellPos) end
+                        task.wait(0.2)
+                        
+                        for i = 1, 3 do
+                            local before = getBubbles()
+                            pcall(function() fire("SellBubble") end)
+                            task.wait(0.3)
+                            local after = getBubbles()
+                            if after < before then break end
                         end
-                        task.wait(0.3)
-                        pcall(function() fire("SellBubble") end)
-                        task.wait(0.3)
-                        if prevPos then
-                            local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                            if root then
-                                root.CFrame = CFrame.new(prevPos)
-                            end
+                        
+                        if prevPos and root then
+                            root.CFrame = CFrame.new(prevPos)
                         end
+                        task.wait(3)
                     end
                     task.wait(1)
                 end
