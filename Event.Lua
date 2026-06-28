@@ -1,5 +1,5 @@
 -- ================================================
--- EVENT TAB (CARNIVAL CHEST)
+-- EVENT TAB (CARNIVAL CHEST + CARNIVAL REBIRTH)
 -- ================================================
 repeat task.wait() until getgenv().Window
 local Window = getgenv().Window
@@ -22,6 +22,8 @@ end
 -- ======================================
 local carnivalRunning = false
 local carnivalThread = nil
+local rebirthRunning = false
+local rebirthThread = nil
 
 -- ======================================
 -- UI - CARNIVAL CHEST
@@ -42,6 +44,29 @@ EventTab:CreateToggle({
             end)
         else
             if carnivalThread then task.cancel(carnivalThread) end
+        end
+    end
+})
+
+-- ======================================
+-- UI - CARNIVAL REBIRTH
+-- ======================================
+EventTab:CreateSection("Carnival Rebirth")
+
+EventTab:CreateToggle({
+    Name = "Auto Carnival Rebirth",
+    CurrentValue = false,
+    Callback = function(v)
+        rebirthRunning = v
+        if v then
+            rebirthThread = task.spawn(function()
+                while rebirthRunning do
+                    pcall(function() Remote:FireServer("CarnivalRebirth") end)
+                    task.wait(5)
+                end
+            end)
+        else
+            if rebirthThread then task.cancel(rebirthThread) end
         end
     end
 })
