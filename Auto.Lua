@@ -175,31 +175,35 @@ AutoTab:CreateToggle({
         sellEnabled = v
         if v then
             sellThread = task.spawn(function()
-                local sellRoot = nil
-                local originalPos = nil
-                for _, obj in ipairs(Workspace:GetDescendants()) do
-                    if obj.Name == "Root" and obj.Parent and obj.Parent.Name == "Sell" then
-                        sellRoot = obj
-                        originalPos = obj.Position
-                        break
+                local sellPos = nil
+                local overworld = workspace.Worlds["The Overworld"]
+                if overworld then
+                    local sell = overworld:FindFirstChild("Sell")
+                    if sell then
+                        local ring = sell:FindFirstChild("Ring")
+                        if ring then
+                            sellPos = ring.Position
+                        end
                     end
                 end
-                
-                if not sellRoot then return end
+                if not sellPos then sellPos = Vector3.new(77, 6, -113) end
                 
                 while sellEnabled do
                     local bubbles = getBubbles()
                     if bubbles >= BUBBLE_CAP then
-                        -- Teleport to sell
                         local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
                         local prevPos = root and root.Position or nil
                         if root then
-                            sellRoot.Position = root.Position + Vector3.new(0, -3, 0)
+                            root.CFrame = CFrame.new(sellPos)
                         end
+                        task.wait(0.3)
                         pcall(function() fire("SellBubble") end)
-                        task.wait(0.5)
-                        if prevPos and sellRoot and originalPos then
-                            sellRoot.Position = originalPos
+                        task.wait(0.3)
+                        if prevPos then
+                            local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                            if root then
+                                root.CFrame = CFrame.new(prevPos)
+                            end
                         end
                     end
                     task.wait(1)
