@@ -37,6 +37,7 @@ local orbThread = nil
 local boxThread = nil
 
 local originalRadius = constants.DefaultPickupRadius
+local BUBBLE_CAP = 650000000
 
 -- ======================================
 -- GET BOXES FROM INVENTORY
@@ -67,6 +68,18 @@ local selectedBox = boxList[1] or "Mystery Box"
 local function getRoot()
     local char = player.Character
     if char then return char:FindFirstChild("HumanoidRootPart") end
+end
+
+local function getBubbles()
+    local leaderstats = player:FindFirstChild("leaderstats")
+    if leaderstats then
+        for _, stat in ipairs(leaderstats:GetChildren()) do
+            if stat.Name:find("Bubble") then
+                return tonumber(stat.Value) or 0
+            end
+        end
+    end
+    return 0
 end
 
 local function collectAllPresents()
@@ -161,33 +174,35 @@ AutoTab:CreateToggle({
     Callback = function(v)
         sellEnabled = v
         if v then
-            local sellRoot = nil
-            local originalPos = nil
-            for _, obj in ipairs(Workspace:GetDescendants()) do
-                if obj.Name == "Root" and obj.Parent and obj.Parent.Name == "Sell" then
-                    sellRoot = obj
-                    originalPos = obj.Position
-                    break
-                end
-            end
-            
-            if not sellRoot then
-                print("[Auto] No sell area found!")
-                sellEnabled = false
-                return
-            end
-            
             sellThread = task.spawn(function()
-                while sellEnabled do
-                    local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                    if root then
-                        sellRoot.Position = root.Position + Vector3.new(0, -3, 0)
+                local sellRoot = nil
+                local originalPos = nil
+                for _, obj in ipairs(Workspace:GetDescendants()) do
+                    if obj.Name == "Root" and obj.Parent and obj.Parent.Name == "Sell" then
+                        sellRoot = obj
+                        originalPos = obj.Position
+                        break
                     end
-                    pcall(function() fire("SellBubble") end)
-                    task.wait(1)
                 end
-                if originalPos then
-                    sellRoot.Position = originalPos
+                
+                if not sellRoot then return end
+                
+                while sellEnabled do
+                    local bubbles = getBubbles()
+                    if bubbles >= BUBBLE_CAP then
+                        -- Teleport to sell
+                        local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                        local prevPos = root and root.Position or nil
+                        if root then
+                            sellRoot.Position = root.Position + Vector3.new(0, -3, 0)
+                        end
+                        pcall(function() fire("SellBubble") end)
+                        task.wait(0.5)
+                        if prevPos and sellRoot and originalPos then
+                            sellRoot.Position = originalPos
+                        end
+                    end
+                    task.wait(1)
                 end
             end)
         else
