@@ -38,6 +38,7 @@ local boxThread = nil
 
 local originalRadius = constants.DefaultPickupRadius
 local BUBBLE_CAP = 650000000
+local RETURN_POS = Vector3.new(-3583, 161, 914)
 
 -- ======================================
 -- GET BOXES FROM INVENTORY
@@ -203,7 +204,6 @@ AutoTab:CreateToggle({
                     
                     if needsSell and bubbles >= BUBBLE_CAP then
                         local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                        local prevPos = root and root.Position or nil
                         
                         if root then root.CFrame = CFrame.new(sellPos) end
                         task.wait(0.2)
@@ -216,8 +216,8 @@ AutoTab:CreateToggle({
                             if after < before then break end
                         end
                         
-                        if prevPos and root then
-                            root.CFrame = CFrame.new(prevPos)
+                        if root then
+                            root.CFrame = CFrame.new(RETURN_POS)
                         end
                         task.wait(3)
                     end
