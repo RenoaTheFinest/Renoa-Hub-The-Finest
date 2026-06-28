@@ -261,7 +261,7 @@ EggsTab:CreateToggle({
             fourXThread = task.spawn(function()
                 while fourXEnabled do
                     while getgenv().questActive and fourXEnabled do
-                        task.wait(1)
+                        task.wait(0.5)
                     end
                     
                     local eggFound = false
@@ -276,8 +276,25 @@ EggsTab:CreateToggle({
                             if root then
                                 root.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
                             end
-                            task.wait(0.1)
-                            pcall(function() Remote:FireServer("HatchEgg", "4x Luck Exotic Egg", HATCH_AMOUNT) end)
+                            
+                            while fourXEnabled and eggFound do
+                                if getgenv().questEgg ~= "4x Luck Exotic Egg" then break end
+                                pcall(function() Remote:FireServer("HatchEgg", "4x Luck Exotic Egg", HATCH_AMOUNT) end)
+                                task.wait(0.05)
+                                
+                                eggFound = false
+                                for _, obj2 in ipairs(workspace:GetDescendants()) do
+                                    if obj2.Name == "4x Luck Exotic Egg" and obj2:IsA("Model") then
+                                        eggFound = true
+                                        break
+                                    end
+                                end
+                            end
+                            
+                            if not eggFound or getgenv().questEgg ~= "4x Luck Exotic Egg" then
+                                getgenv().questActive = false
+                                getgenv().questEgg = nil
+                            end
                             break
                         end
                     end
@@ -287,8 +304,10 @@ EggsTab:CreateToggle({
                         getgenv().questEgg = nil
                     end
                     
-                    task.wait(0.1)
+                    task.wait(0.05)
                 end
+                getgenv().questActive = false
+                getgenv().questEgg = nil
             end)
         else
             if fourXThread then task.cancel(fourXThread) end
@@ -332,14 +351,14 @@ EggsTab:CreateToggle({
             autoHatchThread = task.spawn(function()
                 while autoHatchEnabled do
                     while getgenv().questActive and autoHatchEnabled do
-                        task.wait(1)
+                        task.wait(0.5)
                     end
                     
                     teleportToEgg(selectedEgg)
                     pcall(function()
                         Remote:FireServer("HatchEgg", selectedEgg, HATCH_AMOUNT)
                     end)
-                    task.wait(0.1)
+                    task.wait(0.05)
                 end
             end)
         else
@@ -439,7 +458,7 @@ EggsTab:CreateToggle({
             bountyThread = task.spawn(function()
                 while bountyEnabled do
                     while getgenv().questActive and bountyEnabled do
-                        task.wait(1)
+                        task.wait(0.5)
                     end
                     
                     refreshBountyLabels()
@@ -447,7 +466,7 @@ EggsTab:CreateToggle({
                     pcall(function()
                         Remote:FireServer("HatchEgg", currentBountyEgg, HATCH_AMOUNT)
                     end)
-                    task.wait(0.1)
+                    task.wait(0.05)
                 end
             end)
         else
