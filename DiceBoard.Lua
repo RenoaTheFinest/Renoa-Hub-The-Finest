@@ -24,7 +24,6 @@ local TILE_TYPES = {
 local targetTile = "Chance"
 local running = false
 local thread = nil
-local GOLDEN_DICE_DIST = 5
 
 local function getNode()
     for name, piece in pairs(Board.Pieces) do
@@ -118,7 +117,7 @@ local function loop()
         local diceName = "Dice"
         local waitTime = 2.5
 
-        if goldenAvailable and dist <= GOLDEN_DICE_DIST then
+        if goldenAvailable and dist <= 3 then
             diceName = "Golden Dice"
             waitTime = 1.5
         elseif dist >= 10 then
@@ -157,17 +156,6 @@ DiceBoardTab:CreateDropdown({
     },
     Callback = function(v)
         targetTile = v[1]
-    end
-})
-
-DiceBoardTab:CreateInput({
-    Name = "Golden Dice Distance",
-    PlaceholderText = "5",
-    CurrentValue = tostring(GOLDEN_DICE_DIST),
-    RemoveTextAfterFocusLost = false,
-    Callback = function(v)
-        local n = tonumber(v)
-        if n then GOLDEN_DICE_DIST = n end
     end
 })
 
