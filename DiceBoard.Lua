@@ -30,12 +30,9 @@ local function getNode()
     for name, piece in pairs(Board.Pieces) do
         if name == player.Name then
             local raw = piece.Node.Part
-            if typeof(raw) == "number" then
-                return raw
-            elseif typeof(raw) == "string" then
-                return tonumber(raw)
-            elseif typeof(raw) == "Instance" then
-                return tonumber(raw.Name)
+            if typeof(raw) == "number" then return raw
+            elseif typeof(raw) == "string" then return tonumber(raw)
+            elseif typeof(raw) == "Instance" then return tonumber(raw.Name)
             end
         end
     end
@@ -53,6 +50,19 @@ local function getClosest(current, list)
         end
     end
     return closest, dist
+end
+
+local function hasGoldenDice()
+    local ok, LocalData = pcall(function()
+        return require(ReplicatedStorage.Client.Framework.Services.LocalData)
+    end)
+    if not ok then return false end
+    local data = LocalData:Get()
+    if data and data.Powerups then
+        local gd = data.Powerups["Golden Dice"] or 0
+        return gd > 0
+    end
+    return false
 end
 
 local function getBoardHUD()
@@ -89,9 +99,7 @@ local function waitForNodeChange(oldNode, timeout)
         task.wait(0.3)
         elapsed = elapsed + 0.3
         local current = getNode()
-        if current and current ~= oldNode then
-            return current
-        end
+        if current and current ~= oldNode then return current end
     end
     return getNode()
 end
@@ -99,19 +107,18 @@ end
 local function loop()
     while running do
         local node = getNode()
-
         if not node then
-            warn("[DiceBoard] No node found! Make sure the board UI is open.")
             task.wait(2)
             continue
         end
 
         local target, dist = getClosest(node, TILE_TYPES[targetTile])
 
+        local goldenAvailable = hasGoldenDice()
         local diceName = "Dice"
         local waitTime = 2.5
 
-        if dist <= GOLDEN_DICE_DIST then
+        if goldenAvailable and dist <= GOLDEN_DICE_DIST then
             diceName = "Golden Dice"
             waitTime = 1.5
         elseif dist >= 10 then
@@ -122,29 +129,16 @@ local function loop()
             waitTime = 2.5
         end
 
-        print("[DiceBoard] Node: "..node.." | Target: "..tostring(target).." | Dist: "..dist.." | Using: "..diceName)
-
         local selected = selectDice(diceName)
         if not selected then
-            warn("[DiceBoard] Failed to select " .. diceName .. ", falling back to Dice")
             selectDice("Dice")
             diceName = "Dice"
             waitTime = 2.5
         end
 
         task.wait(0.3)
-
-        local rolled = pressRoll()
-        if not rolled then
-            warn("[DiceBoard] Failed to press Roll button!")
-            task.wait(2)
-            continue
-        end
-
-        local newNode = waitForNodeChange(node, waitTime + 2)
-
-        print("[DiceBoard] Done! Now on node: " .. tostring(newNode))
-
+        pressRoll()
+        waitForNodeChange(node, waitTime + 2)
         task.wait(1)
     end
 end
@@ -173,9 +167,7 @@ DiceBoardTab:CreateInput({
     RemoveTextAfterFocusLost = false,
     Callback = function(v)
         local n = tonumber(v)
-        if n then
-            GOLDEN_DICE_DIST = n
-        end
+        if n then GOLDEN_DICE_DIST = n end
     end
 })
 
@@ -186,17 +178,13 @@ DiceBoardTab:CreateToggle({
         running = v
         if v then
             if not getBoardHUD() then
-                warn("[DiceBoard] Board UI not open! Open the dice board first.")
                 running = false
                 return
             end
             thread = task.spawn(loop)
         else
             running = false
-            if thread then
-                task.cancel(thread)
-                thread = nil
-            end
+            if thread then task.cancel(thread) end
         end
     end
 })
