@@ -13,16 +13,14 @@ getgenv().Window = Window
 
 local function loadTab(url)
     local success = false
-    local attempts = 0
-    while not success and attempts < 3 do
-        attempts = attempts + 1
+    while not success do
         local ok, err = pcall(function()
             loadstring(game:HttpGet(url))()
         end)
         if ok then
             success = true
         else
-            warn("FAILED (" .. attempts .. "):", url)
+            warn("FAILED:", url)
             task.wait(1)
         end
     end
